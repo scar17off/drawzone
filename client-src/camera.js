@@ -55,6 +55,9 @@ function handleMouseUp() {
 }
 
 function handleMouseMove(event) {
+    const pos = getGameCoordinates(event.clientX, event.clientY);
+    document.getElementById("xy-display").innerText = `XY: ${pos.x},${pos.y}`;
+
     if (mouseDown) {
         camera.x += event.movementX;
         camera.y += event.movementY;
@@ -94,3 +97,21 @@ canvas.addEventListener('mouseup', handleMouseUp);
 canvas.addEventListener('mousemove', handleMouseMove);
 
 window.addEventListener('keydown', handleKeyDown);
+
+// function getGameCoordinates(mouseX, mouseY) {
+//     const gameX = (mouseX + camera.x) / camera.zoom;
+//     const gameY = (mouseY + camera.y) / camera.zoom;
+
+//     return { x: Math.floor(gameX), y: Math.floor(gameY) };
+// }
+
+// canvas.addEventListener('click', function(event) {
+//     const canvasBounds = canvas.getBoundingClientRect();
+
+//     const mouseX = event.clientX - canvasBounds.left;
+//     const mouseY = event.clientY - canvasBounds.top;
+
+//     const gameCoords = getGameCoordinates(mouseX, mouseY);
+
+//     console.log("game position:", gameCoords);
+// });
