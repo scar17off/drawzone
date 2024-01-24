@@ -2,6 +2,7 @@ import chat from "./chat.js";
 import socket from "./network.js";
 import { camera } from "./camera.js";
 import renderer from "./renderer.js";
+import { mouse } from "./mouse.js";
 
 window.DrawZone = {
     chunks: {},
@@ -13,7 +14,8 @@ window.DrawZone = {
     renderer,
     world: {
         name: location.pathname.substring(1) || "main"
-    }
+    },
+    mouse
 };
 
 export default DrawZone;

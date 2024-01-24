@@ -1,4 +1,4 @@
-import { camera, isVisible } from "./camera.js";
+import { camera } from "./camera.js";
 
 const canvas = document.querySelector("canvas");
 const ctx = canvas.getContext("2d");
