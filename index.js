@@ -8,8 +8,8 @@ const app = express();
 const httpServer = http.createServer(app);
 const io = socketIO(httpServer);
 
-const chunkManager = require("./modules/world/chunkManager.js");
 const Client = require("./modules/player/Client.js");
+const chunkManager = require("./modules/world/chunkManager.js");
 
 const config = require("./config.json");
 
