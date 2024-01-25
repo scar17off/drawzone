@@ -6,8 +6,8 @@ DrawZone is a hybrid game inspired by OWOP, OWOT, and Cursors.io. It allows play
 
 - Real-time multiplayer drawing experience.
 - Chunk-based world system to manage different areas of the game world.
-- Default player ranks and permissions.
-- Customizable world templates with a maximum player limit.
+- Player ranks and permissions.
+- Customizable world templates.
 - WebSocket communication using Socket.IO for real-time updates.
 - Client-side camera controls for navigation.
 
