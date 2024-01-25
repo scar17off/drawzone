@@ -12,7 +12,7 @@ for(const key in ranks) {
 class Client {
     constructor(ws) {
         this.rank = defaultRank;
-        this.world = new URL(ws.handshake.headers.referer).pathname.substring(1);
+        this.world = new URL(ws.handshake.headers.referer).pathname.substring(1) || "main";
         this.ws = ws;
 
         const world = getWorldByName(this.world);

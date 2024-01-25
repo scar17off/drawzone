@@ -1,10 +1,13 @@
 export var camera = {
     x: 0,
     y: 0,
-    zoom: 32,
-    minZoom: 8,
-    maxZoom: 32
+    zoom: 16,
+    minZoom: 2,
+    maxZoom: 24,
+    zoomStrength: 1
 };
+
+export const canvas = document.getElementById("game");
 
 let mouseDown = false;
 
@@ -18,31 +21,23 @@ export function isVisible(x, y, w, h) {
 	return x + w > cx && y + h > cy && x <= cx + cw / czoom && y <= cy + ch / czoom;
 };
 
-export function centerCameraTo(x, y) {
-	if(typeof(x) == "number" && !isNaN(x)){
-		camera.x = -(window.innerWidth / camera.zoom / 2) + x;
-	}
-	
-	if(typeof(y) == "number" && !isNaN(y)){
-		camera.y = -(window.innerHeight / camera.zoom / 2) + y;
-	}
-}
-
 function zoomIn() {
-    if (camera.zoom * 1.1 > camera.maxZoom) {
+    let nzoom = camera.zoom * (1 + camera.zoomStrength);
+
+    if (nzoom > camera.maxZoom) {
         camera.zoom = camera.maxZoom;
     } else {
-        camera.zoom *= 1.1;
-        camera.zoom = Math.min(camera.zoom, camera.maxZoom);
+        camera.zoom = Math.round(nzoom);
     }
 }
 
 function zoomOut() {
-    if (camera.zoom / 1.1 < camera.minZoom) {
-        camera.zoom = camera.minZoom;
+    let nzoom = camera.zoom / (1 + camera.zoomStrength);
+
+    if (nzoom > camera.maxZoom) {
+        camera.zoom = camera.maxZoom;
     } else {
-        camera.zoom /= 1.1;
-        camera.zoom = Math.max(camera.zoom, camera.minZoom);
+        camera.zoom = Math.round(nzoom);
     }
 }
 
@@ -56,8 +51,8 @@ function handleMouseUp() {
 
 function handleMouseMove(event) {
     if (mouseDown) {
-        camera.x += event.movementX;
-        camera.y += event.movementY;
+        camera.x -= event.movementX;
+        camera.y -= event.movementY;
     }
 }
 
@@ -85,8 +80,6 @@ function handleWheel(event) {
         else zoomOut();
     };
 };
-
-const canvas = document.getElementById("game");
 
 canvas.addEventListener('wheel', handleWheel);
 canvas.addEventListener('mousedown', handleMouseDown);

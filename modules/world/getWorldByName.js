@@ -1,24 +1,24 @@
-const fs = require("fs");
-
 const WorldTemplate = require("./WorldTemplate.js");
+const { ensureWorldDirExists, getWorldDir } = require("./chunkManager.js");
 
-function getWorldByName(name) {
-    if(!name) name = "main";
+function getWorldByName(worldName) {
+    if(!worldName) worldName = "main";
     var foundWorld;
 
     for(const World in server.worlds)
-        if(World.name == name) foundWorld = World;
+        if(World.name == worldName) foundWorld = World;
 
-    if(!foundWorld) foundWorld = initWorld(name);
+    if(!foundWorld) foundWorld = initWorld(worldName);
 
     return foundWorld;
 };
 
-function initWorld(name) {
-    if(!fs.existsSync(`./././worlds/${name}/`))
-        fs.mkdirSync(`./././worlds/${name}/`);
+function initWorld(worldName) {
+    const worldDir = getWorldDir(worldName);
 
-    const World = new WorldTemplate(name);
+    ensureWorldDirExists(worldDir);
+
+    const World = new WorldTemplate(worldName);
 
     server.worlds.push(World);
 

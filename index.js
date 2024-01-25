@@ -8,6 +8,7 @@ const app = express();
 const httpServer = http.createServer(app);
 const io = socketIO(httpServer);
 
+const chunkManager = require("./modules/world/chunkManager.js");
 const Client = require("./modules/player/Client.js");
 
 const config = require("./config.json");
@@ -45,6 +46,10 @@ app.get('/*', (req, res) => {
 
 io.on("connection", socket => {
     const client = new Client(socket);
+
+    socket.on("loadChunk", (x, y) => {
+        socket.emit("chunkLoaded", x, y, chunkManager.getChunkData(client.world, x, y));
+    });
 });
 
 httpServer.listen(config.port, () => {
