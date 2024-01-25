@@ -1,0 +1,26 @@
+<html>
+    <head>
+        <title>DrawZone</title>
+        <script src="https://cdn.socket.io/4.7.4/socket.io.min.js"></script>
+        <style>
+            body {
+                margin: 0;
+                background-color: rgb(33, 33, 33);
+            }
+            #overlay {
+                z-index: 1;
+                position: fixed;
+                top: 0;
+                left: 0;
+                color: white;
+            }
+        </style>
+    </head>
+    <body>
+        <canvas id="game"></canvas>
+        <div id="overlay">
+            <span id="xy-display">XY: 0,0</span>
+        </div>
+    </body>
+    <script src="./bundle.js"></script>
+</html>

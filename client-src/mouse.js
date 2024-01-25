@@ -5,8 +5,8 @@ const canvas = document.querySelector("canvas");
 export const mouse = {
     x: 0, /* pageX */
 	y: 0, /* pageY */
-	get worldX() { return camera.x * 16 + this.x / (camera.zoom / 16); },
-	get worldY() { return camera.y * 16 + this.y / (camera.zoom / 16); },
+	get worldX() { return camera.x * 16 + (camera.zoom / 16); },
+	get worldY() { return camera.y * 16 + (camera.zoom / 16); },
 	get tileX() { return Math.floor(this.worldX / 16); },
 	get tileY() { return Math.floor(this.worldY / 16); }
 };
