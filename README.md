@@ -22,7 +22,7 @@ To get started with DrawZone, follow these steps:
 
 ## Configuration
 
-The game's configuration can be found in `config.json
+The game's configuration can be found in `config.json`
 
 # TODO:
 - [ ] Pixel art drawing
