@@ -1,7 +1,8 @@
 import { camera } from "./camera.js";
-import { chunks } from "./sharedState.js";
-import { mouse } from "./mouse.js"; // Add mouse import
+import { chunks, lines, texts } from "./sharedState.js";
+import { mouse } from "./mouse.js";
 import local_player from "./local_player.js";
+import events from "./events.js";
 
 const canvas = document.querySelector("canvas");
 const ctx = canvas.getContext("2d");
@@ -63,15 +64,6 @@ export function renderLine(x1, y1, x2, y2) {
     ctx.stroke();
 }
 
-export function renderText(text, x, y) {
-    const startX = x * camera.zoom - camera.x;
-    const startY = y * camera.zoom - camera.y;
-
-    ctx.font = camera.zoom + "px Arial";
-    ctx.fillStyle = "black";
-    ctx.fillText(text, startX, startY);
-}
-
 export function renderChunkOutline(chunkX, chunkY) {
     const startX = chunkX * CHUNK_SIZE * camera.zoom - camera.x;
     const startY = chunkY * CHUNK_SIZE * camera.zoom - camera.y;
@@ -79,6 +71,15 @@ export function renderChunkOutline(chunkX, chunkY) {
     ctx.strokeStyle = "black";
     ctx.lineWidth = 1;
     ctx.strokeRect(startX, startY, CHUNK_SIZE * camera.zoom, CHUNK_SIZE * camera.zoom);
+}
+
+export function renderText(text, x, y) {
+    const startX = x * camera.zoom - camera.x;
+    const startY = y * camera.zoom - camera.y;
+
+    ctx.font = camera.zoom + "px Arial";
+    ctx.fillStyle = "black";
+    ctx.fillText(text, startX, startY);
 }
 
 export function renderChunk(chunkData, chunkX, chunkY) {
@@ -113,16 +114,67 @@ export function renderAllChunks() {
     }
 }
 
+function renderAllLines() {
+    for (let i = 0; i < lines.length; i++) {
+        const [start, end] = lines[i];
+        renderLine(start[0], start[1], end[0], end[1]);
+    }
+}
+
+export function renderAllTexts() {
+    for (const key in texts) {
+        if (texts.hasOwnProperty(key)) {
+            const [text, pos] = [texts[key], key];
+            const [x, y] = pos.split(',').map(Number);
+            renderText(text, x, y);
+        }
+    }
+}
+
+let intervalId;
+canvas.addEventListener('mousedown', event => {
+    mouse.prevLineX = mouse.tileX;
+    mouse.prevLineY = mouse.tileY;
+
+    if (event.buttons === 1 && event.ctrlKey) {
+        if (mouse.lineX === null && mouse.lineY === null) {
+            mouse.lineX = mouse.tileX;
+            mouse.lineY = mouse.tileY;
+            mouse.prevLineX = mouse.tileX;
+            mouse.prevLineY = mouse.tileY;
+        }
+
+        intervalId = setInterval(() => {
+            const prevPos = [mouse.prevLineX, mouse.prevLineY];
+            const currPos = [mouse.tileX, mouse.tileY];
+            mouse.prevLineX = currPos[0];
+            mouse.prevLineY = currPos[1];
+            mouse.lineX = currPos[0];
+            mouse.lineY = currPos[1];
+
+            lines.push([prevPos, currPos]);
+        }, 1000 / 10);
+    }
+})
+
+canvas.addEventListener('mouseup', () => {
+    clearInterval(intervalId);
+    mouse.prevLineX = mouse.lineX;
+    mouse.prevLineY = mouse.lineY;
+})
+
+events.on("addText", (text, pos) => {
+    texts[pos] = text;
+})
+
 function onRender() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
     renderAllChunks();
-
     drawGrid();
+    renderAllLines();
 
-    renderText("Welcome to DrawZone", 0, 0);
-
-    renderLine(0, 0, 32, 32);
+    renderAllTexts();
 
     requestAnimationFrame(onRender);
 }

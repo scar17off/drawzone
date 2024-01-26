@@ -23,13 +23,30 @@ socket.on("connect", () => {
     })
 })
 
-canvas.addEventListener('mousemove', event => {
+canvas.addEventListener('mousemove', () => {
     const pos = { x: mouse.tileX, y: mouse.tileY };
 
     socket.emit("move", pos.x, pos.y);
+})
 
-    if(event.buttons == 1) socket.emit("setPixel", pos.x, pos.y, local_player.selectedColor);
-});
+canvas.addEventListener('mousemove', event => {
+    if(event.buttons === 1 && !event.ctrlKey) {
+        if(!local_player.pixelQuota.canSpend(1)) return;
+
+        const pos = { x: mouse.tileX, y: mouse.tileY };
+
+        const chunkX = Math.floor(pos.x / 16);
+        const chunkY = Math.floor(pos.y / 16);
+        const pixelX = Math.floor(pos.x % 16);
+        const pixelY = Math.floor(pos.y % 16);
+        
+        socket.emit("setPixel", pos.x, pos.y, local_player.selectedColor);
+
+        if(chunks[`${chunkX},${chunkY}`]) {
+            chunks[`${chunkX},${chunkY}`][pixelX][pixelY] = local_player.selectedColor; // bruh
+        }
+    }
+})
 
 setInterval(() => {
     if(loadQueue.length > 0) {
