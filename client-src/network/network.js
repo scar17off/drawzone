@@ -1,8 +1,9 @@
 import { camera, canvas } from "../camera.js";
 import { CHUNK_SIZE } from "../renderer.js";
-import { chunks } from "../sharedState.js";
+import { chunks, lines, texts } from "../sharedState.js";
 import { mouse } from "../mouse.js";
 import local_player from "../local_player.js";
+import events from "../events.js";
 
 var loadQueue = [];
 
@@ -21,6 +22,22 @@ socket.on("connect", () => {
             addChunk(chunkDatas[key], x, y);
         }
     })
+
+    socket.on("newLine", (from, to) => {
+        lines.push([from, to]);
+    })
+
+    socket.on("newText", (text, x, y) => {
+        texts[`${x},${y}`] = text;
+    })
+})
+
+events.on("addText", (text, x, y) => {
+    socket.emit("setText", text, x, y);
+})
+
+events.on("addLine", (from, to) => {
+    socket.emit("setLine", from, to);
 })
 
 canvas.addEventListener('mousemove', () => {

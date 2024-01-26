@@ -131,6 +131,7 @@ export function renderAllTexts() {
     }
 }
 
+// line drawing
 let intervalId;
 canvas.addEventListener('mousedown', event => {
     mouse.prevLineX = mouse.tileX;
@@ -152,6 +153,8 @@ canvas.addEventListener('mousedown', event => {
             mouse.lineX = currPos[0];
             mouse.lineY = currPos[1];
 
+            events.emit("addLine", prevPos, currPos);
+
             lines.push([prevPos, currPos]);
         }, 1000 / 10);
     }
@@ -163,8 +166,8 @@ canvas.addEventListener('mouseup', () => {
     mouse.prevLineY = mouse.lineY;
 })
 
-events.on("addText", (text, pos) => {
-    texts[pos] = text;
+events.on("addText", (text, x, y) => {
+    texts[`${x},${y}`] = text;
 })
 
 function onRender() {

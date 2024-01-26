@@ -53,6 +53,14 @@ io.on("connection", socket => {
         chunkManager.set_pixel(client.world, x, y, color);
     })
 
+    socket.on("setLine", (from, to) => {
+        socket.broadcast.emit("newLine", from, to);
+    })
+
+    socket.on("setText", (text, x, y) => {
+        socket.broadcast.emit("newText", text, x, y);
+    })
+
     socket.on("move", (x, y) => {
         client.x = x;
         client.y = y;

@@ -1,3 +1,3 @@
 export const chunks = {};
 export const lines = [];
-export const texts = {"0,0": "Welcome to DrawZone!"};
+export const texts = {"11,5": "Welcome to DrawZone!"};
