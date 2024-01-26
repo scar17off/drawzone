@@ -11,10 +11,12 @@ const structure = {
 
 socket.on("playerJoin", (id) => {
     players[id] = structure;
+    document.getElementById("players-display").innerText = "Players: " + Object.keys(players).length + 1;
 })
 
 socket.on("playerLeft", (id) => {
     delete players[id];
+    document.getElementById("players-display").innerText = "Players: " + Object.keys(players).length + 1;
 })
 
 socket.on("playerUpdate", (id, tool, color) => {

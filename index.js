@@ -47,6 +47,8 @@ app.get('/*', (req, res) => {
 io.on("connection", socket => {
     const client = new Client(socket);
 
+    socket.broadcast.emit("playerJoin", client.id);
+
     socket.on("setPixel", (x, y, color) => {
         client.color = color;
 
@@ -78,6 +80,10 @@ io.on("connection", socket => {
         };
 
         socket.emit("chunkLoaded", chunkDatas);
+    })
+
+    socket.on("disconnect", () => {
+        socket.broadcast.emit("playerLeft", client.id);
     })
 })
 

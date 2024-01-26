@@ -11,6 +11,7 @@ const socket = io();
 
 socket.on("connect", () => {
     console.log("Connected!");
+    document.getElementById("players-display").innerText = "Players: 1"; // we connected
 
     socket.on("message", message => {
         console.log(message);
@@ -60,7 +61,7 @@ canvas.addEventListener('mousemove', event => {
         socket.emit("setPixel", pos.x, pos.y, local_player.selectedColor);
 
         if(chunks[`${chunkX},${chunkY}`]) {
-            chunks[`${chunkX},${chunkY}`][pixelX][pixelY] = local_player.selectedColor; // bruh
+            chunks[`${chunkX},${chunkY}`][pixelX][pixelY] = local_player.selectedColor;
         }
     }
 })

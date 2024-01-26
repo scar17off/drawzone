@@ -5,7 +5,7 @@ import renderer from "./renderer.js";
 import { mouse } from "./mouse.js";
 import { chunks, lines, texts } from "./sharedState.js";
 import local_player from "./local_player.js";
-import { cursors } from "./tools.js";
+import tools from "./tools.js";
 import players from "./network/players.js";
 import events from "./events.js";
 
@@ -25,9 +25,9 @@ window.DrawZone = {
     },
     mouse,
     player: local_player,
-    cursors,
     events,
-    players
+    players,
+    tools
 }
 
 export default DrawZone;

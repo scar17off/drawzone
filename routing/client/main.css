@@ -1,0 +1,88 @@
+body {
+    margin: 0;
+    background-image: url(./img/unloaded.png);
+}
+#top-overlay {
+    z-index: 1;
+    position: fixed;
+    top: 0;
+    left: 0;
+    color: white;
+}
+.full-width {
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    background-color: transparent;
+    color: black;
+    text-align: center;
+    font-size: 24px;
+}
+.palette-container {
+    position: fixed;
+    top: 0;
+    right: 0;
+    height: 100%;
+    width: 50px;
+    background-color: rgba(0, 0, 0, 0.3);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    overflow-y: auto;
+}
+.color-item {
+    width: 30px;
+    height: 30px;
+    margin-bottom: 10px;
+    background-color: #ff0000;
+    cursor: pointer;
+}
+#add-color {
+    width: 30px;
+    height: 30px;
+    background-color: black;
+    color: white;
+    text-align: center;
+    line-height: 30px;
+    cursor: pointer;
+}
+#tools-window {
+    background-color: #ADA9A9;
+    width: 86px;
+    position: absolute;
+    top: 210;
+    left: 0;
+    padding: 7 0 7 0;
+    text-align: center;
+}
+button.tool-item {
+    background-color: #C9C9C9;
+    width: 72px;
+    height: 72px;
+    border-radius: 10px;
+}
+button.tool-item:hover {
+    background-color: #d6d6d6;
+}
+button.tool-item:not(:first-child) {
+    margin-top: 7px;
+}
+.selected-tool {
+    background-color: #FFFFFF !important;
+}
+#topright-displays > span {
+    position: absolute;
+    top: 0;
+    right: 100;
+}
+#topleft-displays > span {
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+span {
+    background-color: rgba(0, 0, 0, 0.2);
+    height: auto;
+    font-size: 18px;
+}

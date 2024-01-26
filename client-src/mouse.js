@@ -1,7 +1,7 @@
 import { camera } from "./camera.js";
 import { loadVisibleChunks, unloadInvisibleChunks } from "./network/network.js";
 
-const canvas = document.querySelector("canvas");
+const canvas = document.getElementById("gameCanvas");
 
 export const mouse = {
     x: 0, /* clientX */

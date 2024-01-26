@@ -3,35 +3,24 @@
         <title>DrawZone</title>
         <script src="https://cdn.socket.io/4.7.4/socket.io.min.js"></script>
         <script src="./EventEmitter.js"></script>
-        <style>
-            body {
-                margin: 0;
-                background-color: rgb(33, 33, 33);
-            }
-            #overlay {
-                z-index: 1;
-                position: fixed;
-                top: 0;
-                left: 0;
-                color: white;
-            }
-            .full-width {
-                position: fixed;
-                bottom: 0;
-                width: 100%;
-                background-color: transparent;
-                color: black;
-                text-align: center;
-                font-size: 24px;
-            }
-        </style>
+        <link rel="stylesheet" type="text/css" href="main.css">
     </head>
     <body>
-        <canvas id="game"></canvas>
-        <div id="overlay">
+        <canvas id="gameCanvas"></canvas>
+        <div id="topright-displays">
+            <span id="players-display">Players: ?</span>
+        </div>
+        <div id="topleft-displays">
             <span id="xy-display">XY: 0,0</span>
         </div>
         <div id="text-input" class="full-width"></div>
+        <div id="tools-window"></div>
+        <div class="palette-container">
+            <div>
+                <div class="color-item"></div>
+            </div>
+            <div id="add-color">+</div>
+        </div>
     </body>
     <script src="./bundle.js"></script>
 </html>

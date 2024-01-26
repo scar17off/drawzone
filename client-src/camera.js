@@ -7,7 +7,7 @@ export var camera = {
     zoomStrength: 1
 };
 
-export const canvas = document.getElementById("game");
+export const canvas = document.getElementById("gameCanvas");
 
 let mouseDown = false;
 
