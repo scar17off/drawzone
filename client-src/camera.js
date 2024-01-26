@@ -45,8 +45,10 @@ function zoomOut() {
     }
 }
 
-function handleMouseDown() {
-    mouseDown = true;
+function handleMouseDown(event) {
+    if (event.button === 1) {
+        mouseDown = true;
+    }
 }
 
 function handleMouseUp() {

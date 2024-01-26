@@ -1,6 +1,22 @@
 {
-    "User": {
+    "None": {
         "id": 0,
+        "default": false
+    },
+    "User": {
+        "id": 1,
         "default": true
+    },
+    "Moderator": {
+        "id": 2,
+        "default": true,
+        "loginCommand": "modlogin",
+        "greetingMessage": "[Server] You are now a moderator. Do /help for a list of commands."
+    },
+    "Admin": {
+        "id": 3,
+        "default": true,
+        "loginCommand": "adminlogin",
+        "greetingMessage": "[Server] You are now an admin. Do /help for a list of commands."
     }
 }

@@ -16,7 +16,7 @@ const config = require("./config.json");
 global.server = {
     worlds: [],
     config
-};
+}
 
 const files = [];
 const getFilesRecursively = directory => {
@@ -31,27 +31,48 @@ const getFilesRecursively = directory => {
             app.get(routePath, (req, res) => {
                 return res.sendFile(absolute, {
                     root: '.'
-                });
-            });
-        };
-    };
-};
+                })
+            })
+        }
+    }
+}
 getFilesRecursively("./routing/client/");
 
 app.get('/*', (req, res) => {
     return res.sendFile("./routing/client/index.html", {
         root: '.'
-    });
-});
+    })
+})
 
 io.on("connection", socket => {
     const client = new Client(socket);
 
-    socket.on("loadChunk", (x, y) => {
-        socket.emit("chunkLoaded", x, y, chunkManager.getChunkData(client.world, x, y));
-    });
-});
+    socket.on("setPixel", (x, y, color) => {
+        client.color = color;
+
+        chunkManager.set_pixel(client.world, x, y, color);
+    })
+
+    socket.on("move", (x, y) => {
+        client.x = x;
+        client.y = y;
+
+        socket.broadcast.emit("playerMoved", client.id, x, y);
+    })
+
+    socket.on("loadChunk", (loadQueue) => {
+        const chunkDatas = {};
+        
+        for(let i in loadQueue) {
+            const [x, y] = loadQueue[i];
+
+            chunkDatas[`${x},${y}`] = chunkManager.getChunkData(client.world, x, y);
+        };
+
+        socket.emit("chunkLoaded", chunkDatas);
+    })
+})
 
 httpServer.listen(config.port, () => {
     console.log(`Server is running at *:${config.port}`);
-});
+})

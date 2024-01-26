@@ -1,5 +1,7 @@
 import { camera } from "./camera.js";
 import { chunks } from "./sharedState.js";
+import { mouse } from "./mouse.js"; // Add mouse import
+import local_player from "./local_player.js";
 
 const canvas = document.querySelector("canvas");
 const ctx = canvas.getContext("2d");
@@ -10,7 +12,7 @@ canvas.height = window.innerHeight;
 window.addEventListener("resize", () => {
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
-});
+})
 
 export const CHUNK_SIZE = 16;
 
@@ -53,11 +55,31 @@ export function drawGrid() {
     }
 }
 
+export function renderLine(x1, y1, x2, y2) {
+    ctx.strokeStyle = '#000000';
+    ctx.beginPath();
+    ctx.moveTo(x1 * camera.zoom - camera.x, y1 * camera.zoom - camera.y);
+    ctx.lineTo(x2 * camera.zoom - camera.x, y2 * camera.zoom - camera.y);
+    ctx.stroke();
+}
+
 export function renderText(text, x, y) {
-    ctx.font = camera.zoom / 2 + "px Arial";
+    const startX = x * camera.zoom - camera.x;
+    const startY = y * camera.zoom - camera.y;
+
+    ctx.font = camera.zoom + "px Arial";
     ctx.fillStyle = "black";
-    ctx.fillText(text, x, y);
-};
+    ctx.fillText(text, startX, startY);
+}
+
+export function renderChunkOutline(chunkX, chunkY) {
+    const startX = chunkX * CHUNK_SIZE * camera.zoom - camera.x;
+    const startY = chunkY * CHUNK_SIZE * camera.zoom - camera.y;
+
+    ctx.strokeStyle = "black";
+    ctx.lineWidth = 1;
+    ctx.strokeRect(startX, startY, CHUNK_SIZE * camera.zoom, CHUNK_SIZE * camera.zoom);
+}
 
 export function renderChunk(chunkData, chunkX, chunkY) {
     const startX = chunkX * CHUNK_SIZE * camera.zoom - camera.x;
@@ -71,6 +93,12 @@ export function renderChunk(chunkData, chunkX, chunkY) {
 
             ctx.fillStyle = `rgb(${pixel[0]}, ${pixel[1]}, ${pixel[2]})`;
             ctx.fillRect(pixelX, pixelY, camera.zoom, camera.zoom);
+
+            if (mouse.x > pixelX && mouse.x < pixelX + camera.zoom && mouse.y > pixelY && mouse.y < pixelY + camera.zoom) {
+                ctx.strokeStyle = `rgb(${local_player.selectedColor.join(", ")}, 1.0)`;
+                ctx.lineWidth = 2;
+                ctx.strokeRect(pixelX, pixelY, camera.zoom, camera.zoom);
+            }
         }
     }
 }
@@ -81,9 +109,9 @@ export function renderAllChunks() {
             const [chunkX, chunkY] = key.split(',').map(Number);
             const chunkData = chunks[key];
             renderChunk(chunkData, chunkX, chunkY);
-        };
-    };
-};
+        }
+    }
+}
 
 function onRender() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -92,8 +120,12 @@ function onRender() {
 
     drawGrid();
 
+    renderText("Welcome to DrawZone", 0, 0);
+
+    renderLine(0, 0, 32, 32);
+
     requestAnimationFrame(onRender);
-};
+}
 onRender();
 
 export default {
@@ -102,4 +134,4 @@ export default {
     renderText,
     renderChunk,
     renderAllChunks
-};
+}

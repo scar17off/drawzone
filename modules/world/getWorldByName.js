@@ -11,7 +11,7 @@ function getWorldByName(worldName) {
     if(!foundWorld) foundWorld = initWorld(worldName);
 
     return foundWorld;
-};
+}
 
 function initWorld(worldName) {
     const worldDir = getWorldDir(worldName);
@@ -23,6 +23,6 @@ function initWorld(worldName) {
     server.worlds.push(World);
 
     return World;
-};
+}
 
 module.exports = { getWorldByName };

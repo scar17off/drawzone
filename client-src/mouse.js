@@ -1,35 +1,42 @@
 import { camera } from "./camera";
-import { loadVisibleChunks, unloadInvisibleChunks } from "./network";
+import { loadVisibleChunks, unloadInvisibleChunks } from "./network/network";
 
 const canvas = document.querySelector("canvas");
 
 export const mouse = {
     x: 0, /* clientX */
-	y: 0, /* clientY */
-	get worldX() { return camera.x * 16 + this.x / (camera.zoom / 16); },
-	get worldY() { return camera.y * 16 + this.y / (camera.zoom / 16); },
-	get tileX() { return Math.floor(this.worldX / 16); },
-	get tileY() { return Math.floor(this.worldY / 16); }
-};
+    y: 0, /* clientY */
+    mouseX: 0,
+    mouseY: 0,
+    get tileX() { return this.mouseX / camera.zoom },
+    get tileY() { return this.mouseY / camera.zoom },
+    buttons: 0
+}
 
-function getGameCoordinates(clientX, clientY) {
-    mouse.x = clientX;
-    mouse.y = clientY;
+canvas.addEventListener('click', event => {
+    mouse.buttons = event.buttons;
+})
 
-    const mouseX = mouse.x - canvas.getBoundingClientRect().left + camera.x;
-    const mouseY = mouse.y - canvas.getBoundingClientRect().top + camera.y;
+export function getGameCoordinates(clientX, clientY) {
+    mouse.x = clientX, mouse.y = clientY;
 
-    const gameX = Math.floor(mouseX / camera.zoom);
-    const gameY = Math.floor(mouseY / camera.zoom);
+    const rect = canvas.getBoundingClientRect();
+    const offsetX = clientX - rect.left + camera.x;
+    const offsetY = clientY - rect.top + camera.y;
 
-    return { x: Math.floor(gameX), y: Math.floor(gameY) };
-};
+    mouse.mouseX = offsetX, mouse.mouseY = offsetY;
+
+    const gameX = offsetX / camera.zoom;
+    const gameY = offsetY / camera.zoom;
+
+    return { x: gameX, y: gameY };
+}
 
 canvas.addEventListener('mousemove', event => {
     const pos = getGameCoordinates(event.clientX, event.clientY);
 
-    document.getElementById("xy-display").innerText = `XY: ${pos.x},${pos.y}`;
+    document.getElementById("xy-display").innerText = `XY: ${Math.floor(pos.x)},${Math.floor(pos.y)}`;
 
     unloadInvisibleChunks();
     loadVisibleChunks();
-});
+})

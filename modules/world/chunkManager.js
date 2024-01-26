@@ -1,5 +1,7 @@
-const fs = require('fs');
-const path = require('path');
+const fs = require("fs");
+const path = require("path");
+
+const CHUNK_SIZE = 16;
 
 function getWorldDir(worldName) {
     if (!worldName) {
@@ -7,8 +9,6 @@ function getWorldDir(worldName) {
     }
     return path.join(__dirname, '../../worlds', worldName, 'pixels');
 }
-
-const CHUNK_SIZE = 16;
 
 function ensureWorldDirExists(worldDir) {
     if (!fs.existsSync(worldDir)) {
@@ -43,6 +43,7 @@ function setChunkData(worldName, chunkX, chunkY, data) {
     const chunkPath = getChunkFilePath(worldName, chunkX, chunkY);
     const flatData = data.flat();
     const buffer = Buffer.from(flatData);
+
     fs.writeFileSync(chunkPath, buffer);
 }
 
@@ -54,30 +55,21 @@ function initChunk(worldName, chunkX, chunkY) {
             chunkData[x][y] = 255;
         }
     }
+
     setChunkData(worldName, chunkX, chunkY, chunkData);
+
     return chunkData;
 }
 
 function get_pixel(worldName, x, y) {
-    const chunkX = Math.floor(x / CHUNK_SIZE);
-    const chunkY = Math.floor(y / CHUNK_SIZE);
-    const localX = x % CHUNK_SIZE;
-    const localY = y % CHUNK_SIZE;
-    const chunkData = getChunkData(worldName, chunkX, chunkY);
-
-    return chunkData[localX][localY];
+    // x, y - game coordinates (not chunk coordinates)
 }
 
 function set_pixel(worldName, x, y, color) {
-    const chunkX = Math.floor(x / CHUNK_SIZE);
-    const chunkY = Math.floor(y / CHUNK_SIZE);
-    const localX = x % CHUNK_SIZE;
-    const localY = y % CHUNK_SIZE;
-    const chunkData = getChunkData(worldName, chunkX, chunkY);
-
-    chunkData[localX][localY] = color;
-    setChunkData(worldName, chunkX, chunkY, chunkData);
+    // x, y - game coordinates (not chunk coordinates), color - e.g. [255, 255, 255]
 }
+
+set_pixel("main", 0, 0, [255, 0, 0]);
 
 module.exports = {
     initChunk,
