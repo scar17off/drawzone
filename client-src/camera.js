@@ -2,8 +2,8 @@ export var camera = {
     x: 0,
     y: 0,
     zoom: 16,
-    minZoom: 2,
-    maxZoom: 24,
+    minZoom: 8,
+    maxZoom: 16,
     zoomStrength: 1
 };
 
@@ -26,6 +26,8 @@ function zoomIn() {
 
     if (nzoom > camera.maxZoom) {
         camera.zoom = camera.maxZoom;
+    } else if (nzoom < camera.minZoom) {
+        camera.zoom = camera.minZoom;
     } else {
         camera.zoom = Math.round(nzoom);
     }
@@ -36,6 +38,8 @@ function zoomOut() {
 
     if (nzoom > camera.maxZoom) {
         camera.zoom = camera.maxZoom;
+    } else if (nzoom < camera.minZoom) {
+        camera.zoom = camera.minZoom;
     } else {
         camera.zoom = Math.round(nzoom);
     }

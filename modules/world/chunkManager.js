@@ -33,7 +33,7 @@ function getChunkData(worldName, chunkX, chunkY) {
         return arrayData;
     } else {
         const emptyChunkData = new Array(CHUNK_SIZE).fill(null).map(() => 
-            new Array(CHUNK_SIZE).fill(255)
+            new Array(CHUNK_SIZE).fill([255, 255, 255])
         );
         return emptyChunkData;
     }

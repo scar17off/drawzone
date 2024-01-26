@@ -1,5 +1,6 @@
-import { camera, canvas } from "./camera";
-import { CHUNK_SIZE, chunks } from "./renderer";
+import { camera, canvas } from "./camera.js";
+import { CHUNK_SIZE } from "./renderer.js";
+import { chunks } from "./sharedState.js";
 
 const socket = io();
 
@@ -11,9 +12,14 @@ socket.on("connect", () => {
     });
     
     socket.on("chunkLoaded", (x, y, chunkData) => {
-        window.DrawZone.chunks[[x, y].join(",")] = chunkData;
+        addChunk(chunkData, x, y);
     });
 });
+
+function addChunk(chunkData, chunkX, chunkY) {
+    const key = `${chunkX},${chunkY}`;
+    chunks[key] = chunkData;
+}
 
 export function loadVisibleChunks() {
     const chunkSizeInPixels = CHUNK_SIZE * camera.zoom;

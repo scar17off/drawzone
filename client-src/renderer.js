@@ -1,4 +1,5 @@
 import { camera } from "./camera.js";
+import { chunks } from "./sharedState.js";
 
 const canvas = document.querySelector("canvas");
 const ctx = canvas.getContext("2d");
@@ -11,7 +12,6 @@ window.addEventListener("resize", () => {
     canvas.height = window.innerHeight;
 });
 
-export const chunks = {};
 export const CHUNK_SIZE = 16;
 
 export function drawGrid() {
@@ -88,9 +88,9 @@ export function renderAllChunks() {
 function onRender() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-    drawGrid();
-
     renderAllChunks();
+
+    drawGrid();
 
     requestAnimationFrame(onRender);
 };
