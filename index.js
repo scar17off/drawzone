@@ -50,6 +50,9 @@ io.on("connection", socket => {
     socket.broadcast.emit("playerJoin", client.id);
 
     socket.on("setPixel", (x, y, color) => {
+        x = Math.floor(x);
+        y = Math.floor(y);
+        
         client.color = color;
 
         chunkManager.set_pixel(client.world, x, y, color);

@@ -28,8 +28,11 @@ socket.on("connect", () => {
         const chunkX = Math.floor(x / CHUNK_SIZE);
         const chunkY = Math.floor(y / CHUNK_SIZE);
 
-        const pixelX = Math.floor(x % 16);
-        const pixelY = Math.floor(y % 16);
+        let pixelX = Math.floor(x % 16);
+        let pixelY = Math.floor(y % 16);
+        
+        if (pixelX < 0) pixelX += 16;
+        if (pixelY < 0) pixelY += 16;
 
         if(chunks[`${chunkX},${chunkY}`]) {
             chunks[`${chunkX},${chunkY}`][pixelX][pixelY] = color;
@@ -67,9 +70,12 @@ canvas.addEventListener('mousemove', event => {
 
         const chunkX = Math.floor(pos.x / 16);
         const chunkY = Math.floor(pos.y / 16);
-        const pixelX = Math.floor(pos.x % 16);
-        const pixelY = Math.floor(pos.y % 16);
+        let pixelX = Math.floor(pos.x % 16);
+        let pixelY = Math.floor(pos.y % 16);
         
+        if (pixelX < 0) pixelX += 16;
+        if (pixelY < 0) pixelY += 16;
+
         socket.emit("setPixel", pos.x, pos.y, local_player.selectedColor);
 
         if(chunks[`${chunkX},${chunkY}`]) {

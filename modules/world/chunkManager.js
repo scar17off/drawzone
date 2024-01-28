@@ -20,9 +20,7 @@ function getChunkData(worldName, chunkX, chunkY) {
         const chunkData = JSON.parse(fs.readFileSync(chunkPath, "utf8"));
         return chunkData;
     } else {
-        const emptyChunkData = new Array(CHUNK_SIZE).fill(null).map(() =>
-            new Array(CHUNK_SIZE).fill(CHUNK_FILL)
-        );
+        const emptyChunkData = Array.from({ length: CHUNK_SIZE }, () => Array.from({ length: CHUNK_SIZE }, () => CHUNK_FILL));
         return emptyChunkData;
     }
 }
@@ -59,15 +57,21 @@ function get_pixel(worldName, x, y) {
 function set_pixel(worldName, x, y, color) {
     const chunkX = Math.floor(x / CHUNK_SIZE);
     const chunkY = Math.floor(y / CHUNK_SIZE);
-    const pixelX = Math.floor(x % CHUNK_SIZE);
-    const pixelY = Math.floor(y % CHUNK_SIZE);
-    var chunkData = getChunkData(worldName, chunkX, chunkY);
-    if(!chunkData[pixelX] || !chunkData[pixelX][pixelY]) chunkData = initChunk(worldName, chunkX, chunkY);
+    let pixelX = Math.floor(x % CHUNK_SIZE);
+    let pixelY = Math.floor(y % CHUNK_SIZE);
+    if (pixelX < 0) pixelX += CHUNK_SIZE;
+    if (pixelY < 0) pixelY += CHUNK_SIZE;
+    let chunkData = getChunkData(worldName, chunkX, chunkY);
 
-    console.log(chunkX, chunkY, pixelX, pixelY, '', x, y);
+    if (!chunkData[pixelX] || !chunkData[pixelX][pixelY]) {
+        chunkData = initChunk(worldName, chunkX, chunkY);
+    }
+
     chunkData[pixelX][pixelY] = color;
     setChunkData(worldName, chunkX, chunkY, chunkData);
 }
+
+set_pixel("main", -16, -16, [255, 255, 0]);
 
 module.exports = {
     getWorldDir,
