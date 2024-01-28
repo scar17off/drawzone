@@ -10,6 +10,8 @@ const io = socketIO(httpServer);
 
 const Client = require("./modules/player/Client.js");
 const chunkManager = require("./modules/world/chunkManager.js");
+const textManager = require("./modules/world/textManager.js");
+const lineManager = require("./modules/world/lineManager.js");
 
 const config = require("./config.json");
 
@@ -55,16 +57,20 @@ io.on("connection", socket => {
         
         client.color = color;
 
-        chunkManager.set_pixel(client.world, x, y, color);
+        if(config.saving.savePixels) chunkManager.set_pixel(client.world, x, y, color);
 
         socket.broadcast.emit("newPixel", x, y, color);
     })
 
     socket.on("setLine", (from, to) => {
+        if(config.saving.saveLines) lineManager.draw_line(client.world, from, to);
+
         socket.broadcast.emit("newLine", from, to);
     })
 
     socket.on("setText", (text, x, y) => {
+        if(config.saving.saveTexts) textManager.set_text(client.world, text, x, y);
+
         socket.broadcast.emit("newText", text, x, y);
     })
 
