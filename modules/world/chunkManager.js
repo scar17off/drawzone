@@ -71,8 +71,6 @@ function set_pixel(worldName, x, y, color) {
     setChunkData(worldName, chunkX, chunkY, chunkData);
 }
 
-set_pixel("main", -16, -16, [255, 255, 0]);
-
 module.exports = {
     getWorldDir,
     ensureWorldDirExists,
