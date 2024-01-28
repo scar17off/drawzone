@@ -3,7 +3,7 @@
     "welcomeMessage": "Welcome to the Early Testing of DrawZone!",
     "saving": {
         "savePixels": true,
-        "saveLines": true,
-        "saveTexts": true
+        "saveLines": false,
+        "saveTexts": false
     }
 }

@@ -8,6 +8,8 @@ export const mouse = {
     y: 0, /* clientY */
     mouseX: 0,
     mouseY: 0,
+    prevTileX: 0,
+    prevTileY: 0,
     get tileX() { return this.mouseX / camera.zoom },
     get tileY() { return this.mouseY / camera.zoom },
     prevLineX: null,
@@ -26,6 +28,7 @@ export function getGameCoordinates(clientX, clientY) {
     const offsetX = clientX - rect.left + camera.x;
     const offsetY = clientY - rect.top + camera.y;
 
+    mouse.prevTileX = mouse.tileX, mouse.prevTileY = mouse.tileY;
     mouse.mouseX = offsetX, mouse.mouseY = offsetY;
 
     const gameX = offsetX / camera.zoom;
