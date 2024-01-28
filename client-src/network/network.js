@@ -24,6 +24,18 @@ socket.on("connect", () => {
         }
     })
 
+    socket.on("newPixel", (x, y, color) => {
+        const chunkX = Math.floor(x / CHUNK_SIZE);
+        const chunkY = Math.floor(y / CHUNK_SIZE);
+
+        const pixelX = Math.floor(x % 16);
+        const pixelY = Math.floor(y % 16);
+
+        if(chunks[`${chunkX},${chunkY}`]) {
+            chunks[`${chunkX},${chunkY}`][pixelX][pixelY] = color;
+        }
+    })
+
     socket.on("newLine", (from, to) => {
         lines.push([from, to]);
     })
@@ -71,7 +83,7 @@ setInterval(() => {
         socket.emit("loadChunk", loadQueue);
         loadQueue = [];
     };
-}, 1000);
+}, 1000 / 2);
 
 function addChunk(chunkData, chunkX, chunkY) {
     const key = `${chunkX},${chunkY}`;

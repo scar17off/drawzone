@@ -53,6 +53,8 @@ io.on("connection", socket => {
         client.color = color;
 
         chunkManager.set_pixel(client.world, x, y, color);
+
+        socket.broadcast.emit("newPixel", x, y, color);
     })
 
     socket.on("setLine", (from, to) => {

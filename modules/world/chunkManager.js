@@ -1,82 +1,81 @@
 const fs = require("fs");
 const path = require("path");
 
+const CHUNK_FILL = [255, 255, 255];
 const CHUNK_SIZE = 16;
 
-function getWorldDir(worldName) {
-    if (!worldName) {
-        throw new Error('worldName is required');
-    }
-    return path.join(__dirname, '../../worlds', worldName, 'pixels');
-}
-
-function ensureWorldDirExists(worldDir) {
-    if (!fs.existsSync(worldDir)) {
-        fs.mkdirSync(worldDir, { recursive: true });
-    }
-}
+const getWorldDir = (worldName) => path.join(__dirname, "../../worlds", worldName, "pixels");
+const ensureWorldDirExists = (worldDir) => { if (!fs.existsSync(worldDir)) fs.mkdirSync(worldDir, { recursive: true }); };
 
 function getChunkFilePath(worldName, chunkX, chunkY) {
     const worldDir = getWorldDir(worldName);
     ensureWorldDirExists(worldDir);
-    return path.join(worldDir, `chunk_${chunkX}_${chunkY}.blob`);
+    return path.join(worldDir, `chunk_${chunkX}_${chunkY}.json`);
 }
 
 function getChunkData(worldName, chunkX, chunkY) {
     const chunkPath = getChunkFilePath(worldName, chunkX, chunkY);
+
     if (fs.existsSync(chunkPath)) {
-        const blob = fs.readFileSync(chunkPath);
-        const arrayData = [];
-        for (let i = 0; i < blob.length; i += CHUNK_SIZE) {
-            arrayData.push(Array.from(blob.slice(i, i + CHUNK_SIZE)));
-        }
-        return arrayData;
+        const chunkData = JSON.parse(fs.readFileSync(chunkPath, "utf8"));
+        return chunkData;
     } else {
-        const emptyChunkData = new Array(CHUNK_SIZE).fill(null).map(() => 
-            new Array(CHUNK_SIZE).fill([255, 255, 255])
+        const emptyChunkData = new Array(CHUNK_SIZE).fill(null).map(() =>
+            new Array(CHUNK_SIZE).fill(CHUNK_FILL)
         );
         return emptyChunkData;
     }
 }
 
-function setChunkData(worldName, chunkX, chunkY, data) {
-    const chunkPath = getChunkFilePath(worldName, chunkX, chunkY);
-    const flatData = data.flat();
-    const buffer = Buffer.from(flatData);
-
-    fs.writeFileSync(chunkPath, buffer);
-}
-
 function initChunk(worldName, chunkX, chunkY) {
-    const chunkData = new Array(CHUNK_SIZE);
-    for (let x = 0; x < CHUNK_SIZE; x++) {
-        chunkData[x] = new Array(CHUNK_SIZE);
-        for (let y = 0; y < CHUNK_SIZE; y++) {
-            chunkData[x][y] = 255;
-        }
-    }
+    const chunkPath = getChunkFilePath(worldName, chunkX, chunkY);
+    const chunkData = Array.from({ length: CHUNK_SIZE }, () => Array.from({ length: CHUNK_SIZE }, () => CHUNK_FILL));
 
-    setChunkData(worldName, chunkX, chunkY, chunkData);
+    fs.writeFileSync(chunkPath, JSON.stringify(chunkData));
 
     return chunkData;
 }
 
+function setChunkData(worldName, chunkX, chunkY, chunkData) {
+    const chunkPath = getChunkFilePath(worldName, chunkX, chunkY);
+    fs.writeFileSync(chunkPath, JSON.stringify(chunkData));
+}
+
+function set_rgb(worldName, chunkX, chunkY, rgb) {
+    const newChunkData = Array.from({ length: CHUNK_SIZE }, () => Array.from({ length: CHUNK_SIZE }, () => rgb));
+    setChunkData(worldName, chunkX, chunkY, newChunkData);
+}
+
 function get_pixel(worldName, x, y) {
-    // x, y - game coordinates (not chunk coordinates)
+    const chunkX = Math.floor(x / CHUNK_SIZE);
+    const chunkY = Math.floor(y / CHUNK_SIZE);
+    const chunkData = getChunkData(worldName, chunkX, chunkY);
+    const pixelX = Math.floor(x % CHUNK_SIZE);
+    const pixelY = Math.floor(y % CHUNK_SIZE);
+
+    return chunkData[pixelX][pixelY];
 }
 
 function set_pixel(worldName, x, y, color) {
-    // x, y - game coordinates (not chunk coordinates), color - e.g. [255, 255, 255]
+    const chunkX = Math.floor(x / CHUNK_SIZE);
+    const chunkY = Math.floor(y / CHUNK_SIZE);
+    const pixelX = Math.floor(x % CHUNK_SIZE);
+    const pixelY = Math.floor(y % CHUNK_SIZE);
+    var chunkData = getChunkData(worldName, chunkX, chunkY);
+    if(!chunkData[pixelX] || !chunkData[pixelX][pixelY]) chunkData = initChunk(worldName, chunkX, chunkY);
+
+    console.log(chunkX, chunkY, pixelX, pixelY, '', x, y);
+    chunkData[pixelX][pixelY] = color;
+    setChunkData(worldName, chunkX, chunkY, chunkData);
 }
 
-set_pixel("main", 0, 0, [255, 0, 0]);
-
 module.exports = {
+    getWorldDir,
+    ensureWorldDirExists,
     initChunk,
     getChunkData,
     setChunkData,
+    set_rgb,
     get_pixel,
-    set_pixel,
-    getWorldDir,
-    ensureWorldDirExists
+    set_pixel
 };
