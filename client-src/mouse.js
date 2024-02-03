@@ -19,10 +19,6 @@ export const mouse = {
     buttons: 0
 }
 
-canvas.addEventListener('click', event => {
-    mouse.buttons = event.buttons;
-})
-
 export function getGameCoordinates(clientX, clientY) {
     const rect = canvas.getBoundingClientRect();
     const offsetX = clientX - rect.left + camera.x;

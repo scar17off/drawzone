@@ -2,7 +2,7 @@ import local_player from "./local_player.js";
 
 export const tools = {};
 
-const toolsData = [
+const cursors = [
     { name: "cursor", pos: [0, 0], hotspot: [-5, 0, 2, -6] },
     { name: "move", pos: [0, 74], hotspot: [-28, -8, -18] },
     { name: "fill", pos: [0, 152], hotspot: [0, 0] },
@@ -14,12 +14,12 @@ const toolsData = [
     { name: "copy", pos: [152, 152], hotspot: [0, 0] }
 ]
 
-const toolIDs = toolsData.reduce((acc, tool, index) => {
+const toolIDs = cursors.reduce((acc, tool, index) => {
     acc[tool.name] = index;
     return acc;
 }, {});
 
-const getToolByName = (name) => toolsData.find(tool => tool.name === name);
+const getToolByName = (name) => cursors.find(tool => tool.name === name);
 
 const canvas = document.getElementById("gameCanvas");
 
@@ -78,13 +78,15 @@ function addTool(tool) {
 }
 
 {
-    addTool(new Tool("Cursor", null, null, 0, function(tool) {
-        tool.setEvent('mousedown mousemove', () => {
-            
+    addTool(new Tool("Cursor", toolIDs.cursor, null, 0, function(tool) {
+        tool.setEvent('mousedown mousemove', mouse => {
+            if(mouse.buttons === 1) {
+                
+            }
         });
     }));
 
-    addTool(new Tool("Move", null, null, 0, function(tool) {
+    addTool(new Tool("Move", toolIDs.move, null, 0, function(tool) {
         tool.setEvent('mousedown mousemove', () => {
             
         });
@@ -94,5 +96,6 @@ function addTool(tool) {
 export default {
     tools,
     Tool,
-    addTool
+    addTool,
+    cursors
 }
