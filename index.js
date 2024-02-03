@@ -29,22 +29,23 @@ const getFilesRecursively = directory => {
             getFilesRecursively(absolute);
         } else {
             files.push(absolute);
-            let routePath = `/${path.relative("routing/client/", absolute)}`;
+            let routePath = `/${path.relative("routing/client/", absolute)}`.replaceAll("\\", '/');
             app.get(routePath, (req, res) => {
                 return res.sendFile(absolute, {
                     root: '.'
-                })
-            })
+                });
+            });
         }
     }
 }
 getFilesRecursively("./routing/client/");
 
 app.get('/*', (req, res) => {
-    return res.sendFile("./routing/client/index.html", {
-        root: '.'
-    })
-})
+    if(req.params[0] == '') // to ignore requests related to img directory
+        return res.sendFile("./routing/client/index.html", {
+            root: '.'
+        });
+});
 
 io.on("connection", socket => {
     const client = new Client(socket);
@@ -60,26 +61,26 @@ io.on("connection", socket => {
         if(config.saving.savePixels) chunkManager.set_pixel(client.world, x, y, color);
 
         socket.broadcast.emit("newPixel", x, y, color);
-    })
+    });
 
     socket.on("setLine", (from, to) => {
         if(config.saving.saveLines) lineManager.draw_line(client.world, from, to);
 
         socket.broadcast.emit("newLine", from, to);
-    })
+    });
 
     socket.on("setText", (text, x, y) => {
         if(config.saving.saveTexts) textManager.set_text(client.world, text, x, y);
 
         socket.broadcast.emit("newText", text, x, y);
-    })
+    });
 
     socket.on("move", (x, y) => {
         client.x = x;
         client.y = y;
 
         socket.broadcast.emit("playerMoved", client.id, x, y);
-    })
+    });
 
     socket.on("loadChunk", (loadQueue) => {
         const chunkDatas = {};
@@ -91,12 +92,12 @@ io.on("connection", socket => {
         };
 
         socket.emit("chunkLoaded", chunkDatas);
-    })
+    });
 
     socket.on("disconnect", () => {
         socket.broadcast.emit("playerLeft", client.id);
-    })
-})
+    });
+});
 
 httpServer.listen(config.port, () => {
     console.log(`Server is running at *:${config.port}`);
