@@ -73,4 +73,24 @@ window.addEventListener('keydown', event => {
 	}
 })
 
+document.querySelectorAll('.color-item').forEach(item => {
+    item.addEventListener('click', function() {
+        const color = this.getAttribute('data-color').split(',').map(Number);
+        local_player.selectedColor = color;
+    });
+});
+
+document.getElementById('color-picker').addEventListener('change', function() {
+    const color = this.value.match(/\w\w/g).map(hex => parseInt(hex, 16));
+    const colorDiv = document.createElement('div');
+    colorDiv.className = 'color-item';
+    colorDiv.style.backgroundColor = `rgb(${color.join(',')})`;
+    colorDiv.setAttribute('data-color', color.join(','));
+    document.querySelector('.palette-container > div').appendChild(colorDiv);
+
+    colorDiv.addEventListener('click', function() {
+        local_player.selectedColor = color;
+    });
+});
+
 export default local_player;
