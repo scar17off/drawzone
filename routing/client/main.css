@@ -29,7 +29,6 @@ body {
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    overflow-y: auto;
 }
 .color-item {
     width: 30px;
@@ -49,6 +48,9 @@ body {
 .color-item.selected {
     transform: scale(1.5);
     z-index: 2;
+}
+#color-list {
+    overflow-y: scroll;
 }
 #add-color {
     width: 30px;
@@ -79,6 +81,11 @@ button.tool-item:hover {
 }
 button.tool-item:not(:first-child) {
     margin-top: 7px;
+}
+button.tool-item > div {
+    width: 72px;
+    height: 72px;
+    background-size: 216px 216px;
 }
 .selected-tool {
     background-color: #FFFFFF !important;

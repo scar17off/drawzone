@@ -44,7 +44,43 @@ class Bucket {
 
 const local_player = {
     selectedColor: [0, 0, 0],
-    palette: [[0, 0, 0]],
+    palette: [
+		[255, 255, 255],
+		[255, 0, 0],
+		[255, 255, 0],
+		[255, 0, 255],
+		[0, 0, 0],
+		[0, 255, 0],
+		[0, 0, 255],
+		[0, 255, 255],
+		[128, 128, 128],
+		[128, 0, 0],
+		[128, 128, 0],
+		[128, 0, 128],
+		[0, 128, 0],
+		[0, 128, 128],
+		[0, 0, 128],
+		[192, 192, 192],
+		[192, 0, 0],
+		[192, 192, 0],
+		[192, 0, 192],
+		[0, 192, 0],
+		[0, 192, 192],
+		[0, 0, 192],
+		[64, 64, 64],
+		[64, 0, 0],
+		[64, 64, 0],
+		[64, 0, 64],
+		[0, 64, 0],
+		[0, 64, 64],
+		[0, 0, 64],
+		[255, 128, 0],
+		[255, 0, 128],
+		[128, 255, 0],
+		[128, 0, 255],
+		[0, 255, 128],
+		[0, 128, 255]
+	],
     nickname: localStorage.nickname || null,
     rank: 0,
     pixelQuota: new Bucket(100, 2),
@@ -72,28 +108,41 @@ window.addEventListener('keydown', event => {
 		local_player.text = local_player.text.slice(0, -1);
 	}
 });
+
 // color stuff
 function addColorEvent(item) {
-    item.addEventListener('click', function() {
-        const color = this.getAttribute('data-color').split(',').map(Number);
+    item.addEventListener('click', () => {
+        const color = item.getAttribute('data-color').split(',').map(Number);
         local_player.selectedColor = color;
         document.querySelectorAll('.color-item').forEach(i => i.classList.remove('selected'));
-        this.classList.add('selected');
+        item.classList.add('selected');
     });
+	item.addEventListener("contextmenu", event => {
+		item.remove();
+		local_player.palette = local_player.palette.filter(color => color !== item.getAttribute("data-color").split(',').map(Number));
+		event.preventDefault();
+	});
 }
 
-document.querySelectorAll('.color-item').forEach(item => {
-    addColorEvent(item);
-});
+document.querySelectorAll('.color-item').forEach(item => addColorEvent(item));
 
-document.getElementById('color-picker').addEventListener('change', function() {
-    const color = this.value.match(/\w\w/g).map(hex => parseInt(hex, 16));
+function addColor(color) {
     const colorDiv = document.createElement('div');
     colorDiv.className = 'color-item';
     colorDiv.style.backgroundColor = `rgb(${color.join(',')})`;
+    local_player.palette.push(color);
     colorDiv.setAttribute('data-color', color.join(','));
     document.getElementById("color-list").appendChild(colorDiv);
     addColorEvent(colorDiv);
+}
+
+document.getElementById('color-picker').addEventListener('change', () => {
+    const color = document.getElementById('color-picker').value.match(/\w\w/g).map(hex => parseInt(hex, 16));
+    addColor(color);
 });
+
+local_player.palette.forEach(color => {
+    addColor(color);
+});	
 
 export default local_player;

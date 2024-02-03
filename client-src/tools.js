@@ -3,38 +3,23 @@ import local_player from "./local_player.js";
 export const tools = {};
 
 const toolsData = [
-    { name: "cursor", pos: [0, 0] },
-    { name: "move", pos: [0, 76] },
-    { name: "fill", pos: [0, 152] },
-    { name: "lope", pos: [76, 0] },
-    { name: "camera", pos: [76, 76] },
-    { name: "eraser", pos: [76, 152] },
-    { name: "shield", pos: [152, 0] },
-    { name: "paste", pos: [152, 76] },
-    { name: "copy", pos: [152, 152] }
-];
+    { name: "cursor", pos: [0, 0], hotspot: [-5, 0, 2, -6] },
+    { name: "move", pos: [0, 74], hotspot: [-28, -8, -18] },
+    { name: "fill", pos: [0, 152], hotspot: [0, 0] },
+    { name: "lope", pos: [76, 0], hotspot: [0, 0] },
+    { name: "camera", pos: [76, 76], hotspot: [0, 0] },
+    { name: "eraser", pos: [76, 152], hotspot: [0, 0] },
+    { name: "shield", pos: [152, 0], hotspot: [0, 0] },
+    { name: "paste", pos: [152, 76], hotspot: [0, 0] },
+    { name: "copy", pos: [152, 152], hotspot: [0, 0] }
+]
 
 const toolIDs = toolsData.reduce((acc, tool, index) => {
     acc[tool.name] = index;
     return acc;
 }, {});
-const toolsetPosData = toolsData.reduce((acc, tool) => {
-    acc[tool.name] = tool.pos;
-    return acc;
-}, {});
 
-toolsData.forEach(tool => {
-    createImg(tool.pos[0], tool.pos[1]);
-});
-
-function createImg(x, y) {
-    const img = document.createElement('img');
-    img.src = "/img/toolset.png";
-    img.style.position = 'absolute';
-    img.style.left = x + 'px';
-    img.style.top = y + 'px';
-    document.body.appendChild(img);
-}
+const getToolByName = (name) => toolsData.find(tool => tool.name === name);
 
 const canvas = document.getElementById("gameCanvas");
 
@@ -49,6 +34,7 @@ class Tool {
     }
     setEvent(event, callback) {
         const eventListener = { event, callback };
+
         canvas.addEventListener(event, callback);
         this.eventListeners.push(eventListener);
     }
@@ -56,6 +42,7 @@ class Tool {
         this.eventListeners.forEach(({ event, callback }) => {
             canvas.removeEventListener(event, callback);
         });
+
         this.eventListeners = [];
     }
 }
@@ -65,13 +52,17 @@ function removeSelectedClass() {
 
     buttons.forEach(element => {
         element.classList.remove("selected-tool");
-    })
+    });
 }
 
 function addTool(tool) {
+    const toolData = getToolByName(tool.elementName);
+
     document.getElementById("tools-window").insertAdjacentHTML("beforeend",
 `<button id="tool-${tool.elementName}" class="tool-item">
-    <div style="background-image: url(./img/toolset.png);">
+    <div style="background-image: url(/img/toolset.png);
+    background-position: ${toolData.pos[0]}px ${toolData.pos[1]}px;
+    margin: ${toolData.hotspot.map(h => h + 'px').join(' ')};">
     </div>
 </button>`);
 
@@ -82,7 +73,7 @@ function addTool(tool) {
     });
 
     tools[tool.elementName] = tool;
-    
+
     if(Object.keys(tools).length === 1) document.getElementById("tool-" + tool.elementName).click();
 }
 
@@ -90,14 +81,14 @@ function addTool(tool) {
     addTool(new Tool("Cursor", null, null, 0, function(tool) {
         tool.setEvent('mousedown mousemove', () => {
             
-        })
-    }))
+        });
+    }));
 
     addTool(new Tool("Move", null, null, 0, function(tool) {
         tool.setEvent('mousedown mousemove', () => {
             
-        })
-    }))
+        });
+    }));
 }
 
 export default {
