@@ -62,7 +62,7 @@ const local_player = {
 
 window.addEventListener('keypress', event => {
     if (event.key.length === 1) local_player.text += event.key;
-})
+});
 
 window.addEventListener('keydown', event => {
     if (event.key === 'Enter' && !['input', 'textarea'].includes(document.activeElement.tagName.toLowerCase())) {
@@ -71,14 +71,12 @@ window.addEventListener('keydown', event => {
 	} else if (event.key === 'Backspace') {
 		local_player.text = local_player.text.slice(0, -1);
 	}
-})
-
+});
+// color stuff
 function addColorEvent(item) {
     item.addEventListener('click', function() {
         const color = this.getAttribute('data-color').split(',').map(Number);
         local_player.selectedColor = color;
-    });
-    item.addEventListener('click', function() {
         document.querySelectorAll('.color-item').forEach(i => i.classList.remove('selected'));
         this.classList.add('selected');
     });

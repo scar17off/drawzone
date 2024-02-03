@@ -44,7 +44,7 @@ body {
     margin-bottom: 10px;
     background-color: #ff0000;
     cursor: pointer;
-    transition: transform 0.3s ease;
+    transition: order 0.5s ease;
 }
 .color-item.selected {
     transform: scale(1.5);
