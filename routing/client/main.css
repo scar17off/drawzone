@@ -38,6 +38,18 @@ body {
     background-color: #ff0000;
     cursor: pointer;
 }
+.color-item {
+    width: 30px;
+    height: 30px;
+    margin-bottom: 10px;
+    background-color: #ff0000;
+    cursor: pointer;
+    transition: transform 0.3s ease;
+}
+.color-item.selected {
+    transform: scale(1.5);
+    z-index: 2;
+}
 #add-color {
     width: 30px;
     height: 30px;

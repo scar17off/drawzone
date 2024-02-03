@@ -73,11 +73,19 @@ window.addEventListener('keydown', event => {
 	}
 })
 
-document.querySelectorAll('.color-item').forEach(item => {
+function addColorEvent(item) {
     item.addEventListener('click', function() {
         const color = this.getAttribute('data-color').split(',').map(Number);
         local_player.selectedColor = color;
     });
+    item.addEventListener('click', function() {
+        document.querySelectorAll('.color-item').forEach(i => i.classList.remove('selected'));
+        this.classList.add('selected');
+    });
+}
+
+document.querySelectorAll('.color-item').forEach(item => {
+    addColorEvent(item);
 });
 
 document.getElementById('color-picker').addEventListener('change', function() {
@@ -86,11 +94,8 @@ document.getElementById('color-picker').addEventListener('change', function() {
     colorDiv.className = 'color-item';
     colorDiv.style.backgroundColor = `rgb(${color.join(',')})`;
     colorDiv.setAttribute('data-color', color.join(','));
-    document.querySelector('.palette-container > div').appendChild(colorDiv);
-
-    colorDiv.addEventListener('click', function() {
-        local_player.selectedColor = color;
-    });
+    document.getElementById("color-list").appendChild(colorDiv);
+    addColorEvent(colorDiv);
 });
 
 export default local_player;
