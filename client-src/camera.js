@@ -1,12 +1,3 @@
-export var camera = {
-    x: 0,
-    y: 0,
-    zoom: 16,
-    minZoom: 8,
-    maxZoom: 16,
-    zoomStrength: 1
-};
-
 export const canvas = document.getElementById("gameCanvas");
 
 let mouseDown = false;
@@ -21,8 +12,8 @@ export function isVisible(x, y, w, h) {
 	return x + w > cx && y + h > cy && x <= cx + cw / czoom && y <= cy + ch / czoom;
 };
 
-function zoomIn() {
-    let nzoom = camera.zoom * (1 + camera.zoomStrength);
+function editZoom(change) {
+    let nzoom = change > 0 ? camera.zoom * (1 + Math.abs(change)) : camera.zoom / (1 + Math.abs(change));
 
     if (nzoom > camera.maxZoom) {
         camera.zoom = camera.maxZoom;
@@ -33,16 +24,12 @@ function zoomIn() {
     }
 }
 
-function zoomOut() {
-    let nzoom = camera.zoom / (1 + camera.zoomStrength);
+function zoomIn() {
+    editZoom(camera.zoomStrength);
+}
 
-    if (nzoom > camera.maxZoom) {
-        camera.zoom = camera.maxZoom;
-    } else if (nzoom < camera.minZoom) {
-        camera.zoom = camera.minZoom;
-    } else {
-        camera.zoom = Math.round(nzoom);
-    }
+function zoomOut() {
+    editZoom(-camera.zoomStrength);
 }
 
 function handleMouseDown(event) {
@@ -93,3 +80,13 @@ canvas.addEventListener('mouseup', handleMouseUp);
 canvas.addEventListener('mousemove', handleMouseMove);
 
 window.addEventListener('keydown', handleKeyDown);
+
+export var camera = {
+    x: 0,
+    y: 0,
+    zoom: 16,
+    minZoom: 8,
+    maxZoom: 16,
+    zoomStrength: 1,
+    editZoom
+};

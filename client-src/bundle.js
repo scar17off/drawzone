@@ -8,6 +8,7 @@ import local_player from "./local_player.js";
 import tools from "./tools.js";
 import players from "./network/players.js";
 import events from "./events.js";
+import world from "./world.js";
 
 window.DrawZone = {
     chunks: {},
@@ -21,7 +22,8 @@ window.DrawZone = {
         name: location.pathname.substring(1) || "main",
         chunks,
         lines,
-        texts
+        texts,
+        ...world
     },
     mouse,
     player: local_player,

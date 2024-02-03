@@ -2,7 +2,6 @@ import { camera, canvas } from "../camera.js";
 import { CHUNK_SIZE } from "../renderer.js";
 import { chunks, lines, texts } from "../sharedState.js";
 import { mouse } from "../mouse.js";
-import local_player from "../local_player.js";
 import events from "../events.js";
 
 var loadQueue = [];
@@ -60,28 +59,6 @@ canvas.addEventListener('mousemove', () => {
     const pos = { x: mouse.tileX, y: mouse.tileY };
 
     socket.emit("move", pos.x, pos.y);
-})
-
-canvas.addEventListener('mousemove', event => {
-    if(event.buttons === 1 && !event.ctrlKey) {
-        if(!local_player.pixelQuota.canSpend(1)) return;
-
-        const pos = { x: mouse.tileX, y: mouse.tileY };
-
-        const chunkX = Math.floor(pos.x / 16);
-        const chunkY = Math.floor(pos.y / 16);
-        let pixelX = Math.floor(pos.x % 16);
-        let pixelY = Math.floor(pos.y % 16);
-        
-        if (pixelX < 0) pixelX += 16;
-        if (pixelY < 0) pixelY += 16;
-
-        socket.emit("setPixel", pos.x, pos.y, local_player.selectedColor);
-
-        if(chunks[`${chunkX},${chunkY}`]) {
-            chunks[`${chunkX},${chunkY}`][pixelX][pixelY] = local_player.selectedColor;
-        }
-    }
 })
 
 setInterval(() => {

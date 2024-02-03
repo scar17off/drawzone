@@ -43,3 +43,7 @@ canvas.addEventListener('mousemove', event => {
     unloadInvisibleChunks();
     loadVisibleChunks();
 })
+
+canvas.addEventListener('contextmenu', function(event) {
+    event.preventDefault();
+});
