@@ -7,6 +7,7 @@ class Client {
     constructor(ws) {
         this.world = new URL(ws.handshake.headers.referer).pathname.substring(1) || "main";
         this.ws = ws;
+        this.ip = ws.handshake.address;
         this.nickname = null;
         this.color = [0, 0, 0];
         this.rank = defaultRank;
@@ -59,7 +60,7 @@ class Client {
         if(typeof greeting !== "undefined" && greeting !== '') this.send(greeting);
     }
     kick() {
-        this.ws.close();
+        this.ws.disconnect();
     }
     tp(x, y) {
         this.x = x;

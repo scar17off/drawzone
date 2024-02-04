@@ -69,7 +69,27 @@ class Command {
                     }
                 }
             }
+        }
+    }
+    kick(id) {
+        const targetClient = getWorldClients(this.client.world)
+            .find(client => client.id === parseInt(id));
 
+        if (targetClient) targetClient.kick();
+    }
+    kickip(ipOrId) {
+        if (isNaN(ipOrId)) {
+            // kick by IP
+            const targetClients = getWorldClients()
+                .filter(client => client.ip === ipOrId);
+            
+            targetClients.forEach(client => client.kick());
+        } else {
+            // kick by ID
+            const targetClient = getWorldClients(this.client.world)
+                .find(client => client.id === parseInt(ipOrId));
+            
+            if (targetClient) targetClient.kick();
         }
     }
 }
