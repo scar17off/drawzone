@@ -27,16 +27,17 @@ global.server = {
 const { Command } = require("./modules/player/commands.js");
 
 const files = [];
-const getFilesRecursively = directory => {
+const getFilesRecursively = function(directory) {
     const filesInDirectory = fs.readdirSync(directory);
-    for(const file of filesInDirectory) {
+    for(let i = 0; i < filesInDirectory.length; i++) {
+        const file = filesInDirectory[i];
         let absolute = path.join(directory, file);
         if(fs.statSync(absolute).isDirectory()) {
             getFilesRecursively(absolute);
         } else {
             files.push(absolute);
-            let routePath = `/${path.relative("routing/client/", absolute)}`.replaceAll("\\", '/');
-            app.get(routePath, (req, res) => {
+            let routePath = '/' + path.relative("routing/client/", absolute).split(path.sep).join('/');
+            app.get(routePath, function(req, res) {
                 return res.sendFile(absolute, {
                     root: '.'
                 });
