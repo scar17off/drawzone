@@ -12,6 +12,7 @@ class Client {
         this.rank = defaultRank;
         this.tool = 0;
         this.rank = 0;
+        this.id = null;
         this.x = 0;
         this.y = 0;
         this.pixelQuota = null;
@@ -22,25 +23,22 @@ class Client {
             this.send("The world is full.");
             this.ws.close();
         } else {
-            // Id, rank
-            this.setId(getWorldByName(this.world).getNextID());
+            world.clients.push(this);
+            
+            this.setId(world.clients.length);
             this.setRank(ranks[defaultRank].id);
             
-            // Pixel quota
             const rankData = getRankByID(this.rank);
             this.pixelQuota = new Bucket(rankData.pixelQuota[0], rankData.pixelQuota[1]);
 
-            // Greeting
             this.send(`[Server] Joined world: "${this.world}", your ID is: ${this.id}!`);
             this.send(server.config.welcomeMessage);
-
-            world.clients.push(this);
         }
 
         this.ws.on("disconnect", () => {
             const index = world.clients.indexOf(this);
             if(index !== -1) world.clients.splice(index, 1);
-        })
+        });
     }
     setId(id) {
         this.id = id;
@@ -51,14 +49,12 @@ class Client {
     setRank(id) {
         const rankData = getRankByID(id);
 
-        // assign rank
         this.rank = id;
         this.pixelQuota = new Bucket(rankData.pixelQuota[0], rankData.pixelQuota[1]);
 
         this.ws.emit("newRank", id);
         this.ws.emit("newPixelQuota", rankData.pixelQuota[0], rankData.pixelQuota[1]);
 
-        // rank greeting
         const greeting = rankData.greetingMessage;
         if(typeof greeting !== "undefined" && greeting !== '') this.send(greeting);
     }

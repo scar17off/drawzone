@@ -6,13 +6,7 @@ class WorldTemplate {
         this.lastID = 1;
     }
     isFull() {
-        return this.clients.length >= this.maxPlayers;
-    }
-    getNextID() {
-        const id = this.lastID;
-        this.lastID++;
-        
-        return id;
+        return this.clients.length > this.maxPlayers;
     }
 }
 

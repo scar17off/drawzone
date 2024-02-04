@@ -5,10 +5,11 @@ function getWorldByName(worldName) {
     if(!worldName) worldName = "main";
     var foundWorld;
 
-    for(const World in server.worlds)
-        if(World.name == worldName) foundWorld = World;
+    foundWorld = server.worlds.find(world => world.name === worldName);
 
-    if(!foundWorld) foundWorld = initWorld(worldName);
+    if(!foundWorld) {
+        foundWorld = initWorld(worldName);
+    }
 
     return foundWorld;
 }
