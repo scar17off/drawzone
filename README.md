@@ -37,3 +37,5 @@ The game's configuration can be found in `config.json`
 - [ ] Tempmute & Tempban
 - [ ] Discord Gateway plugin
 - [ ] Area selection for tool
+- [ ] Cursor visiblity
+- [ ] Pencil, write textures
