@@ -1,6 +1,5 @@
 import socket from "./network.js";
-
-const players = {};
+import { players } from "../sharedState.js";
 
 const structure = {
     x: 0,

@@ -1,6 +1,7 @@
 import { camera } from "./camera.js";
 import { chunks, lines, texts } from "./sharedState.js";
 import { mouse } from "./mouse.js";
+import { players } from "./sharedState.js";
 import local_player from "./local_player.js";
 import events from "./events.js";
 
@@ -16,7 +17,7 @@ canvas.height = window.innerHeight;
 window.addEventListener("resize", () => {
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
-})
+});
 
 export const CHUNK_SIZE = 16;
 
@@ -136,6 +137,26 @@ export function renderAllChunks() {
     }
 }
 
+// Add this function to the renderer.js file
+function renderPlayers() {
+    Object.entries(players).forEach(([id, player]) => {
+        // TODO: make it draw tool instead of circle;
+        // make it draw a container with player id
+        const playerX = player.x * camera.zoom - camera.x;
+        const playerY = player.y * camera.zoom - camera.y;
+
+        ctx.fillStyle = `rgb(${player.color.join(',')})`;
+        ctx.beginPath();
+        ctx.arc(playerX, playerY, 10, 0, Math.PI * 2);
+        ctx.fill();
+
+        ctx.font = '12px Arial';
+        ctx.fillStyle = 'black';
+        const textWidth = ctx.measureText(id).width;
+        ctx.fillText(id, playerX + (20 - textWidth) / 2, playerY + 20);
+    });
+}
+
 function renderAllLines() {
     for (let i = 0; i < lines.length; i++) {
         const [start, end] = lines[i];
@@ -198,8 +219,9 @@ function onRender() {
     renderAllChunks();
     drawGrid();
     renderAllLines();
-
     renderAllTexts();
+
+    renderPlayers();
 
     requestAnimationFrame(onRender);
 }
