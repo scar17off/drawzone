@@ -61,6 +61,12 @@ class Client {
     kick() {
         this.ws.close();
     }
+    tp(x, y) {
+        this.x = x;
+        this.y = y;
+
+        this.ws.emit("teleport", x, y);
+    }
 }
 
 module.exports = Client;

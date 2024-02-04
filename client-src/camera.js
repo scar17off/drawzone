@@ -42,6 +42,8 @@ function editZoom(change) {
 function centerAt(x, y) {
     camera.x = Math.floor(x * camera.zoom - window.innerWidth / 2);
     camera.y = Math.floor(y * camera.zoom - window.innerHeight / 2);
+
+    events.emit("loadChunks");
 }
 
 centerAt(0, 0);

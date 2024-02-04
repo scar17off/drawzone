@@ -59,6 +59,10 @@ socket.on("connect", () => {
     socket.on("newPixelQuota", (rate, per) => {
         local_player.pixelQuota = new Bucket(rate, per);
     });
+
+    socket.on("teleport", (x, y) => {
+        camera.centerAt(x, y);
+    });
 });
 
 events.on("addText", (text, x, y) => {

@@ -26,4 +26,16 @@ function initWorld(worldName) {
     return World;
 }
 
-module.exports = { getWorldByName };
+function getWorldClients(worldName) {
+    if(worldName) {
+        const world = server.worlds.find(w => w.name === worldName);
+        return world ? world.clients : [];
+    } else {
+        return server.worlds.flatMap(world => world.clients);
+    }
+}
+
+module.exports = {
+    getWorldByName,
+    getWorldClients
+}
