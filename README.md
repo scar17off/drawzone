@@ -28,8 +28,12 @@ The game's configuration can be found in `config.json`
 - [x] Pixel art drawing
 - [ ] Line art drawing
 - [ ] ASCII art drawing
-- [ ] Chat
+- [x] Chat
 - [ ] Chat commands
 - [ ] Tools
-- [ ] Design
+- [x] Design
 - [ ] Window system
+- [ ] Protection
+- [ ] Tempmute & Tempban
+- [ ] Discord Gateway plugin
+- [ ] Area selection for tool
