@@ -34,8 +34,19 @@ The game's configuration can be found in `config.json`
 - [x] Design
 - [x] Window system
 - [ ] Protection
+  - Find out the best way to store protection data
 - [ ] Tempmute & Tempban
+  - bansManager.js, muteManager.js
 - [ ] Discord Gateway plugin
+  - Later
 - [ ] Area selection for tool
 - [ ] Cursor visiblity
+  - Need to rewrite tools.js
 - [ ] Pencil, write textures
+  - No textures yet
+- [ ] Enhance Chat System
+  - Implement moderation features and possibly private messaging.
+- [ ] Add Customizable World Templates
+- [ ] Improve the chat interface for better readability and user interaction.
+- [ ] Add more comprehensive error handling and logging throughout the server and client code.
+- [ ] Ensure all user-generated content is sanitized to prevent XSS and other security vulnerabilities.
