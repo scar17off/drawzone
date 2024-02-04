@@ -9,6 +9,7 @@ import tools from "./tools.js";
 import players from "./network/players.js";
 import events from "./events.js";
 import world from "./world.js";
+import { GUIWindow } from "./windowSystem.js";
 
 window.DrawZone = {
     chunks: {},
@@ -29,7 +30,8 @@ window.DrawZone = {
     player: local_player,
     events,
     players,
-    tools
+    tools,
+    GUIWindow
 }
 
 export default DrawZone;
