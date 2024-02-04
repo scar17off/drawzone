@@ -1,3 +1,5 @@
+import events from "./events.js";
+
 export const canvas = document.getElementById("gameCanvas");
 
 let mouseDown = false;
@@ -22,6 +24,8 @@ function editZoom(change) {
     } else {
         camera.zoom = Math.round(nzoom);
     }
+
+    events.emit("loadChunks");
 }
 
 function zoomIn() {
@@ -36,6 +40,8 @@ function handleMouseDown(event) {
     if (event.button === 1) {
         mouseDown = true;
     }
+
+    events.emit("loadChunks");
 }
 
 function handleMouseUp() {
@@ -47,21 +53,27 @@ function handleMouseMove(event) {
         camera.x -= event.movementX;
         camera.y -= event.movementY;
     }
+
+    events.emit("loadChunks");
 }
 
 function handleKeyDown(event) {
     switch (event.key) {
         case 'ArrowUp':
             camera.y -= 1 * camera.zoom;
+            events.emit("loadChunks");
             break;
         case 'ArrowDown':
             camera.y += 1 * camera.zoom;
+            events.emit("loadChunks");
             break;
         case 'ArrowLeft':
             camera.x -= 1 * camera.zoom;
+            events.emit("loadChunks");
             break;
         case 'ArrowRight':
             camera.x += 1 * camera.zoom;
+            events.emit("loadChunks");
             break;
     }
 }

@@ -3,6 +3,8 @@ import { CHUNK_SIZE } from "../renderer.js";
 import { chunks, lines, texts } from "../sharedState.js";
 import { mouse } from "../mouse.js";
 import events from "../events.js";
+import local_player from "../local_player.js";
+import Bucket from "../../modules/player/Bucket.js";
 
 var loadQueue = [];
 
@@ -49,6 +51,14 @@ socket.on("connect", () => {
     socket.on("newText", (text, x, y) => {
         texts[`${x},${y}`] = text;
     });
+
+    socket.on("newRank", rank => {
+        local_player.rank = rank;
+    });
+
+    socket.on("newPixelQuota", (rate, per) => {
+        local_player.pixelQuota = new Bucket(rate, per);
+    });
 });
 
 events.on("addText", (text, x, y) => {
@@ -69,8 +79,8 @@ setInterval(() => {
     if(loadQueue.length > 0) {
         socket.emit("loadChunk", loadQueue);
         loadQueue = [];
-    };
-}, 1000 / 2);
+    }
+}, 1000 / 5);
 
 function addChunk(chunkData, chunkX, chunkY) {
     const key = `${chunkX},${chunkY}`;
@@ -92,6 +102,10 @@ export function loadVisibleChunks() {
             }
         }
     }
+    // if(loadQueue.length > 0) {
+    //     socket.emit("loadChunk", loadQueue);
+    //     loadQueue = [];
+    // }
 }
 
 export function unloadInvisibleChunks() {
@@ -114,5 +128,10 @@ export function unloadInvisibleChunks() {
         }
     });
 }
+
+events.on("loadChunks", () => {
+    unloadInvisibleChunks();
+    loadVisibleChunks();
+});
 
 export default socket;

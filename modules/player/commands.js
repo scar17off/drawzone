@@ -1,5 +1,5 @@
 const rankUtil = require("./rankingUtils.js");
-const ranks = require("./ranks.json");
+const ranks = require("../shared/ranks.json");
 
 const loginCommands = Object.values(ranks).reduce((acc, rank) => {
     if(rank.loginCommand) {

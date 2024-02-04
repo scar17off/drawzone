@@ -1,5 +1,5 @@
 const { getWorldByName } = require("../world/worldManager.js");
-const ranks = require("./ranks.json");
+const ranks = require("../shared/ranks.json");
 const Bucket = require("./Bucket.js");
 const { defaultRank, getRankByID } = require("./rankingUtils.js");
 
@@ -14,7 +14,7 @@ class Client {
         this.rank = 0;
         this.x = 0;
         this.y = 0;
-        this.pixelQuota = new Bucket(100, 2);
+        this.pixelQuota = null;
 
         const world = getWorldByName(this.world);
         
@@ -22,9 +22,15 @@ class Client {
             this.send("The world is full.");
             this.ws.close();
         } else {
+            // Id, rank
             this.setId(getWorldByName(this.world).getNextID());
             this.setRank(ranks[defaultRank].id);
+            
+            // Pixel quota
+            const rankData = getRankByID(this.rank);
+            this.pixelQuota = new Bucket(rankData.pixelQuota[0], rankData.pixelQuota[1]);
 
+            // Greeting
             this.send(`[Server] Joined world: "${this.world}", your ID is: ${this.id}!`);
             this.send(server.config.welcomeMessage);
 
@@ -43,9 +49,17 @@ class Client {
         this.ws.emit("message", message);
     }
     setRank(id) {
-        this.rank = id;
+        const rankData = getRankByID(id);
 
-        const greeting = getRankByID(id).greetingMessage;
+        // assign rank
+        this.rank = id;
+        this.pixelQuota = new Bucket(rankData.pixelQuota[0], rankData.pixelQuota[1]);
+
+        this.ws.emit("newRank", id);
+        this.ws.emit("newPixelQuota", rankData.pixelQuota[0], rankData.pixelQuota[1]);
+
+        // rank greeting
+        const greeting = rankData.greetingMessage;
         if(typeof greeting !== "undefined" && greeting !== '') this.send(greeting);
     }
     kick() {

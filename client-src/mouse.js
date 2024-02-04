@@ -1,5 +1,4 @@
 import { camera } from "./camera.js";
-import { loadVisibleChunks, unloadInvisibleChunks } from "./network/network.js";
 
 const canvas = document.getElementById("gameCanvas");
 
@@ -39,10 +38,7 @@ canvas.addEventListener('mousemove', event => {
     const pos = getGameCoordinates(event.clientX, event.clientY);
 
     document.getElementById("xy-display").innerText = `XY: ${Math.floor(pos.x)},${Math.floor(pos.y)}`;
-
-    unloadInvisibleChunks();
-    loadVisibleChunks();
-})
+});
 
 canvas.addEventListener('contextmenu', function(event) {
     event.preventDefault();

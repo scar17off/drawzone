@@ -50,7 +50,7 @@ body {
     z-index: 2;
 }
 #color-list {
-    overflow-y: scroll;
+    overflow: hidden;
 }
 #add-color {
     width: 30px;

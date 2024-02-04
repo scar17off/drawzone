@@ -1,4 +1,4 @@
-const ranks = require("./ranks.json");
+const ranks = require("../shared/ranks.json");
 
 var defaultRank;
 
