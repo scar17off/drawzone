@@ -23,9 +23,7 @@ class Client {
             this.send("The world is full.");
             this.ws.close();
         } else {
-            world.clients.push(this);
-            
-            this.setId(world.clients.length);
+            this.setId(world.clients.length + 1);
             this.setRank(ranks[defaultRank].id);
             
             const rankData = getRankByID(this.rank);
@@ -33,6 +31,8 @@ class Client {
 
             this.send(`[Server] Joined world: "${this.world}", your ID is: ${this.id}!`);
             this.send(server.config.welcomeMessage);
+
+            world.clients.push(this); // push client after assigning important properties
         }
 
         this.ws.on("disconnect", () => {
