@@ -4,7 +4,10 @@ import { mouse } from "./mouse.js";
 import local_player from "./local_player.js";
 import events from "./events.js";
 
-const canvas = document.querySelector("canvas");
+const unloadedChunkImage = new Image();
+unloadedChunkImage.src = './img/unloaded.png';
+
+const canvas = document.getElementById("gameCanvas");
 const ctx = canvas.getContext("2d");
 
 canvas.width = window.innerWidth;
@@ -105,11 +108,30 @@ export function renderChunk(chunkData, chunkX, chunkY) {
 }
 
 export function renderAllChunks() {
-    for (const key in chunks) {
-        if (chunks.hasOwnProperty(key)) {
-            const [chunkX, chunkY] = key.split(',').map(Number);
-            const chunkData = chunks[key];
-            renderChunk(chunkData, chunkX, chunkY);
+    const chunkSizeInPixels = CHUNK_SIZE * camera.zoom;
+    const leftChunkIndex = Math.floor(camera.x / chunkSizeInPixels);
+    const rightChunkIndex = Math.ceil((camera.x + canvas.width) / chunkSizeInPixels);
+    const topChunkIndex = Math.floor(camera.y / chunkSizeInPixels);
+    const bottomChunkIndex = Math.ceil((camera.y + canvas.height) / chunkSizeInPixels);
+
+    for (let y = topChunkIndex; y < bottomChunkIndex; y++) {
+        for (let x = leftChunkIndex; x < rightChunkIndex; x++) {
+            const chunkKey = `${x},${y}`;
+            if (chunks.hasOwnProperty(chunkKey)) {
+                const chunkData = chunks[chunkKey];
+                renderChunk(chunkData, x, y);
+            } else {
+                // Disable image smoothing to prevent blur
+                ctx.imageSmoothingEnabled = false;
+
+                // Render unloaded chunk image
+                const startX = x * CHUNK_SIZE * camera.zoom - camera.x;
+                const startY = y * CHUNK_SIZE * camera.zoom - camera.y;
+                ctx.drawImage(unloadedChunkImage, startX, startY, CHUNK_SIZE * camera.zoom, CHUNK_SIZE * camera.zoom);
+
+                // Re-enable image smoothing for other rendering operations if necessary
+                ctx.imageSmoothingEnabled = true;
+            }
         }
     }
 }
