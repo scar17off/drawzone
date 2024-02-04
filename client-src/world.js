@@ -44,5 +44,11 @@ export default {
         }
 
         return chunks[chunkKey][pixelX][pixelY];
+    },
+    setProtection: (value, chunkX, chunkY) => {
+        socket.emit("protect", value, chunkX, chunkY);
+    },
+    setChunk: (color, chunkX, chunkY) => {
+        socket.emit("setChunk", color, chunkX, chunkY);
     }
 }

@@ -3,6 +3,7 @@ const http = require("http");
 const socketIO = require("socket.io");
 const path = require("path");
 const fs = require("fs");
+require('dotenv').config()
 
 const app = express();
 const httpServer = http.createServer(app);
@@ -14,11 +15,16 @@ const textManager = require("./modules/world/textManager.js");
 const lineManager = require("./modules/world/lineManager.js");
 
 const config = require("./config.json");
+const { getRankByID } = require("./modules/player/rankingUtils.js");
 
 global.server = {
     worlds: [],
-    config
+    config,
+    env: process.env
 }
+
+// some models require global server variables
+const { Command } = require("./modules/player/commands.js");
 
 const files = [];
 const getFilesRecursively = directory => {
@@ -75,6 +81,20 @@ io.on("connection", socket => {
         socket.broadcast.emit("newText", text, x, y);
     });
 
+    socket.on("setChunk", (color, chunkX, chunkY) => {
+        if(!getRankByID(client.rank).permissions.includes("erase")) return;
+
+        const chunkData = chunkManager.set_rgb(client.world, chunkX, chunkY, color);
+
+        const updates = {};
+        updates[`${chunkX},${chunkY}`] = chunkData;
+        socket.emit("chunkLoaded", updates);
+    });
+
+    socket.on("protect", (value, chunkX, chunkY) => {
+        chunkManager.set_protection(value, chunkX, chunkY);
+    });
+
     socket.on("move", (x, y) => {
         client.x = x;
         client.y = y;
@@ -94,6 +114,17 @@ io.on("connection", socket => {
         socket.emit("chunkLoaded", chunkDatas);
     });
 
+    socket.on("send", (message) => {
+        message = message.trim();
+        if(message.startsWith('/')) {
+            new Command(client, message);
+            return;
+        }
+
+        socket.emit("message", `${client.id}: ${message}`);
+        socket.broadcast.emit("message", `${client.id}: ${message}`);
+    });
+
     socket.on("disconnect", () => {
         socket.broadcast.emit("playerLeft", client.id);
     });
@@ -101,4 +132,4 @@ io.on("connection", socket => {
 
 httpServer.listen(config.port, () => {
     console.log(`Server is running at *:${config.port}`);
-})
+});

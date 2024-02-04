@@ -13,8 +13,8 @@ const cursors = {
     fill: { pos: [0, 74], hotspot: [-18, -8, -18] },
     zoom: { pos: [135, 0], hotspot: [-5] },
     camera: { pos: [76, 76], hotspot: [0, 0] },
-    eraser: { pos: [76, 152], hotspot: [0, 0] },
-    shield: { pos: [152, 0], hotspot: [0, 0] },
+    eraser: { pos: [135, 66], hotspot: [0, 0] },
+    protect: { pos: [62, 0], hotspot: [-4, 0] },
     paste: { pos: [152, 76], hotspot: [0, 0] },
     copy: { pos: [152, 152], hotspot: [0, 0] }
 }
@@ -76,9 +76,7 @@ function addTool(tool) {
 
     document.getElementById("tool-" + tool.elementName).addEventListener("click", () => {
         const currentTool = getToolById(local_player.tool);
-        if (currentTool && tool.name !== currentTool.name) {
-            currentTool.deactivate();
-        }
+        if (currentTool && tool.name !== currentTool.name) currentTool.deactivate();
         local_player.tool = toolIDs[tool.elementName];
         tool.activate();
         removeSelectedClass();
@@ -101,6 +99,14 @@ function addTool(tool) {
         });
     }));
 
+    addTool(new Tool("Pencil", toolIDs.pencil, null, 0, function(tool) {
+        
+    }));
+
+    addTool(new Tool("Write", toolIDs.write, null, 0, function(tool) {
+        
+    }));
+
     addTool(new Tool("Move", toolIDs.move, null, 0, function(tool) {
         tool.setEvent('mousemove', event => {
             if(event.buttons === 1) {
@@ -113,9 +119,7 @@ function addTool(tool) {
     addTool(new Tool("Fill", toolIDs.fill, null, 0, function(tool) {
         let filling = false;
 
-        function colorEquals(color1, color2) {
-            return color1[0] === color2[0] && color1[1] === color2[1] && color1[2] === color2[2];
-        }
+        const colorEquals = (color1, color2) => color1[0] === color2[0] && color1[1] === color2[1] && color1[2] === color2[2];
 
         async function bfsFill(x, y, targetColor, fillColor) {
             let queue = [[x, y]];
@@ -139,7 +143,7 @@ function addTool(tool) {
                 bfsFill(mouse.tileX, mouse.tileY, targetColor, fillColor);
             }
         });
-        tool.setEvent('mouseup', event => {
+        tool.setEvent('mouseup', () => {
             filling = false;
         });
     }));
@@ -151,6 +155,26 @@ function addTool(tool) {
             } else if (event.buttons === 2) {
                 camera.editZoom(-0.5);
             }
+        });
+    }));
+
+    addTool(new Tool("Protect", toolIDs.protect, null, 2, function(tool) {
+        tool.setEvent('mousemove', event => {
+            if(event.buttons === 0 || event.buttons === 4) return;
+            const chunkX = Math.floor(mouse.tileX / 16);
+            const chunkY = Math.floor(mouse.tileY / 16);
+
+            world.setProtection(event.buttons === 1, chunkX, chunkY);
+        });
+    }));
+
+    addTool(new Tool("Eraser", toolIDs.eraser, null, 2, function(tool) {
+        tool.setEvent('mousemove', event => {
+            if(event.buttons === 4 || event.buttons === 0) return;
+            const chunkX = Math.floor(mouse.tileX / 16);
+            const chunkY = Math.floor(mouse.tileY / 16);
+
+            world.setChunk(event.buttons === 1 ? local_player.selectedColor : [255, 255, 255], chunkX, chunkY);
         });
     }));
 }

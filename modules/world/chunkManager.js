@@ -39,9 +39,24 @@ function setChunkData(worldName, chunkX, chunkY, chunkData) {
     fs.writeFileSync(chunkPath, JSON.stringify(chunkData));
 }
 
+function set_protection(worldName, chunkX, chunkY, value) {
+    const chunkPath = getChunkFilePath(worldName, chunkX, chunkY);
+    let chunkData = getChunkData(worldName, chunkX, chunkY);
+
+    if (!chunkData.protection) {
+        chunkData.protection = {};
+    }
+
+    chunkData.protection.enabled = value;
+
+    fs.writeFileSync(chunkPath, JSON.stringify(chunkData));
+}
+
 function set_rgb(worldName, chunkX, chunkY, rgb) {
     const newChunkData = Array.from({ length: CHUNK_SIZE }, () => Array.from({ length: CHUNK_SIZE }, () => rgb));
     setChunkData(worldName, chunkX, chunkY, newChunkData);
+
+    return newChunkData;
 }
 
 function get_pixel(worldName, x, y) {
@@ -79,5 +94,6 @@ module.exports = {
     setChunkData,
     set_rgb,
     get_pixel,
-    set_pixel
+    set_pixel,
+    set_protection
 };
