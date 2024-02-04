@@ -11,7 +11,8 @@ export var camera = {
     minZoom: 8,
     maxZoom: 16,
     zoomStrength: 1,
-    editZoom
+    editZoom,
+    centerAt
 };
 
 export function isVisible(x, y, w, h) {
@@ -39,8 +40,8 @@ function editZoom(change) {
 }
 
 function centerAt(x, y) {
-    camera.x = Math.floor(x - window.innerWidth / 2);
-    camera.y = Math.floor(y - window.innerHeight / 2);
+    camera.x = Math.floor(x * camera.zoom - window.innerWidth / 2);
+    camera.y = Math.floor(y * camera.zoom - window.innerHeight / 2);
 }
 
 centerAt(0, 0);

@@ -23,6 +23,10 @@ class Command {
             }
         }
     }
+    nick(...nickname) {
+        nickname = nickname.join(" ");
+        this.client.nickname = nickname;
+    }
 }
 
 function addCommand(name, func) {
