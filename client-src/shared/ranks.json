@@ -1,0 +1,31 @@
+{
+    "None": {
+        "id": 0,
+        "default": false
+    },
+    "User": {
+        "id": 1,
+        "default": true,
+        "pixelQuota": [100, 2],
+        "permissions": ["chat", "setPixel"],
+        "commands": []
+    },
+    "Moderator": {
+        "id": 2,
+        "default": false,
+        "pixelQuota": [250, 1],
+        "loginCommand": "modlogin",
+        "greetingMessage": "[Server] You are now a moderator. Do /help for a list of commands.",
+        "permissions": ["chat", "setPixel", "protect", "erase"],
+        "commands": []
+    },
+    "Admin": {
+        "id": 3,
+        "default": false,
+        "pixelQuota": [1, 0],
+        "loginCommand": "adminlogin",
+        "greetingMessage": "[Server] You are now an admin. Do /help for a list of commands.",
+        "permissions": ["chat", "setPixel", "protect", "erase"],
+        "commands": []
+    }
+}

@@ -6,5 +6,14 @@ module.exports = {
         path: path.resolve(__dirname, "routing/client"),
         filename: "bundle.js",
     },
+    module: {
+        rules: [
+            {
+                test: /\.json$/,
+                loader: 'json-loader', // webpack v1
+                type: 'javascript/auto', // webpack v4 and above
+            },
+        ],
+    },
     mode: 'development',
 };

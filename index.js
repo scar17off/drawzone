@@ -46,8 +46,18 @@ const getFilesRecursively = directory => {
 }
 getFilesRecursively("./routing/client/");
 
+// share important files with client
+(function clientShare() {
+    const srcPath = path.join(__dirname, "modules", "shared", 'ranks.json');
+    const destPath = path.join(__dirname, 'client-src', 'shared', 'ranks.json');
+
+    fs.copyFile(srcPath, destPath, (err) => {
+        if (err) throw err;
+    });
+})();
+
 app.get('/*', (req, res) => {
-    if(req.params[0] == '') // to ignore requests related to img directory
+    if(req.params[0] == '') // ignore requests related to img directory
         return res.sendFile("./routing/client/index.html", {
             root: '.'
         });
@@ -92,7 +102,8 @@ io.on("connection", socket => {
     });
 
     socket.on("protect", (value, chunkX, chunkY) => {
-        // chunkManager.set_protection(value, chunkX, chunkY);
+        if(!getRankByID(client.rank).permissions.includes("protect")) return;
+        chunkManager.set_protection(value, chunkX, chunkY);
     });
 
     socket.on("move", (x, y) => {
@@ -115,6 +126,7 @@ io.on("connection", socket => {
     });
 
     socket.on("send", (message) => {
+        if(!getRankByID(client.rank).permissions.includes("chat")) return;
         message = message.trim();
         if(message.startsWith('/')) {
             new Command(client, message);
