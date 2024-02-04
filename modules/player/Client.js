@@ -1,4 +1,4 @@
-const { getWorldByName } = require("../world/getWorldByName");
+const { getWorldByName } = require("../world/worldManager.js");
 const ranks = require("./ranks.json");
 const Bucket = require("./Bucket.js");
 const { defaultRank, getRankByID } = require("./rankingUtils.js");

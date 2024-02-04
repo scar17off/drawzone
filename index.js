@@ -3,7 +3,7 @@ const http = require("http");
 const socketIO = require("socket.io");
 const path = require("path");
 const fs = require("fs");
-require('dotenv').config()
+require("dotenv").config();
 
 const app = express();
 const httpServer = http.createServer(app);
@@ -23,7 +23,7 @@ global.server = {
     env: process.env
 }
 
-// some models require global server variables
+// some modules require global server variables
 const { Command } = require("./modules/player/commands.js");
 
 const files = [];
@@ -92,7 +92,7 @@ io.on("connection", socket => {
     });
 
     socket.on("protect", (value, chunkX, chunkY) => {
-        chunkManager.set_protection(value, chunkX, chunkY);
+        // chunkManager.set_protection(value, chunkX, chunkY);
     });
 
     socket.on("move", (x, y) => {
@@ -109,7 +109,7 @@ io.on("connection", socket => {
             const [x, y] = loadQueue[i];
 
             chunkDatas[`${x},${y}`] = chunkManager.getChunkData(client.world, x, y);
-        };
+        }
 
         socket.emit("chunkLoaded", chunkDatas);
     });
