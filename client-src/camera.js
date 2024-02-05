@@ -13,7 +13,7 @@ export var camera = {
     zoomStrength: 1,
     editZoom,
     centerAt
-};
+}
 
 export function isVisible(x, y, w, h) {
 	if(document.visibilityState === "hidden") return;
@@ -23,7 +23,7 @@ export function isVisible(x, y, w, h) {
 	var cw = window.innerWidth;
 	var ch = window.innerHeight;
 	return x + w > cx && y + h > cy && x <= cx + cw / czoom && y <= cy + ch / czoom;
-};
+}
 
 function editZoom(change) {
     let nzoom = change > 0 ? camera.zoom * (1 + Math.abs(change)) : camera.zoom / (1 + Math.abs(change));

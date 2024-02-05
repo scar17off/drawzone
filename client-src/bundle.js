@@ -19,7 +19,10 @@ window.DrawZone = {
         io: socket
     },
     camera,
-    renderer,
+    renderer: {
+        Fx,
+        ...renderer
+    },
     world: {
         name: location.pathname.substring(1) || "main",
         chunks,
@@ -32,8 +35,7 @@ window.DrawZone = {
     events,
     players,
     tools,
-    GUIWindow,
-    Fx
+    GUIWindow
 }
 
 export default DrawZone;

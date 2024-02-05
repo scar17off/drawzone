@@ -217,6 +217,9 @@ events.on("addText", (text, x, y) => {
 });
 
 function onRender() {
+    requestAnimationFrame(onRender);
+    if(!needsRender) return;
+    console.log(needsRender);
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
     renderAllChunks();
@@ -242,7 +245,7 @@ function onRender() {
 
     renderPlayers();
 
-    requestAnimationFrame(onRender);
+    needsRender = false;
 }
 onRender();
 
