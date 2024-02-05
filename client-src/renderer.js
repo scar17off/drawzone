@@ -1,4 +1,4 @@
-import { camera } from "./camera.js";
+import { camera, isVisible } from "./camera.js";
 import { chunks, lines, texts } from "./sharedState.js";
 import { mouse } from "./mouse.js";
 import { players } from "./sharedState.js";
@@ -131,7 +131,10 @@ export function renderAllChunks() {
                 // Render unloaded chunk image
                 const startX = x * CHUNK_SIZE * camera.zoom - camera.x;
                 const startY = y * CHUNK_SIZE * camera.zoom - camera.y;
-                ctx.drawImage(unloadedChunkImage, startX, startY, CHUNK_SIZE * camera.zoom, CHUNK_SIZE * camera.zoom);
+
+                if (isVisible(startX, startY, CHUNK_SIZE * camera.zoom, CHUNK_SIZE * camera.zoom)) {
+                    ctx.drawImage(unloadedChunkImage, startX, startY, CHUNK_SIZE * camera.zoom, CHUNK_SIZE * camera.zoom);
+                }
 
                 // Re-enable image smoothing for other rendering operations if necessary
                 ctx.imageSmoothingEnabled = true;
