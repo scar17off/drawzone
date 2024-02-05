@@ -72,9 +72,9 @@ function handleMouseMove(event) {
     if (mouseDown) {
         camera.x -= event.movementX;
         camera.y -= event.movementY;
-    }
 
-    events.emit("loadChunks");
+        events.emit("loadChunks");
+    }
 }
 
 function handleKeyDown(event) {
