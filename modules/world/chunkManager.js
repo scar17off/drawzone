@@ -96,4 +96,4 @@ module.exports = {
     get_pixel,
     set_pixel,
     set_protection
-};
+}

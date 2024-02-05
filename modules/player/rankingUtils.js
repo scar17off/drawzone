@@ -7,8 +7,8 @@ for(const key in ranks) {
     if(ranks.hasOwnProperty(key) && ranks[key].default) {
         defaultRank = key;
         break;
-    };
-};
+    }
+}
 
 function getRankByID(rankId) {
     for(const key in ranks) {

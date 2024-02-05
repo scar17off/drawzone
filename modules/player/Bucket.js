@@ -5,7 +5,7 @@ class Bucket {
 		this.rate = rate;
         this.time = time;
 		this.infinite = infinite || false;
-	};
+	}
 	update() {
 		this.allowance += (Date.now() - this.lastCheck) / 1000 * (this.rate / this.time);
 		this.lastCheck = Date.now();
@@ -13,7 +13,7 @@ class Bucket {
 		if (this.allowance > this.rate) {
 			this.allowance = this.rate;
 		}
-	};
+	}
 	canSpend(count) {
 		if (this.infinite) {
 			return true;
@@ -28,7 +28,7 @@ class Bucket {
 		this.allowance -= count;
 
 		return true;
-	};
+	}
 	getTimeToRestore() {
 		if (this.allowance >= this.rate) return 0;
         return (this.rate - this.allowance) / (this.rate / this.time);
@@ -37,6 +37,6 @@ class Bucket {
         const restoreTime = this.getTimeToRestore() * 1000;
         await new Promise(resolve => setTimeout(resolve, restoreTime));
 	}
-};
+}
 
 module.exports = Bucket;

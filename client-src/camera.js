@@ -103,8 +103,8 @@ function handleWheel(event) {
         event.preventDefault();
         if (event.deltaY < 0) zoomIn();
         else zoomOut();
-    };
-};
+    }
+}
 
 canvas.addEventListener('wheel', handleWheel);
 canvas.addEventListener('mousedown', handleMouseDown);
