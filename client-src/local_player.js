@@ -62,6 +62,10 @@ const local_player = {
 	set text(value) {
 		this._text = value;
 		document.getElementById("text-input").innerText = this._text;
+	},
+	currentFxRenderer: {
+		type: 0,
+		params: []
 	}
 }
 local_player.selectedColor = local_player.palette[0];

@@ -4,6 +4,7 @@ import { mouse } from "./mouse.js";
 import { players } from "./sharedState.js";
 import local_player from "./local_player.js";
 import events from "./events.js";
+import Fx from "./fx.js";
 
 const unloadedChunkImage = new Image();
 unloadedChunkImage.src = './img/unloaded.png';
@@ -99,11 +100,13 @@ export function renderChunk(chunkData, chunkX, chunkY) {
             ctx.fillStyle = `rgb(${pixel[0]}, ${pixel[1]}, ${pixel[2]})`;
             ctx.fillRect(pixelX, pixelY, camera.zoom, camera.zoom);
 
+            /*
             if (mouse.x > pixelX && mouse.x < pixelX + camera.zoom && mouse.y > pixelY && mouse.y < pixelY + camera.zoom) {
                 ctx.strokeStyle = `rgb(${local_player.selectedColor.join(", ")}, 1.0)`;
                 ctx.lineWidth = 2;
                 ctx.strokeRect(pixelX, pixelY, camera.zoom, camera.zoom);
             }
+            */
         }
     }
 }
@@ -220,6 +223,24 @@ function onRender() {
     drawGrid();
     renderAllLines();
     renderAllTexts();
+
+    switch(local_player.currentFxRenderer.type) {
+        case Fx.RECT_SELECT_ALIGNED:
+            const color = local_player.selectedColor;
+            const size = local_player.currentFxRenderer.params[0];
+
+            console.log(local_player.currentFxRenderer.type, size);
+
+            const startX = Math.floor(mouse.tileX / size) * size;
+            const startY = Math.floor(mouse.tileY / size) * size;
+
+            ctx.strokeStyle = `rgb(${color.join(", ")}, 1.0)`;
+            ctx.lineWidth = 2;
+            ctx.strokeRect(startX * camera.zoom - camera.x, startY * camera.zoom - camera.y, size * camera.zoom, size * camera.zoom);
+            break;
+        default:
+            break;
+    }
 
     renderPlayers();
 

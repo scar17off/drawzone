@@ -8,7 +8,7 @@ export var camera = {
     x: 0,
     y: 0,
     zoom: 16,
-    minZoom: 8,
+    minZoom: 4,
     maxZoom: 16,
     zoomStrength: 1,
     editZoom,

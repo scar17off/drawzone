@@ -9,6 +9,7 @@ import tools from "./tools.js";
 import players from "./network/players.js";
 import events from "./events.js";
 import world from "./world.js";
+import Fx from "./fx.js";
 import { GUIWindow } from "./windowSystem.js";
 
 window.DrawZone = {
@@ -31,7 +32,8 @@ window.DrawZone = {
     events,
     players,
     tools,
-    GUIWindow
+    GUIWindow,
+    Fx
 }
 
 export default DrawZone;
