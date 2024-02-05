@@ -13,11 +13,11 @@ const cursors = {
     write: { pos: [0, 0], hotspot: [] },
     move: { pos: [0, 145], hotspot: [-22, -8, -18] },
     fill: { pos: [0, 74], hotspot: [-18, -8, -18] },
-    zoom: { pos: [135, 0], hotspot: [-5] },
+    zoom: { pos: [135, 0], hotspot: [-2] },
     camera: { pos: [76, 76], hotspot: [0, 0] },
     eraser: { pos: [135, 66], hotspot: [0, 0] },
     protect: { pos: [62, 0], hotspot: [-4, 0] },
-    paste: { pos: [152, 76], hotspot: [0, 0] },
+    paste: { pos: [70, 140], hotspot: [0, -7] },
     copy: { pos: [152, 152], hotspot: [0, 0] }
 }
 
