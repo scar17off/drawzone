@@ -27,7 +27,9 @@ The game's configuration can be found in `config.json`
 # TODO:
 - [x] Pixel art drawing
 - [ ] Line art drawing
+  - [ ] Add feature to request and load lines in chunks
 - [ ] ASCII art drawing
+  - [ ] Add feature to request and load texts in chunks
 - [x] Chat
 - [x] Chat commands
 - [ ] Tools
@@ -37,6 +39,7 @@ The game's configuration can be found in `config.json`
   - [ ] Protect
 - [ ] Optimize chunk loading and rendering code
   - Rewrite `chunks` to Set
+  - requestAnimationFrame when canvas needs to update
 - [x] Design
 - [x] Window system
 - [ ] Protection
@@ -53,6 +56,8 @@ The game's configuration can be found in `config.json`
 - [ ] Enhance Chat System
   - Implement moderation features and possibly private messaging.
 - [ ] Add Customizable World Templates
+  - [x] PixelQuota
+  - [ ] RGB
 - [ ] Improve the chat interface for better readability and user interaction.
 - [ ] Add more comprehensive error handling and logging throughout the server and client code.
 - [ ] Ensure all user-generated content is sanitized to prevent XSS and other security vulnerabilities.
