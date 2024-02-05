@@ -12,7 +12,7 @@ for(const key in ranks) {
 
 function getRankByID(rankId) {
     for(const key in ranks) {
-        if(ranks.hasOwnProperty(key) && ranks[key].id === rankId) {
+        if(ranks.hasOwnProperty(key) && ranks[key].id === parseInt(rankId)) {
             return ranks[key];
         }
     }

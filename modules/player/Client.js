@@ -50,14 +50,13 @@ class Client {
     setRank(id) {
         const rankData = getRankByID(id);
 
-        this.rank = id;
+        this.rank = rankData.id;
         this.pixelQuota = new Bucket(rankData.pixelQuota[0], rankData.pixelQuota[1]);
 
         this.ws.emit("newRank", id);
         this.ws.emit("newPixelQuota", rankData.pixelQuota[0], rankData.pixelQuota[1]);
 
-        const greeting = rankData.greetingMessage;
-        if(typeof greeting !== "undefined" && greeting !== '') this.send(greeting);
+        if(rankData.greetingMessage) this.send(rankData.greetingMessage);
     }
     kick() {
         this.ws.disconnect();

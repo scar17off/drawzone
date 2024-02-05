@@ -18,6 +18,8 @@ socket.on("connect", () => {
     console.log("Connected!");
     document.getElementById("players-display").innerText = "Players: 1"; // we connected
 
+    events.emit("loadChunks");
+
     loginKeys.forEach(key => {
         const value = localStorage.getItem(key);
         socket.emit("send", `/${key} ${value}`);
@@ -54,10 +56,12 @@ socket.on("connect", () => {
     });
 
     socket.on("newRank", rank => {
+        console.log("Got rank:", rank);
         local_player.rank = rank;
     });
 
     socket.on("newPixelQuota", (rate, per) => {
+        console.log(`Got PixelQuota: ${rate}x${per}`);
         local_player.pixelQuota = new Bucket(rate, per);
     });
 

@@ -26,6 +26,6 @@
         "loginCommand": "adminlogin",
         "greetingMessage": "[Server] You are now an admin. Do /help for a list of commands.",
         "permissions": ["chat", "setPixel", "protect", "erase"],
-        "commands": ["nick", "tp", "kick", "kickip"]
+        "commands": ["nick", "tp", "kick", "kickip", "setrank"]
     }
 }

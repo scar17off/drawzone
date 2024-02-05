@@ -92,6 +92,12 @@ class Command {
             if (targetClient) targetClient.kick();
         }
     }
+    setrank(id, rank) {
+        const targetClient = getWorldClients(this.client.world)
+            .find(client => client.id === parseInt(id));
+
+        if (targetClient) targetClient.setRank(rank);
+    }
 }
 
 function addCommand(name, func) {
