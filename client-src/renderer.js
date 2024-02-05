@@ -229,8 +229,6 @@ function onRender() {
             const color = local_player.selectedColor;
             const size = local_player.currentFxRenderer.params[0];
 
-            console.log(local_player.currentFxRenderer.type, size);
-
             const startX = Math.floor(mouse.tileX / size) * size;
             const startY = Math.floor(mouse.tileY / size) * size;
 
