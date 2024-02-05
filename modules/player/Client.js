@@ -16,7 +16,7 @@ class Client {
         this.id = null;
         this.x = 0;
         this.y = 0;
-        this.pixelQuota = null;
+        this.pixelQuota = new Bucket(0, 0);
 
         const world = getWorldByName(this.world);
         
@@ -27,11 +27,15 @@ class Client {
             world.clients.push(this);
             
             this.setId(world.clients.length);
-            this.setRank(ranks[defaultRank].id);
-            
+            const worldPixelQuota = world.pixelQuota;
             const rankData = getRankByID(this.rank);
-            this.pixelQuota = new Bucket(rankData.pixelQuota[0], rankData.pixelQuota[1]);
+            if (worldPixelQuota[0] >= (rankData.pixelQuota ? rankData.pixelQuota[0] : 0) && worldPixelQuota[1] <= (rankData.pixelQuota ? rankData.pixelQuota[1] : 0)) {
+                this.pixelQuota = new Bucket(worldPixelQuota[0], worldPixelQuota[1]);
+            } else {
+                this.pixelQuota = new Bucket(rankData.pixelQuota ? rankData.pixelQuota[0] : 0, rankData.pixelQuota ? rankData.pixelQuota[1] : 0);
+            }
 
+            this.setRank(ranks[defaultRank].id);
             this.send(`[Server] Joined world: "${this.world}", your ID is: ${this.id}!`);
             this.send(server.config.welcomeMessage);
         }
