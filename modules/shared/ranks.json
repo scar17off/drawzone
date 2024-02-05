@@ -16,7 +16,7 @@
         "pixelQuota": [250, 1],
         "loginCommand": "modlogin",
         "greetingMessage": "[Server] You are now a moderator. Do /help for a list of commands.",
-        "permissions": ["chat", "setPixel", "protect", "erase"],
+        "permissions": ["chat", "setPixel", "protect", "erase", "playerList"],
         "commands": ["nick", "tp"]
     },
     "Admin": {
@@ -25,7 +25,7 @@
         "pixelQuota": [1, 0],
         "loginCommand": "adminlogin",
         "greetingMessage": "[Server] You are now an admin. Do /help for a list of commands.",
-        "permissions": ["chat", "setPixel", "protect", "erase"],
+        "permissions": ["chat", "setPixel", "protect", "erase", "playerList"],
         "commands": ["nick", "tp", "kick", "kickip", "setrank"]
     }
 }

@@ -25,7 +25,7 @@ socket.on("connect", () => {
         socket.emit("send", `/${key} ${value}`);
     });
     
-    socket.on("chunkLoaded", (chunkDatas) => {
+    socket.on("chunkLoaded", chunkDatas => {
         for(let key in chunkDatas) {
             const [x, y] = key.split(',').map(Number);
             addChunk(chunkDatas[key], x, y);
@@ -58,6 +58,7 @@ socket.on("connect", () => {
     socket.on("newRank", rank => {
         console.log("Got rank:", rank);
         local_player.rank = rank;
+        events.emit("newRank", rank);
     });
 
     socket.on("newPixelQuota", (rate, per) => {

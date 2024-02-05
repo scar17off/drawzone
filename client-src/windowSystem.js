@@ -1,4 +1,8 @@
-export const windows = {};
+import events from "./events.js";
+import { players } from "./sharedState.js";
+import ranks from "./shared/ranks.json";
+
+const windows = {};
 
 function addDragAbility(windowInstance) {
     let pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
@@ -35,7 +39,7 @@ function addDragAbility(windowInstance) {
     windowInstance.titleBar.onmousedown = dragMouseDown;
 }
 
-export class GUIWindow {
+class GUIWindow {
     constructor(title, options, contentCallback) {
         this.title = title;
         this.options = options;
@@ -106,7 +110,76 @@ export class GUIWindow {
     }
 }
 
+const getRankByID = (rankId) => Object.values(ranks).find(rank => rank.id === parseInt(rankId));
+
+events.on("newRank", (id) => {
+    if (getRankByID(id).permissions.includes("playerList")) {
+        const playerListWindow = new GUIWindow('Player List', {}, (win) => {
+            const table = document.createElement('table');
+            const thead = document.createElement('thead');
+            const tbody = document.createElement('tbody');
+            const headerRow = document.createElement('tr');
+
+            // define table headers
+            ['ID', 'X', 'Y', 'Tool', 'Color'].forEach(headerText => {
+                const header = document.createElement('th');
+                header.textContent = headerText;
+                headerRow.appendChild(header);
+            });
+
+            thead.appendChild(headerRow);
+            table.appendChild(thead);
+            table.appendChild(tbody);
+            win.addObj(table);
+
+            function populateTable() {
+                tbody.innerHTML = '';
+                Object.entries(players).forEach(([id, player]) => {
+                    const row = document.createElement('tr');
+                    const idCell = document.createElement('td');
+                    const xCell = document.createElement('td');
+                    const yCell = document.createElement('td');
+                    const toolCell = document.createElement('td');
+                    const colorCell = document.createElement('td');
+
+                    idCell.textContent = id;
+                    xCell.textContent = Math.floor(player.x);
+                    yCell.textContent = Math.floor(player.y);
+                    toolCell.textContent = player.tool;
+                    colorCell.textContent = `rgb(${player.color.join(',')})`;
+
+                    row.appendChild(idCell);
+                    row.appendChild(xCell);
+                    row.appendChild(yCell);
+                    row.appendChild(toolCell);
+                    row.appendChild(colorCell);
+
+                    tbody.appendChild(row);
+                });
+            }
+
+            populateTable();
+
+            win.updatePlayerList = populateTable; // for later usage
+        });
+        playerListWindow.move(100, 100);
+
+        events.on("playerMoved", playerListWindow.updatePlayerList);
+        events.on("playerJoined", playerListWindow.updatePlayerList);
+        events.on("playerLeft", playerListWindow.updatePlayerList);
+    } else {
+        const playerListWindow = windows["Player List"];
+
+        if (playerListWindow) {
+            events.off("playerMoved", playerListWindow.updatePlayerList);
+            events.off("playerJoined", playerListWindow.updatePlayerList);
+            events.off("playerLeft", playerListWindow.updatePlayerList);
+        }
+    }
+});
+
 /*
+
 Example usage:
 
 new GUIWindow('My Window Title', {}, (windowInstance) => {
@@ -116,3 +189,8 @@ new GUIWindow('My Window Title', {}, (windowInstance) => {
     windowInstance.addObj(content);
 }).move(200, 200);
 */
+
+export default {
+    windows,
+    GUIWindow
+}

@@ -10,13 +10,7 @@ for(const key in ranks) {
     }
 }
 
-function getRankByID(rankId) {
-    for(const key in ranks) {
-        if(ranks.hasOwnProperty(key) && ranks[key].id === parseInt(rankId)) {
-            return ranks[key];
-        }
-    }
-}
+const getRankByID = (rankId) => Object.values(ranks).find(rank => rank.id === parseInt(rankId));
 
 module.exports = {
     defaultRank,

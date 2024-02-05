@@ -8,9 +8,10 @@ import local_player from "./local_player.js";
 import tools from "./tools.js";
 import players from "./network/players.js";
 import events from "./events.js";
+import windowSystem from "./windowSystem.js";
 import world from "./world.js";
 import Fx from "./fx.js";
-import { GUIWindow } from "./windowSystem.js";
+import ranks from "./shared/ranks.json";
 
 window.DrawZone = {
     chunks: {},
@@ -35,7 +36,8 @@ window.DrawZone = {
     events,
     players,
     tools,
-    GUIWindow
+    windowSystem,
+    ranks
 }
 
 export default DrawZone;
