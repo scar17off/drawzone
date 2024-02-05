@@ -133,7 +133,7 @@ export function unloadInvisibleChunks() {
 }
 
 events.on("loadChunks", () => {
-    // unloadInvisibleChunks();
+    unloadInvisibleChunks();
     loadVisibleChunks();
 });
 

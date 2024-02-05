@@ -54,7 +54,6 @@ class Tool {
 
         if (typeof this.fxRenderer?.type == "number") {
             local_player.currentFxRenderer = this.fxRenderer;
-            console.log("set fx");
         }
     }
     deactivate() {

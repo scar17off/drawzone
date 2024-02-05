@@ -1,4 +1,4 @@
-import { camera, isVisible } from "./camera.js";
+import { camera } from "./camera.js";
 import { chunks, lines, texts } from "./sharedState.js";
 import { mouse } from "./mouse.js";
 import { players } from "./sharedState.js";
@@ -131,10 +131,7 @@ export function renderAllChunks() {
                 // Render unloaded chunk image
                 const startX = x * CHUNK_SIZE * camera.zoom - camera.x;
                 const startY = y * CHUNK_SIZE * camera.zoom - camera.y;
-
-                if (isVisible(startX, startY, CHUNK_SIZE * camera.zoom, CHUNK_SIZE * camera.zoom)) {
-                    ctx.drawImage(unloadedChunkImage, startX, startY, CHUNK_SIZE * camera.zoom, CHUNK_SIZE * camera.zoom);
-                }
+                ctx.drawImage(unloadedChunkImage, startX, startY, CHUNK_SIZE * camera.zoom, CHUNK_SIZE * camera.zoom);
 
                 // Re-enable image smoothing for other rendering operations if necessary
                 ctx.imageSmoothingEnabled = true;
@@ -207,17 +204,17 @@ canvas.addEventListener('mousedown', event => {
             lines.push([prevPos, currPos]);
         }, 1000 / 10);
     }
-})
+});
 
 canvas.addEventListener('mouseup', () => {
     clearInterval(intervalId);
     mouse.prevLineX = mouse.lineX;
     mouse.prevLineY = mouse.lineY;
-})
+});
 
 events.on("addText", (text, x, y) => {
     texts[`${x},${y}`] = text;
-})
+});
 
 function onRender() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);

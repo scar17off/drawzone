@@ -31,6 +31,12 @@ The game's configuration can be found in `config.json`
 - [x] Chat
 - [x] Chat commands
 - [ ] Tools
+  - [ ] Paste
+  - [ ] Copy
+  - [ ] Screenshot
+  - [ ] Protect
+- [ ] Optimize chunk loading and rendering code
+  - Rewrite `chunks` to Set
 - [x] Design
 - [x] Window system
 - [ ] Protection
