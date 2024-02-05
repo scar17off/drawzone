@@ -3,6 +3,9 @@ import socket from "./network/network.js";
 import { chunks } from "./sharedState.js";
 
 export default {
+    move: (x, y) => {
+        socket.emit("move", x, y);
+    },
     setPixel: (x, y, color) => {
         if (!local_player.pixelQuota.canSpend(1)) return;
 
@@ -50,5 +53,14 @@ export default {
     },
     setChunk: (color, chunkX, chunkY) => {
         socket.emit("setChunk", color, chunkX, chunkY);
+    },
+    setChunkData: (chunkX, chunkY, chunkData) => {
+        const chunkKey = `${chunkX},${chunkY}`;
+
+        socket.emit("setChunkData", chunkX, chunkY, chunkData);
+
+        if (chunks.hasOwnProperty(chunkKey)) {
+            chunks[chunkKey] = chunkData;
+        }
     }
 }

@@ -5,6 +5,7 @@ import { mouse } from "../mouse.js";
 import events from "../events.js";
 import local_player from "../local_player.js";
 import Bucket from "../../modules/player/Bucket.js";
+import world from "../world.js";
 
 var loadQueue = [];
 
@@ -74,9 +75,7 @@ events.on("addLine", (from, to) => {
 });
 
 canvas.addEventListener('mousemove', () => {
-    const pos = { x: mouse.tileX, y: mouse.tileY };
-
-    socket.emit("move", pos.x, pos.y);
+    world.move(mouse.tileX, mouse.tileY);
 });
 
 setInterval(() => {
