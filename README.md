@@ -58,6 +58,7 @@ The game's configuration can be found in `config.json`
 - [ ] Add Customizable World Templates
   - [x] PixelQuota
   - [ ] RGB
+  - [ ] World password
 - [ ] Improve the chat interface for better readability and user interaction.
 - [ ] Add more comprehensive error handling and logging throughout the server and client code.
 - [ ] Ensure all user-generated content is sanitized to prevent XSS and other security vulnerabilities.
