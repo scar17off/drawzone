@@ -265,7 +265,12 @@ events.on("newRank", (newRank) => {
                             const chunkData = getImageChunkData(imageData);
 
                             Object.entries(chunkData).forEach(([chunkKey, chunk]) => {
-                                const [chunkX, chunkY] = chunkKey.split(',').map(Number);
+                                const [chunkOffsetX, chunkOffsetY] = chunkKey.split(',').map(Number);
+                                const baseChunkX = Math.floor(mouse.tileX / 16);
+                                const baseChunkY = Math.floor(mouse.tileY / 16);
+                                const chunkX = baseChunkX + chunkOffsetX;
+                                const chunkY = baseChunkY + chunkOffsetY;
+                                
                                 world.setChunkData(chunkX, chunkY, chunk);
                             });
                         }
