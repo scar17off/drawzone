@@ -4,6 +4,7 @@ import { camera } from "./camera.js";
 import world from "./world.js";
 import Fx from "./fx.js";
 import ranks from "./shared/ranks.json";
+import events from "./events.js";
 
 // this is shit
 const cursors = {
@@ -36,7 +37,7 @@ class Tool {
         this.name = name;
         this.elementName = name.toLowerCase();
         this.cursor = cursor.base64;
-        this.minRank = minRank;
+        this.minRank = minRank.id;
         this.fxRenderer = { type: fxRenderer[0], params: fxRenderer.slice(1) };
         this.eventListeners = [];
         this.onInit = onInit;
@@ -69,7 +70,6 @@ class Tool {
         const toolButton = document.getElementById(`tool-${this.elementName}`);
         if (toolButton) toolButton.style.display = '';
     }
-    
     hide() {
         const toolButton = document.getElementById(`tool-${this.elementName}`);
         if (toolButton) toolButton.style.display = 'none';
@@ -114,6 +114,16 @@ function addTool(tool) {
 
     if (Object.keys(tools).length === 1) document.getElementById("tool-" + tool.elementName).click();
 }
+
+events.on("newRank", (newRank) => {
+    Object.values(tools).forEach(tool => {
+        if (newRank >= tool.minRank) {
+            tool.show();
+        } else {
+            tool.hide();
+        }
+    });
+});
 
 {
     addTool(new Tool("Cursor", cursors.cursor, [Fx.RECT_SELECT_ALIGNED, 1], ranks.User, function (tool) {
