@@ -106,6 +106,8 @@ function addTool(tool) {
         tool.activate();
         removeSelectedClass();
         document.getElementById("tool-" + tool.elementName).classList.add("selected-tool");
+
+        events.emit("setTool", local_player.tool);
     });
 
     tools[tool.elementName] = tool;

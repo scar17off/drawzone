@@ -79,6 +79,10 @@ events.on("addLine", (from, to) => {
     socket.emit("setLine", from, to);
 });
 
+events.on("setTool", toolID => {
+    socket.emit("setTool", toolID);
+});
+
 canvas.addEventListener('mousemove', () => {
     world.move(mouse.tileX, mouse.tileY);
 });

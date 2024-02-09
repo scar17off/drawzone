@@ -114,6 +114,12 @@ io.on("connection", socket => {
         socket.broadcast.emit("playerMoved", client.id, x, y);
     });
 
+    socket.on("setTool", toolID => {
+        client.tool = toolID;
+
+        socket.broadcast.emit("playerUpdate", client.id, client.tool, client.color);
+    });
+
     socket.on("loadChunk", (loadQueue) => {
         const chunkDatas = {};
         
