@@ -1,5 +1,6 @@
 import local_player from "./local_player.js";
 import socket from "./network/network.js";
+import { CHUNK_SIZE } from "./renderer.js";
 import { chunks } from "./sharedState.js";
 
 export default {
@@ -53,12 +54,17 @@ export default {
     },
     setChunk: (color, chunkX, chunkY) => {
         socket.emit("setChunk", color, chunkX, chunkY);
+
+        const chunkKey = `${chunkX},${chunkY}`;
+        if (chunks.hasOwnProperty(chunkKey)) {
+            const chunkData = Array.from({ length: CHUNK_SIZE }, () => Array.from({ length: CHUNK_SIZE }, () => color));
+            chunks[chunkKey] = chunkData;
+        }
     },
     setChunkData: (chunkX, chunkY, chunkData) => {
-        const chunkKey = `${chunkX},${chunkY}`;
-
         socket.emit("setChunkData", chunkX, chunkY, chunkData);
 
+        const chunkKey = `${chunkX},${chunkY}`;
         if (chunks.hasOwnProperty(chunkKey)) {
             chunks[chunkKey] = chunkData;
         }

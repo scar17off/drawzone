@@ -34,7 +34,7 @@ function initChunk(worldName, chunkX, chunkY) {
     return chunkData;
 }
 
-function setChunkData(worldName, chunkX, chunkY, chunkData) {
+function set_chunkdata(worldName, chunkX, chunkY, chunkData) {
     const chunkPath = getChunkFilePath(worldName, chunkX, chunkY);
     fs.writeFileSync(chunkPath, JSON.stringify(chunkData));
 }
@@ -54,7 +54,7 @@ function set_protection(worldName, chunkX, chunkY, value) {
 
 function set_rgb(worldName, chunkX, chunkY, rgb) {
     const newChunkData = Array.from({ length: CHUNK_SIZE }, () => Array.from({ length: CHUNK_SIZE }, () => rgb));
-    setChunkData(worldName, chunkX, chunkY, newChunkData);
+    set_chunkdata(worldName, chunkX, chunkY, newChunkData);
 
     return newChunkData;
 }
@@ -83,7 +83,7 @@ function set_pixel(worldName, x, y, color) {
     }
 
     chunkData[pixelX][pixelY] = color;
-    setChunkData(worldName, chunkX, chunkY, chunkData);
+    set_chunkdata(worldName, chunkX, chunkY, chunkData);
 }
 
 module.exports = {
@@ -91,7 +91,7 @@ module.exports = {
     ensureWorldDirExists,
     initChunk,
     getChunkData,
-    setChunkData,
+    set_chunkdata,
     set_rgb,
     get_pixel,
     set_pixel,

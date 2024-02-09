@@ -99,7 +99,17 @@ io.on("connection", socket => {
 
         const updates = {};
         updates[`${chunkX},${chunkY}`] = chunkData;
-        socket.emit("chunkLoaded", updates);
+        socket.broadcast.emit("chunkLoaded", updates);
+    });
+
+    socket.on("setChunkData", (chunkX, chunkY, chunkData) => {
+        if(!getRankByID(client.rank).permissions.includes("erase")) return;
+
+        chunkManager.set_chunkdata(client.world, chunkX, chunkY, chunkData);
+
+        const updates = {};
+        updates[`${chunkX},${chunkY}`] = chunkData;
+        socket.broadcast.emit("chunkLoaded", updates);
     });
 
     socket.on("protect", (value, chunkX, chunkY) => {
