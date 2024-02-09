@@ -7,6 +7,14 @@ import events from "./events.js";
 import Fx from "./fx.js";
 import { getCursorByName, toolIDs } from "./tools.js";
 
+export const options = {
+    grid: true,
+    text: true,
+    lines: true,
+    pixels: true,
+    needsUpdate: false
+}
+
 const unloadedChunkImage = new Image();
 unloadedChunkImage.src = './img/unloaded.png';
 
@@ -126,15 +134,13 @@ export function renderAllChunks() {
                 const chunkData = chunks[chunkKey];
                 renderChunk(chunkData, x, y);
             } else {
-                // Disable image smoothing to prevent blur
+                // prevent blur
                 ctx.imageSmoothingEnabled = false;
 
-                // Render unloaded chunk image
                 const startX = x * CHUNK_SIZE * camera.zoom - camera.x;
                 const startY = y * CHUNK_SIZE * camera.zoom - camera.y;
                 ctx.drawImage(unloadedChunkImage, startX, startY, CHUNK_SIZE * camera.zoom, CHUNK_SIZE * camera.zoom);
 
-                // Re-enable image smoothing for other rendering operations if necessary
                 ctx.imageSmoothingEnabled = true;
             }
         }
@@ -178,6 +184,7 @@ function renderPlayers() {
             } else {
                 toolSize = Math.min(72, 72 / (camera.zoom / 8));
             }
+            
             ctx.drawImage(img, playerX, playerY, toolSize, toolSize);
         } else {
             console.error(`No base64 data found for tool ${toolName}`);
@@ -241,14 +248,23 @@ events.on("addText", (text, x, y) => {
     texts[`${x},${y}`] = text;
 });
 
+export function requestRender() {
+    options.needsUpdate = true;
+    onRender();
+}
+
 function onRender() {
+    // if (!options.needsUpdate) return;
+    // options.needsUpdate = false;
+
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-    renderAllChunks();
-    drawGrid();
-    renderAllLines();
-    renderAllTexts();
+    if(options.pixels) renderAllChunks();
+    if(options.grid) drawGrid();
+    if(options.lines) renderAllLines();
+    if(options.text) renderAllTexts();
 
+    // player fx
     switch(local_player.currentFxRenderer.type) {
         case Fx.RECT_SELECT_ALIGNED:
             const color = local_player.selectedColor;
@@ -273,8 +289,8 @@ onRender();
 
 export default {
     chunks,
-    CHUNK_SIZE,
     renderText,
     renderChunk,
-    renderAllChunks
+    renderAllChunks,
+    options
 }
