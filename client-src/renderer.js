@@ -149,27 +149,24 @@ function renderPlayers() {
         const toolName = Object.keys(toolIDs).find(key => toolIDs[key] === player.tool);
         const toolData = getCursorByName(toolName);
         
-        // Calculate text width for dynamic id container size
         ctx.font = '12px Arial';
         const textWidth = ctx.measureText(id).width;
-        const padding = 4; // Padding around text
+        const padding = 4; // padding around text
         const idContainerWidth = textWidth + padding * 2;
-        const idContainerHeight = parseInt(ctx.font, 10) + padding * 2; // Height based on font size
+        const idContainerHeight = parseInt(ctx.font, 10) + padding * 2; // height based on font size
 
-        // Draw id container below the player tool
         ctx.strokeStyle = `rgb(${player.color.join(", ")})`;
         ctx.lineWidth = 1;
-        ctx.setLineDash([5, 3]); // Dotted line pattern
-        const idContainerY = playerY + (72 / (camera.zoom / 8)) + 5; // Position below player tool
+        ctx.setLineDash([5, 3]); // dotted line pattern
+        const idContainerY = playerY + (72 / (camera.zoom / 8)) + 5; // below player tool
         ctx.strokeRect(playerX, idContainerY, idContainerWidth, idContainerHeight);
 
-        // Draw id text inside container
         ctx.fillStyle = 'black';
-        // Adjust text position to be centered within the container
+        // centered within the container
         const textX = playerX + padding;
         const textY = idContainerY + padding + (idContainerHeight / 2);
-        ctx.fillText(id, textX, textY); // Adjust position to center text inside container
-        ctx.setLineDash([]); // Reset line dash to solid
+        ctx.fillText(id, textX, textY);
+        ctx.setLineDash([]);
 
         if (toolData && toolData.base64) {
             const img = new Image(72, 72);
