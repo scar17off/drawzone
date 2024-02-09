@@ -270,7 +270,7 @@ events.on("newRank", (newRank) => {
                                 const baseChunkY = Math.floor(mouse.tileY / 16);
                                 const chunkX = baseChunkX + chunkOffsetX;
                                 const chunkY = baseChunkY + chunkOffsetY;
-                                
+
                                 world.setChunkData(chunkX, chunkY, chunk);
                             });
                         }

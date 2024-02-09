@@ -5,6 +5,7 @@ import { players } from "./sharedState.js";
 import local_player from "./local_player.js";
 import events from "./events.js";
 import Fx from "./fx.js";
+import { getCursorByName, toolIDs } from "./tools.js";
 
 const unloadedChunkImage = new Image();
 unloadedChunkImage.src = './img/unloaded.png';
@@ -140,18 +141,23 @@ export function renderAllChunks() {
     }
 }
 
-// Add this function to the renderer.js file
 function renderPlayers() {
     Object.entries(players).forEach(([id, player]) => {
-        // TODO: make it draw tool instead of circle;
-        // make it draw a container with player id
-        const playerX = player.x * camera.zoom - camera.x;
+        const playerX = player.x * camera.zoom - camera.x
         const playerY = player.y * camera.zoom - camera.y;
 
-        ctx.fillStyle = `rgb(${player.color.join(',')})`;
-        ctx.beginPath();
-        ctx.arc(playerX, playerY, 10, 0, Math.PI * 2);
-        ctx.fill();
+        const toolName = Object.keys(toolIDs).find(key => toolIDs[key] === player.tool);
+        const toolData = getCursorByName(toolName);
+        
+        if (toolData && toolData.base64) {
+            const img = new Image(72, 72);
+            img.src = toolData.base64;
+
+            const toolSize = 72 / (camera.zoom / 8);
+            ctx.drawImage(img, playerX, playerY, toolSize, toolSize);
+        } else {
+            console.error(`No base64 data found for tool ${toolName}`);
+        }
 
         ctx.font = '12px Arial';
         ctx.fillStyle = 'black';
