@@ -65,6 +65,15 @@ class Tool {
             canvas.removeEventListener(event, callback);
         });
     }
+    show() {
+        const toolButton = document.getElementById(`tool-${this.elementName}`);
+        if (toolButton) toolButton.style.display = '';
+    }
+    
+    hide() {
+        const toolButton = document.getElementById(`tool-${this.elementName}`);
+        if (toolButton) toolButton.style.display = 'none';
+    }
 }
 
 function removeSelectedClass() {
