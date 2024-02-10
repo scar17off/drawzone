@@ -129,12 +129,15 @@ events.on("newRank", (newRank) => {
 
 {
     addTool(new Tool("Cursor", cursors.cursor, [Fx.RECT_SELECT_ALIGNED, 1], ranks.User, function (tool) {
-        tool.setEvent('mousemove', event => {
+        function mouseDown(event) {
             if (event.buttons === 1 || event.buttons == 2) {
                 const color = event.buttons === 1 ? local_player.selectedColor : [255, 255, 255];
                 world.setPixel(mouse.tileX, mouse.tileY, color);
             }
-        });
+        }
+        
+        tool.setEvent('mousemove', mouseDown);
+        tool.setEvent('mousedown', mouseDown);
     }));
 
     addTool(new Tool("Pencil", cursors.pencil, [Fx.NONE], ranks.User, function (tool) {

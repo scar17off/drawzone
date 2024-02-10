@@ -13,7 +13,7 @@
     "Moderator": {
         "id": 2,
         "default": false,
-        "pixelQuota": [250, 1],
+        "pixelQuota": [160, 1],
         "loginCommand": "modlogin",
         "greetingMessage": "[Server] You are now a moderator. Do /help for a list of commands.",
         "permissions": ["chat", "setPixel", "protect", "erase", "playerList"],

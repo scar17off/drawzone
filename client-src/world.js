@@ -8,8 +8,6 @@ export default {
         socket.emit("move", x, y);
     },
     setPixel: (x, y, color) => {
-        if (!local_player.pixelQuota.canSpend(1)) return;
-
         const chunkX = Math.floor(x / 16);
         const chunkY = Math.floor(y / 16);
         let pixelX = Math.floor(x % 16);
@@ -18,9 +16,16 @@ export default {
         if (pixelX < 0) pixelX += 16;
         if (pixelY < 0) pixelY += 16;
 
+        const chunkKey = `${chunkX},${chunkY}`;
+        const existingColor = chunks[chunkKey] ? chunks[chunkKey][pixelX][pixelY] : null;
+
+        if (existingColor && existingColor.every((val, index) => val === color[index])) return;
+
+        if (!local_player.pixelQuota.canSpend(1)) return;
+
         socket.emit("setPixel", x, y, color);
 
-        if (chunks[`${chunkX},${chunkY}`]) chunks[`${chunkX},${chunkY}`][pixelX][pixelY] = color;
+        if (chunks[chunkKey]) chunks[chunkKey][pixelX][pixelY] = color;
     },
     getPixel: async (x, y) => {
         const chunkX = Math.floor(x / 16);

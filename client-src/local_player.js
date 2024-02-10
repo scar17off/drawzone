@@ -52,7 +52,7 @@ const local_player = {
 	],
     nickname: localStorage.nickname || null,
     rank: 0,
-    pixelQuota: new Bucket(100, 2),
+    pixelQuota: new Bucket(0, 0),
     tool: 0,
 	id: null,
 	_text: '',

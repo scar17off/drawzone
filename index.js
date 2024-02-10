@@ -75,6 +75,10 @@ io.on("connection", socket => {
         
         client.color = color;
 
+        const chunkX = Math.floor(x / 16);
+        const chunkY = Math.floor(y / 16);
+
+        if(!getRankByID(client.rank).permissions.includes("protect") && chunkManager.get_protection(client.world, chunkX, chunkY) === true) return;
         if(config.saving.savePixels) chunkManager.set_pixel(client.world, x, y, color);
 
         socket.broadcast.emit("newPixel", x, y, color);
@@ -114,7 +118,7 @@ io.on("connection", socket => {
 
     socket.on("protect", (value, chunkX, chunkY) => {
         if(!getRankByID(client.rank).permissions.includes("protect")) return;
-        chunkManager.set_protection(value, chunkX, chunkY);
+        chunkManager.set_protection(client.world, chunkX, chunkY, value);
     });
 
     socket.on("move", (x, y) => {
@@ -136,7 +140,7 @@ io.on("connection", socket => {
         for(let i in loadQueue) {
             const [x, y] = loadQueue[i];
 
-            chunkDatas[`${x},${y}`] = chunkManager.getChunkData(client.world, x, y);
+            chunkDatas[`${x},${y}`] = chunkManager.get_chunkdata(client.world, x, y);
         }
 
         socket.emit("chunkLoaded", chunkDatas);
