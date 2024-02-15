@@ -3,37 +3,36 @@ import { players } from "./sharedState.js";
 import ranks from "./shared/ranks.json";
 
 const windows = {};
+let isDraggingWindow = false;
 
 function addDragAbility(windowInstance) {
     let pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
     const dragMouseDown = (e) => {
         e = e || window.event;
         e.preventDefault();
-        // get the mouse cursor position at startup:
+        e.stopPropagation();
+        isDraggingWindow = true;
         pos3 = e.clientX;
         pos4 = e.clientY;
         document.onmouseup = closeDragElement;
-        // call a function whenever the cursor moves:
         document.onmousemove = elementDrag;
     }
 
     const elementDrag = (e) => {
         e = e || window.event;
         e.preventDefault();
-        // calculate the new cursor position:
         pos1 = pos3 - e.clientX;
         pos2 = pos4 - e.clientY;
         pos3 = e.clientX;
         pos4 = e.clientY;
-        // set the element's new position:
         windowInstance.frame.style.top = (windowInstance.frame.offsetTop - pos2) + "px";
         windowInstance.frame.style.left = (windowInstance.frame.offsetLeft - pos1) + "px";
     }
 
     const closeDragElement = () => {
-        // stop moving when mouse button is released:
         document.onmouseup = null;
         document.onmousemove = null;
+        isDraggingWindow = false; // Reset the flag when dragging stops
     }
 
     windowInstance.titleBar.onmousedown = dragMouseDown;

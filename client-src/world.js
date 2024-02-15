@@ -2,12 +2,14 @@ import local_player from "./local_player.js";
 import socket from "./network/network.js";
 import { CHUNK_SIZE } from "./renderer.js";
 import { chunks } from "./sharedState.js";
+import isDraggingWindow from "./windowSystem.js";
 
 export default {
     move: (x, y) => {
         socket.emit("move", x, y);
     },
     setPixel: (x, y, color) => {
+        if(isDraggingWindow) return;
         const chunkX = Math.floor(x / 16);
         const chunkY = Math.floor(y / 16);
         let pixelX = Math.floor(x % 16);
@@ -55,9 +57,11 @@ export default {
         return chunks[chunkKey][pixelX][pixelY];
     },
     setProtection: (value, chunkX, chunkY) => {
+        if(isDraggingWindow) return;
         socket.emit("protect", value, chunkX, chunkY);
     },
     setChunk: (color, chunkX, chunkY) => {
+        if(isDraggingWindow) return;
         socket.emit("setChunk", color, chunkX, chunkY);
 
         const chunkKey = `${chunkX},${chunkY}`;
@@ -67,6 +71,7 @@ export default {
         }
     },
     setChunkData: (chunkX, chunkY, chunkData) => {
+        if(isDraggingWindow) return;
         socket.emit("setChunkData", chunkX, chunkY, chunkData);
 
         const chunkKey = `${chunkX},${chunkY}`;
