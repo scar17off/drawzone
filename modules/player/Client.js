@@ -34,10 +34,11 @@ class Client {
             } else {
                 this.pixelQuota = new Bucket(rankData.pixelQuota ? rankData.pixelQuota[0] : 0, rankData.pixelQuota ? rankData.pixelQuota[1] : 0);
             }
+            
+            this.send(server.config.welcomeMessage);
 
             this.setRank(ranks[defaultRank].id);
             this.send(`[Server] Joined world: "${this.world}", your ID is: ${this.id}!`);
-            this.send(server.config.welcomeMessage);
         }
 
         this.ws.on("disconnect", () => {
