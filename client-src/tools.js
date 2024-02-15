@@ -141,7 +141,43 @@ events.on("newRank", (newRank) => {
     }));
 
     addTool(new Tool("Pencil", cursors.pencil, [Fx.NONE], ranks.User, function (tool) {
+        let intervalId = null;
+        let drawingStarted = false;
 
+        tool.setEvent('mousemove', event => {
+            if (event.buttons === 1) {
+                if (!drawingStarted) {
+                    drawingStarted = true;
+                    mouse.prevLineX = mouse.tileX;
+                    mouse.prevLineY = mouse.tileY;
+                }
+
+                if (intervalId === null) {
+                    intervalId = setInterval(() => {
+                        const prevPos = [mouse.prevLineX, mouse.prevLineY];
+                        const currPos = [mouse.tileX, mouse.tileY];
+                        if (!prevPos[0] || !prevPos[1]) {
+                            mouse.prevLineX = currPos[0];
+                            mouse.prevLineY = currPos[1];
+                        }
+                        mouse.lineX = currPos[0];
+                        mouse.lineY = currPos[1];
+
+                        world.drawLine(prevPos, currPos);
+                        mouse.prevLineX = currPos[0];
+                        mouse.prevLineY = currPos[1];
+                    }, 1000 / 10);
+                }
+            } else if(event.buttons === 0) {
+                if(intervalId !== null) {
+                    clearInterval(intervalId);
+                    intervalId = null;
+                }
+                drawingStarted = false;
+                mouse.prevLineX = null;
+                mouse.prevLineY = null;
+            }
+        });
     }));
 
     addTool(new Tool("Write", cursors.write, [Fx.NONE], ranks.User, function (tool) {

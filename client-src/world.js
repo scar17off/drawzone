@@ -1,7 +1,7 @@
 import local_player from "./local_player.js";
 import socket from "./network/network.js";
 import { CHUNK_SIZE } from "./renderer.js";
-import { chunks } from "./sharedState.js";
+import { chunks, lines } from "./sharedState.js";
 
 export default {
     move: (x, y) => {
@@ -26,6 +26,10 @@ export default {
         socket.emit("setPixel", x, y, color);
 
         if (chunks[chunkKey]) chunks[chunkKey][pixelX][pixelY] = color;
+    },
+    drawLine: (from, to) => {
+        socket.emit("setLine", from, to);
+        lines.push([from, to]);
     },
     getPixel: async (x, y) => {
         const chunkX = Math.floor(x / 16);

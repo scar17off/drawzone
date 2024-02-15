@@ -75,10 +75,6 @@ events.on("addText", (text, x, y) => {
     socket.emit("setText", text, x, y);
 });
 
-events.on("addLine", (from, to) => {
-    socket.emit("setLine", from, to);
-});
-
 events.on("setTool", toolID => {
     socket.emit("setTool", toolID);
 });

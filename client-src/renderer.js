@@ -209,41 +209,6 @@ export function renderAllTexts() {
     }
 }
 
-// line drawing
-let intervalId;
-canvas.addEventListener('mousedown', event => {
-    mouse.prevLineX = mouse.tileX;
-    mouse.prevLineY = mouse.tileY;
-
-    if (event.buttons === 1 && event.ctrlKey) {
-        if (mouse.lineX === null && mouse.lineY === null) {
-            mouse.lineX = mouse.tileX;
-            mouse.lineY = mouse.tileY;
-            mouse.prevLineX = mouse.tileX;
-            mouse.prevLineY = mouse.tileY;
-        }
-
-        intervalId = setInterval(() => {
-            const prevPos = [mouse.prevLineX, mouse.prevLineY];
-            const currPos = [mouse.tileX, mouse.tileY];
-            mouse.prevLineX = currPos[0];
-            mouse.prevLineY = currPos[1];
-            mouse.lineX = currPos[0];
-            mouse.lineY = currPos[1];
-
-            events.emit("addLine", prevPos, currPos);
-
-            lines.push([prevPos, currPos]);
-        }, 1000 / 10);
-    }
-});
-
-canvas.addEventListener('mouseup', () => {
-    clearInterval(intervalId);
-    mouse.prevLineX = mouse.lineX;
-    mouse.prevLineY = mouse.lineY;
-});
-
 events.on("addText", (text, x, y) => {
     texts[`${x},${y}`] = text;
 });
