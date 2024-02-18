@@ -140,7 +140,10 @@ io.on("connection", socket => {
         for(let i in loadQueue) {
             const [x, y] = loadQueue[i];
 
-            chunkDatas[`${x},${y}`] = chunkManager.get_chunkdata(client.world, x, y);
+            chunkDatas[`${x},${y}`] = {
+                data: chunkManager.get_chunkdata(client.world, x, y),
+                protected: chunkManager.get_protection(client.world, x, y)
+            }
         }
 
         socket.emit("chunkLoaded", chunkDatas);

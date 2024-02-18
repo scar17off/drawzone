@@ -38,14 +38,20 @@ function set_chunkdata(worldName, chunkX, chunkY, chunkData) {
 }
 
 function get_protection(worldName, chunkX, chunkY) {
-    
+    const protectionPath = path.join(getWorldDir(worldName), `protection_${chunkX}_${chunkY}.bool`);
+
+    if(fs.existsSync(protectionPath)) {
+        return fs.readFileSync(protectionPath, "utf8") === "true";
+    } else {
+        return false;
+    }
 }
 
 function set_protection(worldName, chunkX, chunkY, value) {
-    
-}
+    const protectionPath = path.join(getWorldDir(worldName), `protection_${chunkX}_${chunkY}.bool`);
 
-set_protection("main", 0, 0, true);
+    fs.writeFileSync(protectionPath, value.toString());
+}
 
 function set_rgb(worldName, chunkX, chunkY, rgb) {
     const newChunkData = Array.from({ length: CHUNK_SIZE }, () => Array.from({ length: CHUNK_SIZE }, () => rgb));

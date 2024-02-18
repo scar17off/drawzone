@@ -79,12 +79,46 @@ export function renderLine(x1, y1, x2, y2) {
 }
 
 export function renderChunkOutline(chunkX, chunkY) {
+    const isCurrentChunkProtected = chunks[`${chunkX},${chunkY}`].protected;
+    const isLeftChunkProtected = chunks.hasOwnProperty(`${chunkX-1},${chunkY}`) ? chunks[`${chunkX-1},${chunkY}`].protected : false;
+    const isRightChunkProtected = chunks.hasOwnProperty(`${chunkX+1},${chunkY}`) ? chunks[`${chunkX+1},${chunkY}`].protected : false;
+    const isTopChunkProtected = chunks.hasOwnProperty(`${chunkX},${chunkY-1}`) ? chunks[`${chunkX},${chunkY-1}`].protected : false;
+    const isBottomChunkProtected = chunks.hasOwnProperty(`${chunkX},${chunkY+1}`) ? chunks[`${chunkX},${chunkY+1}`].protected : false;
+
     const startX = chunkX * CHUNK_SIZE * camera.zoom - camera.x;
     const startY = chunkY * CHUNK_SIZE * camera.zoom - camera.y;
+    const endX = startX + CHUNK_SIZE * camera.zoom;
+    const endY = startY + CHUNK_SIZE * camera.zoom;
 
     ctx.strokeStyle = "black";
     ctx.lineWidth = 1;
-    ctx.strokeRect(startX, startY, CHUNK_SIZE * camera.zoom, CHUNK_SIZE * camera.zoom);
+
+    if(isCurrentChunkProtected) {
+        if(!isLeftChunkProtected) {
+            ctx.beginPath();
+            ctx.moveTo(startX, startY);
+            ctx.lineTo(startX, endY);
+            ctx.stroke();
+        }
+        if(!isRightChunkProtected) {
+            ctx.beginPath();
+            ctx.moveTo(endX, startY);
+            ctx.lineTo(endX, endY);
+            ctx.stroke();
+        }
+        if(!isTopChunkProtected) {
+            ctx.beginPath();
+            ctx.moveTo(startX, startY);
+            ctx.lineTo(endX, startY);
+            ctx.stroke();
+        }
+        if(!isBottomChunkProtected) {
+            ctx.beginPath();
+            ctx.moveTo(startX, endY);
+            ctx.lineTo(endX, endY);
+            ctx.stroke();
+        }
+    }
 }
 
 export function renderText(text, x, y) {
@@ -102,12 +136,16 @@ export function renderChunk(chunkData, chunkX, chunkY) {
 
     for (let x = 0; x < CHUNK_SIZE; x++) {
         for (let y = 0; y < CHUNK_SIZE; y++) {
-            const pixel = chunkData[x][y];
+            const pixel = chunkData.data[x][y];
             const pixelX = startX + x * camera.zoom;
             const pixelY = startY + y * camera.zoom;
 
             ctx.fillStyle = `rgb(${pixel[0]}, ${pixel[1]}, ${pixel[2]})`;
             ctx.fillRect(pixelX, pixelY, camera.zoom, camera.zoom);
+
+            if(chunkData.protected) {
+                renderChunkOutline(chunkX, chunkY);
+            }
 
             /*
             if (mouse.x > pixelX && mouse.x < pixelX + camera.zoom && mouse.y > pixelY && mouse.y < pixelY + camera.zoom) {
@@ -195,6 +233,7 @@ function renderPlayers() {
 function renderAllLines() {
     for (let i = 0; i < lines.length; i++) {
         const [start, end] = lines[i];
+
         renderLine(start[0], start[1], end[0], end[1]);
     }
 }
@@ -204,6 +243,7 @@ export function renderAllTexts() {
         if (texts.hasOwnProperty(key)) {
             const [text, pos] = [texts[key], key];
             const [x, y] = pos.split(',').map(Number);
+            
             renderText(text, x, y);
         }
     }

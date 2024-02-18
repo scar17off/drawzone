@@ -28,7 +28,7 @@ socket.on("connect", () => {
     socket.on("chunkLoaded", chunkDatas => {
         for(let key in chunkDatas) {
             const [x, y] = key.split(',').map(Number);
-            addChunk(chunkDatas[key], x, y);
+            addChunk(chunkDatas[key].data, x, y, chunkDatas[key].protected);
         }
     });
 
@@ -43,7 +43,7 @@ socket.on("connect", () => {
         if (pixelY < 0) pixelY += 16;
 
         if(chunks[`${chunkX},${chunkY}`]) {
-            chunks[`${chunkX},${chunkY}`][pixelX][pixelY] = color;
+            chunks[`${chunkX},${chunkY}`].data[pixelX][pixelY] = color;
         }
     })
 
@@ -90,9 +90,9 @@ setInterval(() => {
     }
 }, 1000 / 5);
 
-function addChunk(chunkData, chunkX, chunkY) {
+function addChunk(chunkData, chunkX, chunkY, isProtected) {
     const key = `${chunkX},${chunkY}`;
-    chunks[key] = chunkData;
+    chunks[key] = { data: chunkData, protected: isProtected };
 }
 
 export function loadVisibleChunks() {
