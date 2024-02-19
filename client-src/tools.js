@@ -1,4 +1,4 @@
-import local_player from "./local_player.js";
+import local_player, { addColor } from "./local_player.js";
 import { mouse } from "./mouse.js";
 import { camera } from "./camera.js";
 import world from "./world.js";
@@ -112,7 +112,7 @@ function addTool(tool) {
 
     document.getElementById("tool-" + tool.elementName).addEventListener("click", () => {
         const currentTool = getToolById(local_player.tool);
-        console.log(tool.id, currentTool.id);
+        // this shit needs to be rewritten, so tools and cursors will be independent
         if (tool.id !== currentTool.id) {
             currentTool.deactivate();
         }
@@ -155,14 +155,28 @@ events.on("newRank", (newRank) => {
     }));
 
     addTool(new Tool("Pipette", cursors.pipette, [Fx.NONE], ranks.User, function (tool) {
-        tool.setEvent('mousedown', async event => {
+        async function mouseDown(event) {
             if (event.buttons === 1) {
                 const color = await world.getPixel(mouse.tileX, mouse.tileY);
 
-                local_player.palette.push(color);
+                const colorExists = local_player.palette.some(existingColor => 
+                    existingColor[0] === color[0] && existingColor[1] === color[1] && existingColor[2] === color[2]
+                );
+
+                if(!colorExists) addColor(color);
                 local_player.selectedColor = color;
+
+                setTimeout(() => {
+                    const colorElement = document.querySelector(`.color-item[data-color='${color.join(",")}']`);
+                    if (colorElement) {
+                        colorElement.click();
+                    }
+                }, 0);
             }
-        });
+        }
+
+        tool.setEvent('mousemove', mouseDown);
+        tool.setEvent('mousedown', mouseDown);
     }));
 
     addTool(new Tool("Pencil", cursors.pencil, [Fx.NONE], ranks.User, function (tool) {

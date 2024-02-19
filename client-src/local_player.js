@@ -100,7 +100,7 @@ function addColorEvent(item) {
 
 document.querySelectorAll('.color-item').forEach(item => addColorEvent(item));
 
-function addColor(color) {
+export function addColor(color) {
     const colorDiv = document.createElement('div');
     colorDiv.className = 'color-item';
     colorDiv.style.backgroundColor = `rgb(${color.join(',')})`;
