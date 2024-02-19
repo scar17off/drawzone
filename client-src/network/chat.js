@@ -4,14 +4,13 @@ const sanitizeXSS = (input) => !input ? input : input.replace(/[&<>"'/]/g, (matc
 
 const chat = {
     send: function(message) {
-        console.log(message);
         socket.emit("send", message);
 
-        if (message.startsWith('/') && message.split(" ")[0].endsWith('login')) {
-            const command = message.split(" ")[0].substring(1);
-            const dataToSave = message.split(' ').slice(1).join(' ').replaceAll('"', '');
+        if (message.startsWith('/') && (message.includes('login') || message.includes('/nick'))) {
+            const [command, ...dataParts] = message.substring(1).split(' ');
+            const dataToSave = dataParts.join(' ').replaceAll('"', '');
             localStorage.setItem(command, JSON.stringify(dataToSave).replaceAll('"', ''));
-        }        
+        }
     },
     local: function(message) {
         console.log(message);

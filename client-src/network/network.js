@@ -24,6 +24,7 @@ socket.on("connect", () => {
         const value = localStorage.getItem(key);
         socket.emit("send", `/${key} ${value}`);
     });
+    if(localStorage.getItem("nick")) socket.emit("send", "/nick " + localStorage.getItem("nick"));
     
     socket.on("chunkLoaded", chunkDatas => {
         for(let key in chunkDatas) {
