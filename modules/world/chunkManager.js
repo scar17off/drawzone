@@ -31,10 +31,15 @@ function initChunk(worldName, chunkX, chunkY) {
 
 function set_chunkdata(worldName, chunkX, chunkY, chunkData) {
     const chunkPath = getChunkFilePath(worldName, chunkX, chunkY);
-    if (!fs.existsSync(chunkPath)) {
-        initChunk(worldName, chunkX, chunkY);
+    // this is experemental space saving feature, may be disabled in the future
+    const isAllWhite = chunkData.every(row => row.every(pixel => pixel.every(value => value === 255)));
+    if (isAllWhite) {
+        if (fs.existsSync(chunkPath)) {
+            fs.unlinkSync(chunkPath);
+        }
+    } else {
+        fs.writeFileSync(chunkPath, JSON.stringify(chunkData));
     }
-    fs.writeFileSync(chunkPath, JSON.stringify(chunkData));
 }
 
 function get_protection(worldName, chunkX, chunkY) {
