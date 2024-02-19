@@ -63,10 +63,10 @@ body {
 }
 #tools-window {
     background-color: #ADA9A9;
-    width: 86px;
+    width: 72px;
     position: absolute;
     left: 0;
-    padding: 7 0 7 0;
+    padding: 7;
     text-align: center;
 }
 button.tool-item {
@@ -77,9 +77,6 @@ button.tool-item {
 }
 button.tool-item:hover {
     background-color: #d6d6d6;
-}
-button.tool-item:not(:first-child) {
-    margin-top: 7px;
 }
 button.tool-item > div {
     width: 72px;
@@ -163,8 +160,4 @@ li.admin {
     position: absolute;
     right: 10px;
     top: 10px;
-}
-.window-container {
-    /* this is probably useless */
-    /* padding: 20px; */
 }
