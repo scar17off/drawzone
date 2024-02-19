@@ -1,5 +1,5 @@
 import { camera, canvas } from "../camera.js";
-import { CHUNK_SIZE } from "../renderer.js";
+import { CHUNK_SIZE, requestRender } from "../renderer.js";
 import { chunks, lines, texts } from "../sharedState.js";
 import { mouse } from "../mouse.js";
 import events from "../events.js";
@@ -30,6 +30,7 @@ socket.on("connect", () => {
             const [x, y] = key.split(',').map(Number);
             addChunk(chunkDatas[key].data, x, y, chunkDatas[key].protected);
         }
+        requestRender();
     });
 
     socket.on("newPixel", (x, y, color) => {
@@ -43,16 +44,18 @@ socket.on("connect", () => {
         if (pixelY < 0) pixelY += 16;
 
         if(chunks[`${chunkX},${chunkY}`]) {
+            requestRender();
             chunks[`${chunkX},${chunkY}`].data[pixelX][pixelY] = color;
         }
-    })
+    });
 
     socket.on("newLine", (from, to) => {
         lines.push([from, to]);
+        requestRender();
     });
-
     socket.on("newText", (text, x, y) => {
         texts[`${x},${y}`] = text;
+        requestRender();
     });
 
     socket.on("newRank", rank => {
@@ -133,6 +136,7 @@ export function unloadInvisibleChunks() {
     Object.keys(chunks).forEach(chunkKey => {
         if (!visibleChunks.has(chunkKey)) {
             delete chunks[chunkKey];
+            requestRender();
         }
     });
 }

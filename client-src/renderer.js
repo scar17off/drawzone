@@ -5,7 +5,7 @@ import { players } from "./sharedState.js";
 import local_player from "./local_player.js";
 import events from "./events.js";
 import Fx from "./fx.js";
-import { getCursorByName, toolIDs } from "./tools.js";
+import { cursors, toolIDs } from "./tools.js";
 
 export const options = {
     grid: true,
@@ -191,7 +191,7 @@ function renderPlayers() {
         const playerY = player.y * camera.zoom - camera.y;
 
         const toolName = Object.keys(toolIDs).find(key => toolIDs[key] === player.tool);
-        const toolData = getCursorByName(toolName);
+        const toolData = cursors[toolName];
         
         ctx.font = '12px Arial';
         const textWidth = ctx.measureText(id).width;
@@ -259,8 +259,8 @@ export function requestRender() {
 }
 
 function onRender() {
-    // if (!options.needsUpdate) return;
-    // options.needsUpdate = false;
+    if (!options.needsUpdate) return;
+    options.needsUpdate = false;
 
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
@@ -288,7 +288,7 @@ function onRender() {
 
     renderPlayers();
 
-    requestAnimationFrame(onRender);
+    // requestAnimationFrame(onRender);
 }
 onRender();
 

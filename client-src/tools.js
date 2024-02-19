@@ -5,10 +5,12 @@ import world from "./world.js";
 import Fx from "./fx.js";
 import ranks from "./shared/ranks.json";
 import events from "./events.js";
+import { requestRender } from "./renderer.js";
 
 // this is shit
-const cursors = {
+export const cursors = {
     cursor: { base64: "data:image/png;base64,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", offset: [-2] },
+    pipette: { base64: "data:image/png;base64,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", offset: [-8] },
     pencil: { base64: "data:image/png;base64,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", offset: [-6] },
     write: { base64: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEgAAABICAYAAABV7bNHAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAHfSURBVHhe7Zs7SgRBFEXHH4IfxC0YiXsRAwUxcQUauRc1EJNBEAzNXIeRRi5BBfGDn3ubejA0M1wcZx5MeQ9cii6qu7pPve6oq2OMMcYY80+ZKm0W0yXD8lVSJaNajNRFzZqMVcOV30S2kOfS10tUV78q4fEScoNcITGuGmZLe4p8/yGXCInrjZ2sCuI8fMB1ZAN5K31kBnlEtpED5BzpIivIJ0J47jxyh9wicb2qUIuxj/ChD5ujwWQtakP7OzBO+PCcjxXTG1YGWSztQmnZ3x7L81MrJ1MQ4YeVr007JD660fYbl/5hzhY0cViQwIIEFiSwIIEFCSxIYEECCxJYkMCCBBYksCCBBQksSGBBAgsSWJDAggQWJLAggQUJLEhgQQILEliQwIIEFiSwIIEFCSxIYEECCxJYkMCCBBYksCCBBQksSGBBgmxB3EbQ7+95Em1sNeDxoLFpZE4YG1Daf8+/I+SltK+lZX97LP+0T92rkTVZyFkr+Sh9hIvE3T57yBFygpwhqwilEJ47hzwg90hcrxpif9cxwgcbNhcIqW6/GKuEr8cOsos8lb5eeC/so4j2phUeLyPXCPeSxfWqYlSLkbWoDamTAa58VMlv4b2yaqqrHGOMMcYYM3F0Oj/n1Gmes0hRGwAAAABJRU5ErkJggg==", offset: [-6] },
     move: { base64: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEgAAABICAYAAABV7bNHAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAUUSURBVHhe7Zs5qCxFGIXHDUEUXCKVJ4KCgYIGCiYmJmr6sqdGijuYiabGIi6BgSuK+gRBI1HB1EQ0cMlURHDHFZfA7b3z9e1z+V+/mjt3uvsvZqbnwKGn63bX8k11T1X9dWdb7a2T2uOq6MT2uFVHJ7RHq3s+abnXcDwkn9qcbXtTowjhcfmI/ExztqNJQyrB+bc9Th5SbPRjMlAiIPy0bE0KUmzsozIwPpWfbT+/KH/Ufn5KtiYBqQTnV/ki+cb2/E75XPn79nwykEpwfpKvJkG6WybtgeZsNrtC/lqeBKR5cK4kodUdMun3NWc7ukzeeEglOD/KhuNxTxeQ0y+VNxZSHBGXes7JrVEXUPzbRkKKcB6RS3DisQQoHiOkJ0lotbbTElf8CZlGxcfKjUaLACF/ju+k50lolQapRhf9U/5FvkF+X6axDAiXEddz3yfydfIP8l+yBbC1U/xWz2uPpS9kPz3I8v2Mk5x/6iOW2YNorCv/jUxZ/zdn/cX95POt7PxTe08mIOTK05ChcCzyIb90OCgbkDV2Q8gvHQ6qBWhttQW0QH0B+R1gr6oG17EPIArzO8BeVUiD67gsIK6nMMQI+aGdj7tpq6YHZRbiEHVMfaXEzD23+ln2ILBvL1pmoLgfuR7nyF/J5BnnbimQYqZxyeIqEqQhhY4NCLk+zN0MKW0VoAQnzsqHFpYBCEVIaUsli+AMbQTKAoScRwqkEpx5SxZDlAkIOZ9RF91q9BwrGxAaFVJNOKgGIDQKpHiRI57ErRyaYSGdgsa0F+fvkinv/uZs/LLY6uOyLpcdd9t3BDeOYxwrJ+JJUK+GbpYp857mLF+M3z6WKTPuBThmPNcd3EGQQeC9zdls9pz8jnym/B8JCaLM3+Xr5Zvk1+TX5TPksdaQuqI38WRcIxPJRUCiF/8jwwVwu3LXcviXNeC4kaCW/y6kZZsv3uXeLqPdnXfuQSbGM8oc6xYZsZHgXTm7B/0hXysflN+Q35RPlzN70G8yPzxu6yvyrTLBgON6EIqPG92NC9hlwQJ5DdV+B50lvydTJnCsyOE4xbc4b3du5m3PWx+t868YdlmXyF/KlHeYhFax/XMVL2KcQCaMGxg/IAoaU86v1jiIX+XPZcp6iYRW+4Jj1YRUA1AJzssktFoKjlULUjagFDhWDUiZgFLhWIsgDS0kC5DrdbGcBscqQWKlbgxIGYBcH3rOZ3IqHKsE6TvZ46Q9xw97aGxArsfZ8hcyeY7ya7VI3jiAbpNfkJkzAWmVBBBEQIF53asyczxE/bNG57sqQe3be1DGI1aqz1I9x+pzk3dXWHz2t7Yqoj7Uy/Xk2Kvn9KIquQJo1eBY1Mv17F3HvoDQqoLpalA9hwCahGoB8uM4lsbOb65qAaKbj1UW+fixSQdVCxAbCeI4qq+4n3wYBCJApULKBOSKswXlQ5nwL43rO77hPu5n+vCB/LCcrho96AL5fPktGUjeFL6MuJ77mHi+LV8oH5BRei/KUqw0+3NoSGmpxMd5I2kf45JFnFutJRwrVn7eepJDLCVAJTjps/Laio0oQfJCeheQ0zcajrUIEuoCQpOAY82D5JBS939WCc1MBo5VgsR6EhsJHPYmPkZQz3GrycCxSpDYZeF/vCOq64hn75XAdVdsrCO4mPi/Py8d8dw0xUZ7L4B3WcRY+SThWKWeNPme05UhnCKzP+e05mwL5xh1pwtrPX3IElCYdmzhbLUxms2OAv7Gq2wMaxf2AAAAAElFTkSuQmCC", offset: [-7] },
@@ -24,7 +26,15 @@ const cursors = {
 export const tools = {};
 
 export const toolIDs = Object.keys(cursors).reduce((acc, toolName, index) => (acc[toolName] = index, acc), {});
-export const getCursorByName = name => ({ name, ...cursors[name] });
+export function getCursorOffsetByBase64(base64) {
+    const cursorEntries = Object.entries(cursors);
+
+    for (const [_, cursorData] of cursorEntries)
+        if (cursorData.base64 === base64)
+            return cursorData.offset;
+    
+    return null;
+}
 export const getToolById = id => {
     const toolName = Object.values(tools)[id].elementName;
     return tools[toolName];
@@ -35,12 +45,13 @@ const canvas = document.getElementById("gameCanvas");
 class Tool {
     constructor(name, cursor, fxRenderer, minRank, onInit) {
         this.name = name;
-        this.elementName = name.toLowerCase();
-        this.cursor = cursor.base64;
+        this.elementName = name.toLowerCase().replaceAll(" ", "-");
+        this.cursor = cursor;
         this.minRank = minRank.id;
         this.fxRenderer = { type: fxRenderer[0], params: fxRenderer.slice(1) };
         this.eventListeners = [];
         this.onInit = onInit;
+        this.id = Object.keys(tools).length;
     }
     setFxRenderer(fx) {
         this.fxRenderer = fx;
@@ -50,6 +61,7 @@ class Tool {
     }
     setEvent(event, callback) {
         const eventListener = { event, callback };
+
         this.eventListeners.push(eventListener);
     }
     activate() {
@@ -85,21 +97,23 @@ function removeSelectedClass() {
 }
 
 function addTool(tool) {
-    const toolData = getCursorByName(tool.elementName);
     tool.addEvents();
 
     const toolButton = document.createElement("button");
     toolButton.id = `tool-${tool.elementName}`;
     toolButton.className = "tool-item";
     const toolImageDiv = document.createElement("div");
-    toolImageDiv.style.backgroundImage = `url("${toolData.base64}")`;
-    toolImageDiv.style.margin = toolData.offset.join("px ") + "px";
+    toolImageDiv.style.backgroundImage = `url("${tool.cursor.base64}")`;
+
+    toolImageDiv.style.margin = tool.cursor.offset.join("px ") + "px";
+
     toolButton.appendChild(toolImageDiv);
     document.getElementById("tools-window").appendChild(toolButton);
 
     document.getElementById("tool-" + tool.elementName).addEventListener("click", () => {
         const currentTool = getToolById(local_player.tool);
-        if (currentTool && tool.name !== currentTool.name) {
+        console.log(tool.id, currentTool.id);
+        if (tool.id !== currentTool.id) {
             currentTool.deactivate();
         }
         local_player.tool = toolIDs[tool.elementName];
@@ -138,6 +152,17 @@ events.on("newRank", (newRank) => {
         
         tool.setEvent('mousemove', mouseDown);
         tool.setEvent('mousedown', mouseDown);
+    }));
+
+    addTool(new Tool("Pipette", cursors.pipette, [Fx.NONE], ranks.User, function (tool) {
+        tool.setEvent('mousedown', async event => {
+            if (event.buttons === 1) {
+                const color = await world.getPixel(mouse.tileX, mouse.tileY);
+
+                local_player.palette.push(color);
+                local_player.selectedColor = color;
+            }
+        });
     }));
 
     addTool(new Tool("Pencil", cursors.pencil, [Fx.NONE], ranks.User, function (tool) {
@@ -181,7 +206,14 @@ events.on("newRank", (newRank) => {
     }));
 
     addTool(new Tool("Write", cursors.write, [Fx.NONE], ranks.User, function (tool) {
-
+        tool.setEvent('keydown', event => {
+            if (event.key === 'Enter' && !['input', 'textarea'].includes(document.activeElement.tagName.toLowerCase())) {
+                events.emit("addText", local_player.text, mouse.tileX, mouse.tileY);
+                local_player.text = '';
+            } else if (event.key === 'Backspace') {
+                local_player.text = local_player.text.slice(0, -1);
+            }
+        });
     }));
 
     addTool(new Tool("Move", cursors.move, [Fx.NONE], ranks.User, function (tool) {

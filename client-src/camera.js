@@ -1,4 +1,5 @@
 import events from "./events.js";
+import { requestRender } from "./renderer.js";
 
 export const canvas = document.getElementById("gameCanvas");
 
@@ -37,6 +38,7 @@ function editZoom(change) {
     }
 
     events.emit("loadChunks");
+    requestRender();
 }
 
 function centerAt(x, y) {
@@ -44,6 +46,7 @@ function centerAt(x, y) {
     camera.y = Math.floor(y * camera.zoom - window.innerHeight / 2);
 
     events.emit("loadChunks");
+    requestRender();
 }
 
 centerAt(0, 0);
@@ -60,8 +63,6 @@ function handleMouseDown(event) {
     if (event.button === 1) {
         mouseDown = true;
     }
-
-    events.emit("loadChunks");
 }
 
 function handleMouseUp() {
@@ -69,11 +70,14 @@ function handleMouseUp() {
 }
 
 function handleMouseMove(event) {
+    requestRender();
+
     if (mouseDown) {
         camera.x -= event.movementX;
         camera.y -= event.movementY;
 
         events.emit("loadChunks");
+        requestRender();
     }
 }
 
@@ -96,6 +100,8 @@ function handleKeyDown(event) {
             events.emit("loadChunks");
             break;
     }
+
+    requestRender();
 }
 
 function handleWheel(event) {
