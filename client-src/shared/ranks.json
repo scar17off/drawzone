@@ -17,7 +17,7 @@
         "loginCommand": "modlogin",
         "greetingMessage": "[Server] You are now a moderator. Do /help for a list of commands.",
         "permissions": ["chat", "setPixel", "protect", "erase", "playerList"],
-        "commands": ["nick", "tp"]
+        "commands": ["nick", "tp", "list"]
     },
     "Admin": {
         "id": 3,
@@ -26,6 +26,6 @@
         "loginCommand": "adminlogin",
         "greetingMessage": "[Server] You are now an admin. Do /help for a list of commands.",
         "permissions": ["chat", "setPixel", "protect", "erase", "playerList"],
-        "commands": ["nick", "tp", "kick", "kickip", "setrank"]
+        "commands": ["nick", "tp", "kick", "kickip", "setrank", "list"]
     }
 }

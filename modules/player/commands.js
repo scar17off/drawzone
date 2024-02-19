@@ -1,4 +1,4 @@
-const rankUtil = require("./rankingUtils.js");
+const { getRankByID } = require("./rankingUtils.js");
 const ranks = require("../shared/ranks.json");
 const { getWorldClients } = require("../world/worldManager.js");
 
@@ -16,7 +16,7 @@ class Command {
         this.args = text.split(" ");
         this.cmd = this.args[0].replace('/', '');
         this.args.shift();
-        this.rank = rankUtil.getRankByID(this.client.rank);
+        this.rank = getRankByID(this.client.rank);
 
         if(this.rank.commands.includes(this.cmd) || loginCommands.includes(this.cmd)) {
             if(this[this.cmd]) {
@@ -97,6 +97,21 @@ class Command {
             .find(client => client.id === parseInt(id));
 
         if (targetClient) targetClient.setRank(rank);
+    }
+    list() {
+        const clients = getWorldClients(this.client.world);
+        const ranksWithClients = clients.reduce((acc, client) => {
+            const rankKey = Object.keys(ranks).find(key => ranks[key].id === client.rank);
+            if (!acc[rankKey]) {
+                acc[rankKey] = [];
+            }
+            acc[rankKey].push(client.nickname ? `${client.nickname} (${client.id})` : client.id);
+            return acc;
+        }, {});
+
+        Object.entries(ranksWithClients).forEach(([rankKey, clients]) => {
+            this.client.send(`${rankKey} (${clients.length}): ${clients.join(', ')}`);
+        });
     }
 }
 
