@@ -25,34 +25,17 @@ To get started with DrawZone, follow these steps:
 The game's configuration can be found in `config.json`
 
 # TODO:
-- [x] Pixel art drawing
 - [ ] Line art drawing
   - [ ] Add feature to request and load lines in chunks
 - [ ] ASCII art drawing
   - [ ] Add feature to request and load texts in chunks
-- [x] Chat
-- [x] Chat commands
 - [ ] Tools
-  - [ ] Paste
   - [ ] Copy
   - [ ] Screenshot
-  - [ ] Protect
-- [ ] Optimize chunk loading and rendering code
-  - Rewrite `chunks` to Set
-  - requestAnimationFrame when canvas needs to update
-- [x] Design
-- [x] Window system
-- [ ] Protection
-  - Find out the best way to store protection data
 - [ ] Tempmute & Tempban
   - bansManager.js, muteManager.js
 - [ ] Discord Gateway plugin
   - Later
-- [ ] Area selection for tool
-- [ ] Cursor visiblity
-  - Need to rewrite tools.js
-- [ ] Pencil, write textures
-  - No textures yet
 - [ ] Enhance Chat System
   - Implement moderation features and possibly private messaging.
 - [ ] Add Customizable World Templates
