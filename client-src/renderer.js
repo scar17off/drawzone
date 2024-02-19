@@ -282,15 +282,31 @@ function onRender() {
             ctx.lineWidth = 2;
             ctx.strokeRect(startX * camera.zoom - camera.x, startY * camera.zoom - camera.y, size * camera.zoom, size * camera.zoom);
             break;
-        default:
+        case Fx.AREA_SELECT:
+            if (local_player.currentFxRenderer.params.length !== 3) return;
+            const [start, end, step] = local_player.currentFxRenderer.params;
+            const adjustedStartX = step === CHUNK_SIZE ? Math.floor(start[0] / step) * step : start[0];
+            const adjustedStartY = step === CHUNK_SIZE ? Math.floor(start[1] / step) * step : start[1];
+            const adjustedEndX = step === CHUNK_SIZE ? Math.floor(end[0] / step) * step : end[0];
+            const adjustedEndY = step === CHUNK_SIZE ? Math.floor(end[1] / step) * step : end[1];
+
+            ctx.strokeStyle = `rgba(${local_player.selectedColor.join(", ")}, 0.5)`;
+            ctx.lineWidth = 2;
+
+            for (let x = adjustedStartX; x <= adjustedEndX; x += step) {
+                for (let y = adjustedStartY; y <= adjustedEndY; y += step) {
+                    if ((x === adjustedStartX || x === adjustedEndX || y === adjustedStartY || y === adjustedEndY)) {
+                        ctx.strokeRect(Math.floor(x * camera.zoom - camera.x), Math.floor(y * camera.zoom - camera.y), step * camera.zoom, step * camera.zoom);
+                    }
+                }
+            }
+        break;
+            default:
             break;
     }
 
     renderPlayers();
-
-    // requestAnimationFrame(onRender);
 }
-onRender();
 
 export default {
     chunks,

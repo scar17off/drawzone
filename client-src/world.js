@@ -12,7 +12,7 @@ function canDraw(x, y) {
     const chunkKey = `${chunkX},${chunkY}`;
     const hasPermission = getRankByID(local_player.rank).permissions.includes("protect");
     local_player.pixelQuota.update();
-    const hasQuota = local_player.pixelQuota.allowance > 0;
+    const hasQuota = local_player.pixelQuota.allowance > 0 || (local_player.pixelQuota.rate === 1 && local_player.pixelQuota.time === 0);
 
     return (!chunks[chunkKey] || !chunks[chunkKey].protected || hasPermission) && hasQuota;
 }
@@ -37,6 +37,7 @@ export default {
         if (existingColor && existingColor.every((val, index) => val === color[index])) return;
         if (!canDraw(x, y)) return;
 
+        x = Math.floor(x), y = Math.floor(y);
         socket.emit("setPixel", x, y, color);
         if (chunks[chunkKey]) chunks[chunkKey].data[pixelX][pixelY] = color;
     },
