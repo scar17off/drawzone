@@ -50,7 +50,13 @@ function get_protection(worldName, chunkX, chunkY) {
 function set_protection(worldName, chunkX, chunkY, value) {
     const protectionPath = path.join(getWorldDir(worldName), `protection_${chunkX}_${chunkY}.bool`);
 
-    fs.writeFileSync(protectionPath, value.toString());
+    if (value) {
+        fs.writeFileSync(protectionPath, value.toString());
+    } else {
+        if (fs.existsSync(protectionPath)) {
+            fs.unlinkSync(protectionPath);
+        }
+    }
 }
 
 function set_rgb(worldName, chunkX, chunkY, rgb) {
