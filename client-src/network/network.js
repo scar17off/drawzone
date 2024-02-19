@@ -127,23 +127,22 @@ export function unloadInvisibleChunks() {
     const topChunkIndex = Math.floor(camera.y / chunkSizeInPixels);
     const bottomChunkIndex = Math.ceil((camera.y + canvas.height) / chunkSizeInPixels);
 
-    const visibleChunks = new Set();
+    const visibleChunksKeys = new Set();
     for (let y = topChunkIndex; y < bottomChunkIndex; y++) {
         for (let x = leftChunkIndex; x < rightChunkIndex; x++) {
-            visibleChunks.add(`${x},${y}`);
+            visibleChunksKeys.add(`${x},${y}`);
         }
     }
 
-    Object.keys(chunks).forEach(chunkKey => {
-        if (!visibleChunks.has(chunkKey)) {
-            delete chunks[chunkKey];
-            requestRender();
-        }
-    });
+    const chunksToDelete = Object.keys(chunks).filter(chunkKey => !visibleChunksKeys.has(chunkKey));
+    if (chunksToDelete.length > Object.keys(chunks).length / 2) {
+        chunksToDelete.forEach(chunkKey => delete chunks[chunkKey]);
+        requestRender();
+    }
 }
 
 events.on("loadChunks", () => {
-    unloadInvisibleChunks();
+    unloadInvisibleChunks(); // removing this improves performance but stores more chunks in memory
     loadVisibleChunks();
 });
 

@@ -235,6 +235,8 @@ events.on("newRank", (newRank) => {
             if (event.buttons === 1) {
                 camera.x -= event.movementX;
                 camera.y -= event.movementY;
+                
+                events.emit("loadChunks");
             }
         });
     }));
