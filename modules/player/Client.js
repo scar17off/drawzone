@@ -3,20 +3,74 @@ const ranks = require("../shared/ranks.json");
 const Bucket = require("./Bucket.js");
 const { defaultRank, getRankByID } = require("./rankingUtils.js");
 
+/**
+ * Represents a client connected to the server.
+ */
 class Client {
+    /**
+     * Creates an instance of a Client.
+     * @param {Object} ws - The WebSocket connection for the client.
+     */
     constructor(ws) {
+        /**
+         * The world the client is currently in.
+         * @type {string}
+         */
         this.world = new URL(ws.handshake.headers.referer).pathname.substring(1) || "main";
+        /**
+         * The WebSocket connection for the client.
+         * @type {Object}
+         */
         this.ws = ws;
+        /**
+         * The IP address of the client.
+         * @type {string}
+         */
         this.ip = ws.handshake.address;
+        /**
+         * The nickname of the client.
+         * @type {?string}
+         */
         this.nickname = null;
+        /**
+         * The color of the client in RGB format.
+         * @type {number[]}
+         */
         this.color = [0, 0, 0];
+        /**
+         * The rank of the client.
+         * @type {number}
+         */
         this.rank = defaultRank;
+        /**
+         * The tool the client is currently using.
+         * @type {number}
+         */
         this.tool = 0;
-        this.rank = 0;
+        /**
+         * The unique identifier of the client.
+         * @type {?number}
+         */
         this.id = null;
+        /**
+         * The x-coordinate of the client in the world.
+         * @type {number}
+         */
         this.x = 0;
+        /**
+         * The y-coordinate of the client in the world.
+         * @type {number}
+         */
         this.y = 0;
+        /**
+         * The line drawing quota for the client.
+         * @type {Bucket}
+         */
         this.lineQuota = new Bucket(0, 0);
+        /**
+         * The pixel drawing quota for the client.
+         * @type {Bucket}
+         */
         this.pixelQuota = new Bucket(0, 0);
 
         const world = getWorldByName(this.world);
@@ -32,7 +86,8 @@ class Client {
             const quotas = ['lineQuota', 'pixelQuota'];
             quotas.forEach(quotaType => {
                 const worldQuota = world[quotaType];
-                const rankQuota = getRankByID(this.rank)[quotaType] || [0, 0];
+                const rankData = getRankByID(this.rank);
+                const rankQuota = rankData && rankData[quotaType] ? rankData[quotaType] : [0, 0];
                 this[quotaType] = new Bucket(
                     Math.max(worldQuota[0], rankQuota[0]),
                     Math.min(worldQuota[1], rankQuota[1])
@@ -50,12 +105,27 @@ class Client {
             if(index !== -1) world.clients.splice(index, 1);
         });
     }
+
+    /**
+     * Sets the client's unique identifier.
+     * @param {number} id - The unique identifier to set for the client.
+     */
     setId(id) {
         this.id = id;
     }
+
+    /**
+     * Sends a message to the client.
+     * @param {string} message - The message to send.
+     */
     send(message) {
         this.ws.emit("message", message);
     }
+
+    /**
+     * Sets the client's rank.
+     * @param {number} id - The rank ID to set for the client.
+     */
     setRank(id) {
         const rankData = getRankByID(id);
 
@@ -68,9 +138,19 @@ class Client {
 
         if(rankData.greetingMessage) this.send(rankData.greetingMessage);
     }
+
+    /**
+     * Disconnects the client from the server.
+     */
     kick() {
         this.ws.disconnect();
     }
+
+    /**
+     * Teleports the client to a specified location.
+     * @param {number} x - The x-coordinate to teleport to.
+     * @param {number} y - The y-coordinate to teleport to.
+     */
     tp(x, y) {
         this.x = x;
         this.y = y;

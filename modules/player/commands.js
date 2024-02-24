@@ -2,6 +2,9 @@ const { getRankByID } = require("./rankingUtils.js");
 const ranks = require("../shared/ranks.json");
 const { getWorldClients } = require("../world/worldManager.js");
 
+// this is for JsDoc
+const Client = require("./Client.js");
+
 const loginCommands = Object.values(ranks).reduce((acc, rank) => {
     if(rank.loginCommand) {
         acc.push(rank.loginCommand);
@@ -10,12 +13,22 @@ const loginCommands = Object.values(ranks).reduce((acc, rank) => {
 }, []);
 
 class Command {
+    /**
+     * Creates an instance of Command.
+     * @param {Object} client - The client executing the command.
+     * @param {string} text - The text of the command.
+     */
     constructor(client, text) {
+        /** @type {Client} The client executing the command. */
         this.client = client;
+        /** @type {Object} A collection of commands. */
         this.commands = {};
+        /** @type {string[]} The arguments of the command, split by spaces. */
         this.args = text.split(" ");
+        /** @type {string} The command to be executed, extracted from the first argument. */
         this.cmd = this.args[0].replace('/', '');
         this.args.shift();
+        /** @type {Object} The rank of the client executing the command. */
         this.rank = getRankByID(this.client.rank);
 
         if(this.rank.commands.includes(this.cmd) || loginCommands.includes(this.cmd)) {
