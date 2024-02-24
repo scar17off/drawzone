@@ -113,6 +113,9 @@ class Command {
             this.client.send(`${rankKey} (${clients.length}): ${clients.join(', ')}`);
         });
     }
+    spawn() {
+        this.client.tp(0, 0);
+    }
 }
 
 function addCommand(name, func) {
