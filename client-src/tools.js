@@ -252,17 +252,6 @@ events.on("newRank", (newRank) => {
         });
     }));
 
-    addTool(new Tool("Write", cursors.write, [Fx.NONE], ranks.User, function (tool) {
-        tool.setEvent('keydown', event => {
-            if (event.key === 'Enter' && !['input', 'textarea'].includes(document.activeElement.tagName.toLowerCase())) {
-                events.emit("addText", local_player.text, mouse.tileX, mouse.tileY);
-                local_player.text = '';
-            } else if (event.key === 'Backspace') {
-                local_player.text = local_player.text.slice(0, -1);
-            }
-        });
-    }));
-
     addTool(new Tool("Move", cursors.move, [Fx.NONE], ranks.User, function (tool) {
         tool.setEvent('mousemove', event => {
             if (event.buttons === 1) {
@@ -282,7 +271,7 @@ events.on("newRank", (newRank) => {
         async function bfsFill(x, y, targetColor, fillColor) {
             let queue = [[x, y]];
             while (queue.length > 0 && filling) {
-                if (!local_player.pixelQuota.canSpend(1)) await new Promise(resolve => setTimeout(resolve, 100));
+                if (!local_player.pixelQuota.canSpend(1)) await sleep(100);
                 let [cx, cy] = queue.shift();
                 const currentColor = await world.getPixel(cx, cy);
                 if (colorEquals(currentColor, fillColor) || !colorEquals(currentColor, targetColor)) continue;
@@ -292,7 +281,7 @@ events.on("newRank", (newRank) => {
                 const directions = [[1, 0], [-1, 0], [0, 1], [0, -1]];
                 directions.forEach(([dx, dy]) => queue.push([cx + dx, cy + dy]));
 
-                await new Promise(resolve => setTimeout(resolve, 1)); // to prevent lag
+                await sleep(1); // prevent lag
             }
         }
 

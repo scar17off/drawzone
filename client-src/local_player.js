@@ -1,5 +1,6 @@
 import events from "./events.js";
 import { mouse } from "./mouse.js";
+import { texts } from "./sharedState.js";
 
 class Bucket {
     constructor(rate, time, infinite) {
@@ -76,12 +77,16 @@ window.addEventListener('keypress', event => {
 });
 
 window.addEventListener('keydown', event => {
-    if (event.key === 'Enter' && !['input', 'textarea'].includes(document.activeElement.tagName.toLowerCase())) {
-		events.emit("addText", local_player.text, mouse.tileX, mouse.tileY);
+    const activeElementTag = document.activeElement.tagName.toLowerCase();
+    const isTextInputActive = ['input', 'textarea'].includes(activeElementTag);
+	
+    if (event.key === 'Enter' && !isTextInputActive) {
+        events.emit("addText", local_player.text, mouse.tileX, mouse.tileY);
+        texts[`${mouse.tileX},${mouse.tileY}`] = local_player.text;
         local_player.text = '';
-	} else if (event.key === 'Backspace') {
-		local_player.text = local_player.text.slice(0, -1);
-	}
+    } else if (event.key === 'Backspace') {
+        local_player.text = local_player.text.slice(0, -1);
+    }
 });
 
 // color stuff

@@ -49,15 +49,15 @@ getFilesRecursively("./routing/client/");
 
 // share important files with client
 (function clientShare() {
-    const srcPath = path.join(__dirname, "modules", "shared", 'ranks.json');
-    const destPath = path.join(__dirname, 'client-src', 'shared', 'ranks.json');
+    const srcPath = path.join(__dirname, "modules", "shared", "ranks.json");
+    const destPath = path.join(__dirname, 'client-src', 'shared', "ranks.json");
 
     fs.copyFile(srcPath, destPath, (err) => {
         if (err) throw err;
     });
 })();
 
-app.get('/*', (req, res) => {
+app.get("/*", (req, res) => {
     if(req.params[0] == '') // ignore requests related to img directory
         return res.sendFile("./routing/client/index.html", {
             root: '.'

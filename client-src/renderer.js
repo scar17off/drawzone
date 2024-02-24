@@ -3,7 +3,6 @@ import { chunks, lines, texts } from "./sharedState.js";
 import { mouse } from "./mouse.js";
 import { players } from "./sharedState.js";
 import local_player from "./local_player.js";
-import events from "./events.js";
 import Fx from "./fx.js";
 import { cursors, toolIDs } from "./tools.js";
 
@@ -131,7 +130,6 @@ export function renderText(text, x, y) {
 }
 
 export function renderChunk(chunkData, chunkX, chunkY) {
-    console.log(chunkData);
     const startX = chunkX * CHUNK_SIZE * camera.zoom - camera.x;
     const startY = chunkY * CHUNK_SIZE * camera.zoom - camera.y;
 
@@ -171,7 +169,6 @@ export function renderAllChunks() {
             const chunkKey = `${x},${y}`;
             if (chunks.hasOwnProperty(chunkKey)) {
                 const chunkData = chunks[chunkKey];
-                console.log(chunkData);
                 renderChunk(chunkData, x, y);
             } else {
                 // prevent blur
@@ -250,10 +247,6 @@ export function renderAllTexts() {
         }
     }
 }
-
-events.on("addText", (text, x, y) => {
-    texts[`${x},${y}`] = text;
-});
 
 export function requestRender() {
     options.needsUpdate = true;
