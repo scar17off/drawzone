@@ -6,6 +6,7 @@
     "User": {
         "id": 1,
         "default": true,
+        "lineQuota": [10, 1],
         "pixelQuota": [100, 2],
         "permissions": ["chat", "setPixel"],
         "commands": ["nick"]
@@ -13,6 +14,7 @@
     "Moderator": {
         "id": 2,
         "default": false,
+        "lineQuota": [50, 1],
         "pixelQuota": [160, 1],
         "loginCommand": "modlogin",
         "greetingMessage": "[Server] You are now a moderator. Do /help for a list of commands.",
@@ -22,6 +24,7 @@
     "Admin": {
         "id": 3,
         "default": false,
+        "lineQuota": [1, 0],
         "pixelQuota": [1, 0],
         "loginCommand": "adminlogin",
         "greetingMessage": "[Server] You are now an admin. Do /help for a list of commands.",

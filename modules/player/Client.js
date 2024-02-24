@@ -16,6 +16,7 @@ class Client {
         this.id = null;
         this.x = 0;
         this.y = 0;
+        this.lineQuota = new Bucket(0, 0);
         this.pixelQuota = new Bucket(0, 0);
 
         const world = getWorldByName(this.world);
@@ -27,13 +28,16 @@ class Client {
             world.clients.push(this);
             
             this.setId(world.clients.length);
-            const worldPixelQuota = world.pixelQuota;
-            const rankData = getRankByID(this.rank);
-            if (worldPixelQuota[0] >= (rankData.pixelQuota ? rankData.pixelQuota[0] : 0) && worldPixelQuota[1] <= (rankData.pixelQuota ? rankData.pixelQuota[1] : 0)) {
-                this.pixelQuota = new Bucket(worldPixelQuota[0], worldPixelQuota[1]);
-            } else {
-                this.pixelQuota = new Bucket(rankData.pixelQuota ? rankData.pixelQuota[0] : 0, rankData.pixelQuota ? rankData.pixelQuota[1] : 0);
-            }
+            
+            const quotas = ['lineQuota', 'pixelQuota'];
+            quotas.forEach(quotaType => {
+                const worldQuota = world[quotaType];
+                const rankQuota = getRankByID(this.rank)[quotaType] || [0, 0];
+                this[quotaType] = new Bucket(
+                    Math.max(worldQuota[0], rankQuota[0]),
+                    Math.min(worldQuota[1], rankQuota[1])
+                );
+            });
             
             this.send(server.config.welcomeMessage);
 
@@ -59,6 +63,7 @@ class Client {
         this.pixelQuota = new Bucket(rankData.pixelQuota[0], rankData.pixelQuota[1]);
 
         this.ws.emit("newRank", id);
+        this.ws.emit("newLineQuota", rankData.lineQuota[0], rankData.lineQuota[1]);
         this.ws.emit("newPixelQuota", rankData.pixelQuota[0], rankData.pixelQuota[1]);
 
         if(rankData.greetingMessage) this.send(rankData.greetingMessage);

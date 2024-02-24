@@ -34,8 +34,8 @@ export default {
         const chunkKey = `${chunkX},${chunkY}`;
         const existingColor = chunks[chunkKey] ? chunks[chunkKey].data[pixelX][pixelY] : null;
 
-        if (existingColor && existingColor.every((val, index) => val === color[index])) return;
-        if (!canDraw(x, y)) return;
+        if (existingColor && existingColor.every((val, index) => val === color[index])
+        && !canDraw(x, y)) return false;
 
         x = Math.floor(x), y = Math.floor(y);
         socket.emit("setPixel", x, y, color);
@@ -50,8 +50,11 @@ export default {
         const chunkKeyFrom = `${chunkXFrom},${chunkYFrom}`;
         const chunkKeyTo = `${chunkXTo},${chunkYTo}`;
 
-        if (chunks[chunkKeyFrom] && chunks[chunkKeyFrom].protected) return;
-        if (chunks[chunkKeyTo] && chunks[chunkKeyTo].protected) return;
+        const hasLineQuota = local_player.lineQuota.allowance > 0 || (local_player.lineQuota.rate === 1 && local_player.lineQuota.time === 0);
+
+        if ((chunks[chunkKeyFrom] && chunks[chunkKeyFrom].protected) || 
+            (chunks[chunkKeyTo] && chunks[chunkKeyTo].protected) || 
+            !hasLineQuota) return false;
 
         socket.emit("setLine", from, to);
         lines.push([from, to]);

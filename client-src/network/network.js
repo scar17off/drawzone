@@ -69,6 +69,10 @@ socket.on("connect", () => {
         console.log(`Got PixelQuota: ${rate}x${per}`);
         local_player.pixelQuota = new Bucket(rate, per);
     });
+    socket.on("newLineQuota", (rate, per) => {
+        console.log(`Got LineQuota: ${rate}x${per}`);
+        local_player.lineQuota = new Bucket(rate, per);
+    });
 
     socket.on("teleport", (x, y) => {
         camera.centerAt(x, y);

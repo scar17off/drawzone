@@ -7,6 +7,7 @@ class WorldTemplate {
         this.clients = [];
         this.maxPlayers = 128;
         this.lastID = 1;
+        this.lineQuota = ranks[defaultRank].lineQuota;
         this.pixelQuota = ranks[defaultRank].pixelQuota;
     }
     isFull() {
