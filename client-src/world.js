@@ -1,6 +1,6 @@
 import local_player from "./local_player.js";
 import socket from "./network/network.js";
-import { CHUNK_SIZE } from "./renderer.js";
+import { CHUNK_SIZE, requestRender } from "./renderer.js";
 import { chunks, lines } from "./sharedState.js";
 import ranks from "./shared/ranks.json";
 
@@ -39,6 +39,7 @@ export default {
 
         x = Math.floor(x), y = Math.floor(y);
         socket.emit("setPixel", x, y, color);
+        requestRender();
         if (chunks[chunkKey]) chunks[chunkKey].data[pixelX][pixelY] = color;
     },
     drawLine: (from, to) => {

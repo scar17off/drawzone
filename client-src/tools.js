@@ -7,6 +7,8 @@ import ranks from "./shared/ranks.json";
 import events from "./events.js";
 import { requestRender } from "./renderer.js";
 
+const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+
 // this is shit
 export const cursors = {
     cursor: { base64: "data:image/png;base64,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", offset: [-2] },
@@ -219,6 +221,37 @@ events.on("newRank", (newRank) => {
         });
     }));
 
+    addTool(new Tool("Line", cursors.cursor, [Fx.NONE], ranks.User, function (tool) {
+        let startPoint = null;
+
+        tool.setEvent("mousedown", event => {
+            if (event.buttons === 1) {
+                startPoint = [mouse.tileX, mouse.tileY];
+            }
+        });
+
+        tool.setEvent("mousemove", event => {
+            if (event.buttons === 1 && startPoint) {
+                const endPoint = [mouse.tileX, mouse.tileY];
+                local_player.currentFxRenderer = {
+                    type: Fx.LINE,
+                    params: [startPoint, endPoint]
+                };
+                requestRender();
+            }
+        });
+
+        tool.setEvent("mouseup", () => {
+            if (startPoint) {
+                const endPoint = [mouse.tileX, mouse.tileY];
+                world.drawLine(startPoint, endPoint);
+                startPoint = null;
+                local_player.currentFxRenderer = { type: Fx.NONE, params: [] };
+                requestRender();
+            }
+        });
+    }));
+
     addTool(new Tool("Write", cursors.write, [Fx.NONE], ranks.User, function (tool) {
         tool.setEvent('keydown', event => {
             if (event.key === 'Enter' && !['input', 'textarea'].includes(document.activeElement.tagName.toLowerCase())) {
@@ -255,7 +288,11 @@ events.on("newRank", (newRank) => {
                 if (colorEquals(currentColor, fillColor) || !colorEquals(currentColor, targetColor)) continue;
 
                 await world.setPixel(cx, cy, fillColor);
-                queue.push([cx + 1, cy], [cx - 1, cy], [cx, cy + 1], [cx, cy - 1]);
+
+                const directions = [[1, 0], [-1, 0], [0, 1], [0, -1]];
+                directions.forEach(([dx, dy]) => queue.push([cx + dx, cy + dy]));
+
+                await new Promise(resolve => setTimeout(resolve, 1)); // to prevent lag
             }
         }
 
@@ -284,23 +321,29 @@ events.on("newRank", (newRank) => {
     }));
 
     addTool(new Tool("Protect", cursors.protect, [Fx.NONE], ranks.Moderator, function (tool) {
-        tool.setEvent('mousemove', event => {
+        const protect = event => {
             if (event.buttons === 0 || event.buttons === 4) return;
             const chunkX = Math.floor(mouse.tileX / 16);
             const chunkY = Math.floor(mouse.tileY / 16);
 
             world.setProtection(event.buttons === 1, chunkX, chunkY);
-        });
+        }
+
+        tool.setEvent('mousemove', protect);
+        tool.setEvent('mousedown', protect);
     }));
 
     addTool(new Tool("Eraser", cursors.eraser, [Fx.RECT_SELECT_ALIGNED, 16], ranks.Moderator, function (tool) {
-        tool.setEvent('mousemove', event => {
+        const erase = event => {
             if (event.buttons === 4 || event.buttons === 0) return;
             const chunkX = Math.floor(mouse.tileX / 16);
             const chunkY = Math.floor(mouse.tileY / 16);
 
             world.setChunk(event.buttons === 1 ? local_player.selectedColor : [255, 255, 255], chunkX, chunkY);
-        });
+        }
+
+        tool.setEvent('mousemove', erase);
+        tool.setEvent('mousedown', erase);
     }));
 
     addTool(new Tool("Paste", cursors.paste, [Fx.NONE], ranks.Moderator, function (tool) {

@@ -300,8 +300,18 @@ function onRender() {
                     }
                 }
             }
-        break;
-            default:
+        case Fx.LINE:
+            if (local_player.currentFxRenderer.params.length !== 2) return;
+            const [startPoint, endPoint] = local_player.currentFxRenderer.params;
+
+            ctx.strokeStyle = `rgb(0, 0, 0, 1.0)`;
+            ctx.lineWidth = 1;
+            ctx.beginPath();
+            ctx.moveTo(startPoint[0] * camera.zoom - camera.x, startPoint[1] * camera.zoom - camera.y);
+            ctx.lineTo(endPoint[0] * camera.zoom - camera.x, endPoint[1] * camera.zoom - camera.y);
+            ctx.stroke();
+            break;
+        default:
             break;
     }
 
