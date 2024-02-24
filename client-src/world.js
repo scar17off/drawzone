@@ -39,8 +39,8 @@ export default {
 
         x = Math.floor(x), y = Math.floor(y);
         socket.emit("setPixel", x, y, color);
-        requestRender();
         if (chunks[chunkKey]) chunks[chunkKey].data[pixelX][pixelY] = color;
+        requestRender();
     },
     drawLine: (from, to) => {
         const chunkXFrom = Math.floor(from[0] / 16);
@@ -58,6 +58,7 @@ export default {
 
         socket.emit("setLine", from, to);
         lines.push([from, to]);
+        requestRender();
     },
     getPixel: async (x, y) => {
         const chunkX = Math.floor(x / 16);

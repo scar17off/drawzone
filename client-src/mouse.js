@@ -1,4 +1,5 @@
 import { camera } from "./camera.js";
+import world from "./world.js";
 
 const canvas = document.getElementById("gameCanvas");
 
@@ -36,8 +37,10 @@ canvas.addEventListener('mousemove', event => {
     mouse.x = event.clientX, mouse.y = event.clientY;
 
     const pos = getGameCoordinates(event.clientX, event.clientY);
+    pos.x = Math.floor(pos.x), pos.y = Math.floor(pos.y);
 
-    document.getElementById("xy-display").innerText = `XY: ${Math.floor(pos.x)},${Math.floor(pos.y)}`;
+    document.getElementById("xy-display").innerText = `XY: ${pos.x},${pos.y}`;
+    world.move(mouse.tileX, mouse.tileY);
 });
 
 canvas.addEventListener('contextmenu', function(event) {

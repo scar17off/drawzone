@@ -131,6 +131,7 @@ export function renderText(text, x, y) {
 }
 
 export function renderChunk(chunkData, chunkX, chunkY) {
+    console.log(chunkData);
     const startX = chunkX * CHUNK_SIZE * camera.zoom - camera.x;
     const startY = chunkY * CHUNK_SIZE * camera.zoom - camera.y;
 
@@ -170,6 +171,7 @@ export function renderAllChunks() {
             const chunkKey = `${x},${y}`;
             if (chunks.hasOwnProperty(chunkKey)) {
                 const chunkData = chunks[chunkKey];
+                console.log(chunkData);
                 renderChunk(chunkData, x, y);
             } else {
                 // prevent blur
@@ -191,7 +193,6 @@ function renderPlayers() {
         const playerY = player.y * camera.zoom - camera.y;
 
         const toolName = Object.keys(toolIDs).find(key => toolIDs[key] === player.tool);
-        const toolData = cursors[toolName];
         
         ctx.font = '12px Arial';
         const textWidth = ctx.measureText(id).width;
@@ -212,6 +213,7 @@ function renderPlayers() {
         ctx.fillText(id, textX, textY);
         ctx.setLineDash([]);
 
+        const toolData = cursors[toolName];
         if (toolData && toolData.base64) {
             const img = new Image(72, 72);
             img.src = toolData.base64;

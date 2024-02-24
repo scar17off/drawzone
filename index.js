@@ -100,9 +100,10 @@ io.on("connection", socket => {
         if(!getRankByID(client.rank).permissions.includes("erase")) return;
 
         const chunkData = chunkManager.set_rgb(client.world, chunkX, chunkY, color);
+        const isProtected = chunkManager.get_protection(client.world, chunkX, chunkY);
 
         const updates = {};
-        updates[`${chunkX},${chunkY}`] = chunkData;
+        updates[`${chunkX},${chunkY}`] = { data: chunkData, protected: isProtected };
         socket.broadcast.emit("chunkLoaded", updates);
     });
 
@@ -110,9 +111,10 @@ io.on("connection", socket => {
         if(!getRankByID(client.rank).permissions.includes("erase")) return;
 
         chunkManager.set_chunkdata(client.world, chunkX, chunkY, chunkData);
+        const isProtected = chunkManager.get_protection(client.world, chunkX, chunkY);
 
         const updates = {};
-        updates[`${chunkX},${chunkY}`] = chunkData;
+        updates[`${chunkX},${chunkY}`] = { data: chunkData, protected: isProtected };
         socket.broadcast.emit("chunkLoaded", updates);
     });
 

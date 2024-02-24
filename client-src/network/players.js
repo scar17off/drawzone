@@ -1,6 +1,7 @@
 import socket from "./network.js";
 import { players } from "../sharedState.js";
 import events from "../events.js";
+import { requestRender } from "../renderer.js";
 
 const structure = {
     x: 0,
@@ -30,6 +31,7 @@ socket.on("playerUpdate", (id, tool, color) => {
 socket.on("playerMoved", (id, x, y) => {
     if(!players[id]) players[id] = structure;
     players[id].x = x, players[id].y = y;
+    requestRender();
     events.emit("playerMoved", id, x, y);
 });
 

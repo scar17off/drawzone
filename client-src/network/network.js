@@ -1,11 +1,9 @@
 import { camera, canvas } from "../camera.js";
 import { CHUNK_SIZE, requestRender } from "../renderer.js";
 import { chunks, lines, texts } from "../sharedState.js";
-import { mouse } from "../mouse.js";
 import events from "../events.js";
 import local_player from "../local_player.js";
 import Bucket from "../../modules/player/Bucket.js";
-import world from "../world.js";
 
 var loadQueue = [];
 
@@ -85,10 +83,6 @@ events.on("addText", (text, x, y) => {
 
 events.on("setTool", toolID => {
     socket.emit("setTool", toolID);
-});
-
-canvas.addEventListener('mousemove', () => {
-    world.move(mouse.tileX, mouse.tileY);
 });
 
 setInterval(() => {
