@@ -323,5 +323,6 @@ export default {
     renderText,
     renderChunk,
     renderAllChunks,
-    options
+    options,
+    requestRender
 }
