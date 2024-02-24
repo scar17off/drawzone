@@ -9,7 +9,7 @@
         "lineQuota": [10, 1],
         "pixelQuota": [100, 2],
         "permissions": ["chat", "setPixel"],
-        "commands": ["nick"]
+        "commands": ["nick", "spawn"]
     },
     "Moderator": {
         "id": 2,
@@ -19,7 +19,7 @@
         "loginCommand": "modlogin",
         "greetingMessage": "[Server] You are now a moderator. Do /help for a list of commands.",
         "permissions": ["chat", "setPixel", "protect", "erase", "playerList"],
-        "commands": ["nick", "tp", "list"]
+        "commands": ["nick", "tp", "list", "spawn"]
     },
     "Admin": {
         "id": 3,
@@ -29,6 +29,6 @@
         "loginCommand": "adminlogin",
         "greetingMessage": "[Server] You are now an admin. Do /help for a list of commands.",
         "permissions": ["chat", "setPixel", "protect", "erase", "playerList"],
-        "commands": ["nick", "tp", "kick", "kickip", "setrank", "list"]
+        "commands": ["nick", "tp", "kick", "kickip", "setrank", "list", "spawn"]
     }
 }
