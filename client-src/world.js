@@ -91,6 +91,7 @@ export default {
     setProtection: (value, chunkX, chunkY) => {
         socket.emit("protect", value, chunkX, chunkY);
         chunks[`${chunkX},${chunkY}`].protected = value;
+        requestRender();
     },
     setChunk: (color, chunkX, chunkY) => {
         socket.emit("setChunk", color, chunkX, chunkY);
