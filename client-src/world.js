@@ -100,6 +100,7 @@ export default {
         if (chunks.hasOwnProperty(chunkKey)) {
             const chunkData = Array.from({ length: CHUNK_SIZE }, () => Array.from({ length: CHUNK_SIZE }, () => color));
             chunks[chunkKey].data = chunkData;
+            requestRender();
         }
     },
     setChunkData: (chunkX, chunkY, chunkData) => {
@@ -109,6 +110,7 @@ export default {
 
         if (chunks.hasOwnProperty(chunkKey)) {
             chunks[chunkKey].data = chunkData;
+            requestRender();
         }
     }
 }

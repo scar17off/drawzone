@@ -426,18 +426,32 @@ events.on("newRank", (newRank) => {
             }
         });
 
-        tool.setEvent("mouseup", () => {
+        tool.setEvent("mouseup", async () => {
             if (selectionStart && selectionEnd) {
                 const playerColor = local_player.selectedColor;
                 const adjustedStartX = step === 16 ? Math.floor(selectionStart[0] / step) * step : selectionStart[0];
                 const adjustedStartY = step === 16 ? Math.floor(selectionStart[1] / step) * step : selectionStart[1];
                 const adjustedEndX = step === 16 ? Math.floor(selectionEnd[0] / step) * step + (step - 1) : selectionEnd[0];
                 const adjustedEndY = step === 16 ? Math.floor(selectionEnd[1] / step) * step + (step - 1) : selectionEnd[1];
-                for (let x = adjustedStartX; x <= adjustedEndX; x++) {
-                    for (let y = adjustedStartY; y <= adjustedEndY; y++) {
-                        world.setPixel(x, y, playerColor);
+
+                if (step === 1) {
+                    for (let x = adjustedStartX; x <= adjustedEndX; x++) {
+                        for (let y = adjustedStartY; y <= adjustedEndY; y++) {
+                            world.setPixel(x, y, playerColor);
+                            await sleep(1);
+                        }
+                    }
+                } else if (step === 16) {
+                    for (let x = adjustedStartX; x <= adjustedEndX; x += 16) {
+                        for (let y = adjustedStartY; y <= adjustedEndY; y += 16) {
+                            const chunkX = Math.floor(x / 16);
+                            const chunkY = Math.floor(y / 16);
+                            world.setChunk(playerColor, chunkX, chunkY);
+                            await sleep(3);
+                        }
                     }
                 }
+
                 selectionStart = null;
                 selectionEnd = null;
                 local_player.currentFxRenderer = { type: Fx.NONE, params: [] };

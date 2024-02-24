@@ -121,6 +121,7 @@ io.on("connection", socket => {
     socket.on("protect", (value, chunkX, chunkY) => {
         if(!getRankByID(client.rank).permissions.includes("protect")) return;
         chunkManager.set_protection(client.world, chunkX, chunkY, value);
+        socket.broadcast.emit("protectionUpdated", chunkX, chunkY, value);
     });
 
     socket.on("move", (x, y) => {

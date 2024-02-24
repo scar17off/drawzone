@@ -48,6 +48,11 @@ socket.on("connect", () => {
         }
     });
 
+    socket.on("protectionUpdated", (chunkX, chunkY, value) => {
+        chunks[`${chunkX},${chunkY}`].protected = value;
+        requestRender();
+    });
+
     socket.on("newLine", (from, to) => {
         lines.push([from, to]);
         requestRender();
