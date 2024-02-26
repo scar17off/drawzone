@@ -14,7 +14,6 @@ import Fx from "./fx.js";
 import ranks from "./shared/ranks.json";
 
 window.DrawZone = {
-    chunks: {},
     chat,
     network: {
         io: socket
