@@ -90,13 +90,6 @@ events.on("setTool", toolID => {
     socket.emit("setTool", toolID);
 });
 
-setInterval(() => {
-    if(loadQueue.length > 0) {
-        socket.emit("loadChunk", loadQueue);
-        loadQueue = [];
-    }
-}, 1000 / 5);
-
 function addChunk(chunkData, chunkX, chunkY, isProtected) {
     const key = `${chunkX},${chunkY}`;
     chunks[key] = { data: chunkData, protected: isProtected };
@@ -109,18 +102,19 @@ export function loadVisibleChunks() {
     const topChunkIndex = Math.floor(camera.y / chunkSizeInPixels);
     const bottomChunkIndex = Math.ceil((camera.y + canvas.height) / chunkSizeInPixels);
 
+    const chunkPositionsToLoad = [];
     for (let y = topChunkIndex; y < bottomChunkIndex; y++) {
         for (let x = leftChunkIndex; x < rightChunkIndex; x++) {
             const chunkKey = `${x},${y}`;
             if (!chunks.hasOwnProperty(chunkKey)) {
-                loadQueue.push([x, y]);
+                chunkPositionsToLoad.push([x, y]);
             }
         }
     }
-    // if(loadQueue.length > 0) {
-    //     socket.emit("loadChunk", loadQueue);
-    //     loadQueue = [];
-    // }
+
+    if (chunkPositionsToLoad.length > 0) {
+        socket.emit("loadChunk", chunkPositionsToLoad);
+    }
 }
 
 export function unloadInvisibleChunks() {
