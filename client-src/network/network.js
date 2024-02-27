@@ -5,8 +5,6 @@ import events from "../events.js";
 import local_player from "../local_player.js";
 import Bucket from "../../modules/player/Bucket.js";
 
-var loadQueue = [];
-
 const socket = io();
 
 const getLoginKeys = () => Object.keys(localStorage).filter(key => key.endsWith("login"));

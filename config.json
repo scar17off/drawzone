@@ -5,5 +5,10 @@
         "savePixels": true,
         "saveLines": false,
         "saveTexts": false
+    },
+    "logging": {
+        "info": true,
+        "warn": true,
+        "error": true
     }
 }

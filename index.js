@@ -16,12 +16,62 @@ const lineManager = require("./modules/world/lineManager.js");
 
 const config = require("./config.json");
 const { getRankByID } = require("./modules/player/rankingUtils.js");
+const log = require("./modules/log.js");
+const Plugin = require("./modules/Plugin.js");
 
 global.server = {
     worlds: [],
+    plugins: [],
     config,
     env: process.env
 }
+
+function followSyntax(plugin) {
+    if(typeof plugin.name == "string" &&
+        typeof plugin.version == "string" &&
+        typeof plugin.install == "function") return true;
+    else return false;
+}
+
+function timeConverter(seconds) {
+    let minutes = Math.floor(seconds / 60);
+    let sec = Math.floor(seconds % 60);
+    let hours = Math.floor(minutes / 60);
+    minutes %= 60;
+    let days = Math.floor(hours / 24);
+    hours %= 24;
+    let milliseconds = Math.floor((seconds % 1) * 1000);
+
+    return `${days ? `${days}d ` : ""}${hours ? `${hours}h ` : ""}${minutes ? `${minutes}m ` : ""}${sec ? `${sec}s` : ""}${milliseconds ? ` ${milliseconds}ms` : ""}`;
+}
+
+function loadPlugins() {
+    const folder = path.join(__dirname, 'plugins');
+    fs.readdirSync(folder).forEach(file => {
+        const filePath = path.join(folder, file);
+        if (!file.endsWith(".js")) return;
+        const plugin = require(filePath);
+        plugin.filename = file;
+        plugin.loaded = !file.startsWith("-");
+        
+        if (plugin.loaded) {
+            log(`${plugin.name}`, `Loading ${plugin.name} v${plugin.version}`);
+            if (followSyntax(plugin)) {
+                const start = Date.now();
+                plugin.install();
+                const end = Date.now();
+                plugin.took = end - start;
+                log(`${plugin.name}`, `Enabling ${plugin.name} v${plugin.version} took${timeConverter(plugin.took / 1000)}`);
+            } else {
+                plugin.loaded = false;
+                log("ERROR", `Could not load '${filePath}'\nDoesn't follow syntax`);
+            }
+        }
+        server.plugins.push(new Plugin(plugin));
+    });
+}
+
+loadPlugins();
 
 // some modules require global server variables
 const { Command } = require("./modules/player/commands.js");
@@ -170,5 +220,5 @@ io.on("connection", socket => {
 });
 
 httpServer.listen(config.port, () => {
-    console.log(`Server is running at *:${config.port}`);
+    log("INFO", `Server is running at *:${config.port}`);
 });
