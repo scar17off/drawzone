@@ -92,14 +92,14 @@ Set chunk protection to specified boolean value
 ## [DrawZone.mouse](../client-src/mouse.js#L6)
 ```json
 {
-    "x": 962,
-    "y": 1,
-    "mouseX": 579,
-    "mouseY": -308,
-    "prevTileX": -23.9375,
-    "prevTileY": -18,
-    "tileX": 36.1875,
-    "tileY": -19.25,
+    "x": 0,
+    "y": 0,
+    "mouseX": 0,
+    "mouseY": 0,
+    "prevTileX": 0,
+    "prevTileY": 0,
+    "tileX": 0,
+    "tileY": 0,
     "prevLineX": null,
     "prevLineY": null,
     "lineX": null,
@@ -189,6 +189,7 @@ Object containing player tools
 Save a tool event to the canvas and deactivate on unequip.
 
 #### Example Circle tool
+```js
 DrawZone.tools.addTool(new DrawZone.tools.Tool("Circle", DrawZone.tools.cursors.cursor, [DrawZone.renderer.Fx.NONE], DrawZone.ranks.User, function (tool) {
     const segmentCount = 15;
     let startPoint = null;
@@ -218,3 +219,4 @@ DrawZone.tools.addTool(new DrawZone.tools.Tool("Circle", DrawZone.tools.cursors.
         }
     });
 }));
+```
