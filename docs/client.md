@@ -38,58 +38,58 @@ Send a local message to the chat without broadcasting it to everyone.
 }
 ```
 
-### [DrawZone.camera.x](../client-src/camera.js)
+### [DrawZone.camera.x](../client-src/camera.js#L9)
 X offset of the camera
-### [DrawZone.camera.y](../client-src/camera.js)
+### [DrawZone.camera.y](../client-src/camera.js#L10)
 Y offset of the camera
-### [DrawZone.camera.zoom](../client-src/camera.js)
+### [DrawZone.camera.zoom](../client-src/camera.js#L11)
 Zoom offset of the camera. Basically the size of a game pixel.
-### [DrawZone.camera.minZoom - DrawZone.camera.maxZoom](../client-src/camera.js)
+### [DrawZone.camera.minZoom - DrawZone.camera.maxZoom](../client-src/camera.js#L12)
 Zoom range limit
-### [DrawZone.camera.zoomStrength](../client-src/camera.js)
+### [DrawZone.camera.zoomStrength](../client-src/camera.js#L14)
 Increacement of zoom per mouse wheel scroll or Zoom tool.
-### [DrawZone.camera.editZoom(float change)](../client-src/camera.js)
+### [DrawZone.camera.editZoom(float change)](../client-src/camera.js#L15)
 Teleport camera to specific position
 
-### [DrawZone.renderer](../client-src/renderer.js)
+### [DrawZone.renderer](../client-src/renderer.js#L316)
 ### [DrawZone.renderer.Fx](../client-src/fx.js)
 Tool and other player FX.
-### [DrawZone.renderer.chunks](../client-src/renderer.js)
-Object containing the chunk data
-### [DrawZone.renderer.options](../client-src/renderer.js)
+### [DrawZone.renderer.options](../client-src/renderer.js#L9)
 Rendering settings
-### [DrawZone.renderer.renderAllChunks()](../client-src/renderer.js)
+### [DrawZone.renderer.renderAllChunks()](../client-src/renderer.js#L160)
 Render every visible chunk
-### [DrawZone.renderer.renderChunk(array chunkData, int chunkX, int chunkY)](../client-src/renderer.js)
+### [DrawZone.renderer.renderChunk(array chunkData, int chunkX, int chunkY)](../client-src/renderer.js#L132)
 Render specific chunk
-### [DrawZone.renderer.renderText(string text, float x, float y)](../client-src/renderer.js)
+### [DrawZone.renderer.renderText(string text, float x, float y)](../client-src/renderer.js#L123)
 Save and render a text at specific position
-### [DrawZone.renderer.requestRender()](../client-src/renderer.js)
+### [DrawZone.renderer.requestRender()](../client-src/renderer.js#L251)
 DrawZone does re-render only when there are any updates, the function is to update current state.
 
-### [DrawZone.world](../client-src/world.js)
-### [DrawZone.world.canDraw(int x, int y)](../client-src/world.js)
+### [DrawZone.world](../client-src/world.js#L20)
+### [DrawZone.world.canDraw(int x, int y)](../client-src/world.js#L9)
 Check if you can draw at specific position by ensuring quota, protection and chunk loaded.
-### [DrawZone.world.chunks](../client-src/world.js)
-Object containing the chunk data
-### [DrawZone.world.drawLine(array[2] from, array[2] to)](../client-src/world.js)
+### [DrawZone.world.drawLine(array[2] from, array[2] to)](../client-src/world.js#L45)
 Draw a line from position A to position B
-### [async DrawZone.world.getPixel(int x, int y)](../client-src/world.js)
+### [async DrawZone.world.getPixel(int x, int y)](../client-src/world.js#L63)
 Return the specified pixel color
-### [DrawZone.world.setPixel(int x, int y, array[3] color)](../client-src/world.js)
+### [DrawZone.world.setPixel(int x, int y, array[3] color)](../client-src/world.js#L25)
 Set pixel at specific position with specified color.
 ### [DrawZone.world.name](../client-src/world.js)
 World you're currently in
-### [DrawZone.world.setChunk(array[3] color, int chunkX, int chunkY)](../client-src/world.js)
+### [DrawZone.world.setChunk(array[3] color, int chunkX, int chunkY)](../client-src/world.js#L96)
 Set chunk RGB
-### [DrawZone.world.setChunkData(array[16] chunkData, chunkX, chunkY)](../client-src/world.js)
+### [DrawZone.world.setChunkData(array[16] chunkData, chunkX, chunkY)](../client-src/world.js#L107)
 set chunk data
-### [DrawZone.world.texts](../client-src/world.js)
+### [DrawZone.world.chunks](../client-src/bundle.js#L28)
+Object containing the chunk data
+### [DrawZone.world.lines](../client-src/bundle.js#L29)
+Object containing the chunk data
+### [DrawZone.world.texts](../client-src/bundle.js#L30)
 The text written in the world by players
-### [DrawZone.world.setProtection(bool value, int chunkX, int chunkY)](../client-src/world.js)
+### [DrawZone.world.setProtection(bool value, int chunkX, int chunkY)](../client-src/world.js#L91)
 Set chunk protection to specified boolean value
 
-### [DrawZone.mouse](../client-src/mouse.js)
+### [DrawZone.mouse](../client-src/mouse.js#L6)
 ```json
 {
     "x": 962,
@@ -108,24 +108,24 @@ Set chunk protection to specified boolean value
 }
 ```
 
-### [DrawZone.player](../client-src/local_player.js)
-### [DrawZone.player.currentFxRenderer](../client-src/local_player.js)
+### [DrawZone.player](../client-src/local_player.js#L46)
+### [DrawZone.player.currentFxRenderer](../client-src/local_player.js#L68)
 Player fx used, see client-src/fx.js
-### [DrawZone.player.id](../client-src/local_player.js)
+### [DrawZone.player.id](../client-src/local_player.js#L59)
 Player ID
-### [DrawZone.player.lineQuota](../client-src/local_player.js)
+### [DrawZone.player.lineQuota](../client-src/local_player.js#L56)
 Rate-limiter for the line drawing
-### [DrawZone.player.pixelQuota](../client-src/local_player.js)
+### [DrawZone.player.pixelQuota](../client-src/local_player.js#L57)
 Rate-limiter for the pixel drawing
-### [DrawZone.player.nickname](../client-src/local_player.js)
+### [DrawZone.player.nickname](../client-src/local_player.js#L54)
 Saved nickname set with /nick
-### [DrawZone.player.palette](../client-src/local_player.js)
+### [DrawZone.player.palette](../client-src/local_player.js#L48)
 List of colors in player's palette
-### [DrawZone.player.selectedColor](../client-src/local_player.js)
+### [DrawZone.player.selectedColor](../client-src/local_player.js#L47)
 Array[3] containing your color
-### [DrawZone.player.rank](../client-src/local_player.js)
+### [DrawZone.player.rank](../client-src/local_player.js#L55)
 Rank ID
-### [DrawZone.player.text](../client-src/local_player.js)
+### [DrawZone.player.text](../client-src/local_player.js#L60)
 The text written to buffer
 
 ### DrawZone.events
@@ -138,7 +138,7 @@ The text written to buffer
 `playerUpdate id, tool, color[3]`: Player data updated\
 `playerMoved id, x, y`: Player moved
 
-### [DrawZone.players](../client-src/network/players.js)
+### [DrawZone.players](../client-src/sharedState.js#L4)
 ```json
 {
     "2": {
@@ -151,17 +151,17 @@ The text written to buffer
 ```
 
 ### DrawZone.tools
-### [DrawZone.tools.Tool](../client-src/tools.js)
+### [DrawZone.tools.Tool](../client-src/tools.js#L46)
 The base tool class
-### [DrawZone.tools.addTool](../client-src/tools.js)
+### [DrawZone.tools.addTool](../client-src/tools.js#L100)
 Init the Tool class to the client
-### [DrawZone.tools.cursors](../client-src/tools.js)
+### [DrawZone.tools.cursors](../client-src/tools.js#L13)
 Object containing tool icons and icon offsets
-### [DrawZone.tools.tools](../client-src/tools.js)
+### [DrawZone.tools.tools](../client-src/tools.js#L30)
 Object containing player tools
 
-### [DrawZone.windowSystem](../client-src/windowSystem.js)
-### [DrawZone.windowSystem.GUIWindow](../client-src/windowSystem.js)
+### [DrawZone.windowSystem](../client-src/windowSystem.js#L182)
+### [DrawZone.windowSystem.GUIWindow](../client-src/windowSystem.js#L43)
 Class representing the base window.
 #### Example usage:
 ```js
@@ -172,7 +172,7 @@ new GUIWindow('My Window Title', {}, (windowInstance) => {
     windowInstance.addObj(content);
 }).move(200, 200);
 ```
-### [DrawZone.windowSystem.windows](../client-src/windowSystem.js)
+### [DrawZone.windowSystem.windows](../client-src/windowSystem.js#L5)
 Object containing all windows
 
 ### [DrawZone.ranks](../client-src/shared/ranks.json)

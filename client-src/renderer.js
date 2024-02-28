@@ -314,7 +314,6 @@ function onRender() {
 }
 
 export default {
-    chunks,
     renderText,
     renderChunk,
     renderAllChunks,
