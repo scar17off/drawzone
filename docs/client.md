@@ -20,13 +20,13 @@ The `DrawZone` object is structured as follows:
 - `windowSystem`: Manages GUI windows within the application.
 - `ranks`: Contains player rank information imported from `./shared/ranks.json`.
 
-### [DrawZone.chat](../client-src/network/chat.js)
-## [DrawZone.chat.send(string message)](../client-src/network/chat.js)
+## [DrawZone.chat](../client-src/network/chat.js)
+### [DrawZone.chat.send(string message)](../client-src/network/chat.js)
 Send a message to the server chat through the WebSocket connection.
-## [DrawZone.chat.local(string message)](../client-src/network/chat.js)
+### [DrawZone.chat.local(string message)](../client-src/network/chat.js)
 Send a local message to the chat without broadcasting it to everyone.
 
-### [DrawZone.camera](../client-src/camera.js)
+## [DrawZone.camera](../client-src/camera.js)
 ```json
 {
     "x": 0,
@@ -51,7 +51,7 @@ Increacement of zoom per mouse wheel scroll or Zoom tool.
 ### [DrawZone.camera.editZoom(float change)](../client-src/camera.js#L15)
 Teleport camera to specific position
 
-### [DrawZone.renderer](../client-src/renderer.js#L316)
+## [DrawZone.renderer](../client-src/renderer.js#L316)
 ### [DrawZone.renderer.Fx](../client-src/fx.js)
 Tool and other player FX.
 ### [DrawZone.renderer.options](../client-src/renderer.js#L9)
@@ -65,7 +65,7 @@ Save and render a text at specific position
 ### [DrawZone.renderer.requestRender()](../client-src/renderer.js#L251)
 DrawZone does re-render only when there are any updates, the function is to update current state.
 
-### [DrawZone.world](../client-src/world.js#L20)
+## [DrawZone.world](../client-src/world.js#L20)
 ### [DrawZone.world.canDraw(int x, int y)](../client-src/world.js#L9)
 Check if you can draw at specific position by ensuring quota, protection and chunk loaded.
 ### [DrawZone.world.drawLine(array[2] from, array[2] to)](../client-src/world.js#L45)
@@ -89,7 +89,7 @@ The text written in the world by players
 ### [DrawZone.world.setProtection(bool value, int chunkX, int chunkY)](../client-src/world.js#L91)
 Set chunk protection to specified boolean value
 
-### [DrawZone.mouse](../client-src/mouse.js#L6)
+## [DrawZone.mouse](../client-src/mouse.js#L6)
 ```json
 {
     "x": 962,
@@ -108,7 +108,7 @@ Set chunk protection to specified boolean value
 }
 ```
 
-### [DrawZone.player](../client-src/local_player.js#L46)
+## [DrawZone.player](../client-src/local_player.js#L46)
 ### [DrawZone.player.currentFxRenderer](../client-src/local_player.js#L68)
 Player fx used, see client-src/fx.js
 ### [DrawZone.player.id](../client-src/local_player.js#L59)
@@ -128,7 +128,7 @@ Rank ID
 ### [DrawZone.player.text](../client-src/local_player.js#L60)
 The text written to buffer
 
-### DrawZone.events
+## DrawZone.events
 `loadChunks`: Request the network to load chunks\
 `addText`: Add and send text in the buffer\
 `setTool`: Request the network to change tool\
@@ -138,7 +138,7 @@ The text written to buffer
 `playerUpdate id, tool, color[3]`: Player data updated\
 `playerMoved id, x, y`: Player moved
 
-### [DrawZone.players](../client-src/sharedState.js#L4)
+## [DrawZone.players](../client-src/sharedState.js#L4)
 ```json
 {
     "2": {
@@ -150,20 +150,10 @@ The text written to buffer
 }
 ```
 
-### DrawZone.tools
-### [DrawZone.tools.Tool](../client-src/tools.js#L46)
-The base tool class
-### [DrawZone.tools.addTool](../client-src/tools.js#L100)
-Init the Tool class to the client
-### [DrawZone.tools.cursors](../client-src/tools.js#L13)
-Object containing tool icons and icon offsets
-### [DrawZone.tools.tools](../client-src/tools.js#L30)
-Object containing player tools
-
-### [DrawZone.windowSystem](../client-src/windowSystem.js#L182)
+## [DrawZone.windowSystem](../client-src/windowSystem.js#L182)
 ### [DrawZone.windowSystem.GUIWindow](../client-src/windowSystem.js#L43)
 Class representing the base window.
-#### Example usage:
+#### Example usage
 ```js
 new GUIWindow('My Window Title', {}, (windowInstance) => {
     const content = document.createElement('p');
@@ -177,3 +167,54 @@ Object containing all windows
 
 ### [DrawZone.ranks](../client-src/shared/ranks.json)
 See client-src/ranks.json
+
+## DrawZone.tools
+### [DrawZone.tools.Tool](../client-src/tools.js#L46)
+The base tool class
+### [DrawZone.tools.addTool](../client-src/tools.js#L100)
+Init the Tool class to the client
+### [DrawZone.tools.cursors](../client-src/tools.js#L13)
+Object containing tool icons and icon offsets
+### [DrawZone.tools.tools](../client-src/tools.js#L30)
+Object containing player tools
+
+#### [Tool](../client-src/tools.js#L46) Constructor parameters
+- name - The name of the tool.
+- cursor - The cursor object associated with the tool.
+- effects - An array of effects the tool can apply.
+- rank - The minimum rank required to use the tool.
+- action - The function to be executed when the tool is used.
+
+### Tool.setEvent
+Save a tool event to the canvas and deactivate on unequip.
+
+#### Example Circle tool
+DrawZone.tools.addTool(new DrawZone.tools.Tool("Circle", DrawZone.tools.cursors.cursor, [DrawZone.renderer.Fx.NONE], DrawZone.ranks.User, function (tool) {
+    const segmentCount = 15;
+    let startPoint = null;
+
+    tool.setEvent("mousedown", event => {
+        if (event.buttons === 1) {
+            startPoint = [DrawZone.mouse.tileX, DrawZone.mouse.tileY];
+        }
+    });
+
+    tool.setEvent("mouseup", () => {
+        if (startPoint) {
+            const endPoint = [DrawZone.mouse.tileX, DrawZone.mouse.tileY];
+            const radius = Math.sqrt(Math.pow(endPoint[0] - startPoint[0], 2) + Math.pow(endPoint[1] - startPoint[1], 2));
+            const angleIncrement = 360 / segmentCount;
+            const points = [];
+            for (let angle = 0; angle < 360; angle += angleIncrement) {
+                const x = startPoint[0] + radius * Math.cos(angle * Math.PI / 180);
+                const y = startPoint[1] + radius * Math.sin(angle * Math.PI / 180);
+                points.push([x, y]);
+            }
+            for (let i = 0; i < points.length - 1; i++) {
+                DrawZone.world.drawLine(points[i], points[i + 1]);
+            }
+            DrawZone.world.drawLine(points[points.length - 1], points[0]);
+            startPoint = null;
+        }
+    });
+}));
