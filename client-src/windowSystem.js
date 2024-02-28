@@ -179,18 +179,6 @@ events.on("newRank", (id) => {
     }
 });
 
-/*
-
-Example usage:
-
-new GUIWindow('My Window Title', {}, (windowInstance) => {
-    const content = document.createElement('p');
-    content.textContent = 'This is a dynamic content inside the window.';
-
-    windowInstance.addObj(content);
-}).move(200, 200);
-*/
-
 export default {
     windows,
     GUIWindow

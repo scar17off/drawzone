@@ -20,40 +20,22 @@ The `DrawZone` object is structured as follows:
 - `windowSystem`: Manages GUI windows within the application.
 - `ranks`: Contains player rank information imported from `./shared/ranks.json`.
 
-## Key Components
+### DrawZone.chat
 
-### Network Communication
-
-The `network` property holds the Socket.IO client instance, facilitating real-time communication with the server.
-
-### Structure
-
-javascript:client-src/bundle.js
-```js
-    network: {
-        io: socket
-    },
-```
-- `io`: This is the Socket.IO client instance used for real-time communication between the client and the server.
-
-### Chat
-
-## DrawZone.chat.send
+## DrawZone.chat.send(string message)
 Send a message to the server chat through the WebSocket connection.
-## DrawZone.chat.local
+## DrawZone.chat.local(string message)
 Send a local message to the chat without broadcasting it to everyone.
 
 ### DrawZone.camera
 ```json
 {
-    x: 0,
-    y: 0,
-    zoom: 16,
-    minZoom: 4,
-    maxZoom: 16,
-    zoomStrength: 1,
-    editZoom,
-    centerAt
+    "x": 0,
+    "y": 0,
+    "zoom": 16,
+    "minZoom": 4,
+    "maxZoom": 16,
+    "zoomStrength": 1
 }
 ```
 
@@ -172,18 +154,27 @@ The text written to buffer
 ```
 
 ### DrawZone.tools
-### DrawZone.tools.Tool
+### [DrawZone.tools.Tool](client-src/tools.js)
 The base tool class
-### DrawZone.tools.addTool
+### [DrawZone.tools.addTool](client-src/tools.js)
 Init the Tool class to the client
-### DrawZone.tools.cursors
+### [DrawZone.tools.cursors](client-src/tools.js)
 Object containing tool icons and icon offsets
-### DrawZone.tools.tools
+### [DrawZone.tools.tools](client-src/tools.js)
 Object containing player tools
 
-### DrawZone.windowSystem
-### DrawZone.windowSystem.GUIWindow
-Class representing the base window
+### [DrawZone.windowSystem](client-src/windowSystem.js)
+### [DrawZone.windowSystem.GUIWindow](client-src/windowSystem.js)
+Class representing the base window.
+#### Example usage:
+```js
+new GUIWindow('My Window Title', {}, (windowInstance) => {
+    const content = document.createElement('p');
+    content.textContent = 'This is a dynamic content inside the window.';
+
+    windowInstance.addObj(content);
+}).move(200, 200);
+```
 ### DrawZone.windowSystem.windows
 Object containing all windows
 
