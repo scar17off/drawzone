@@ -187,12 +187,20 @@ io.on("connection", socket => {
         socket.broadcast.emit("playerUpdate", client.id, client.tool, client.color);
     });
 
-    socket.on("loadChunk", (loadQueue) => {
+    socket.on("loadChunk", (loadQueueOrX, maybeY) => {
         const chunkDatas = {};
         
-        for(let i in loadQueue) {
-            const [x, y] = loadQueue[i];
+        if (typeof loadQueueOrX === 'object') {
+            for(let i in loadQueueOrX) {
+                const [x, y] = loadQueueOrX[i];
 
+                chunkDatas[`${x},${y}`] = {
+                    data: chunkManager.get_chunkdata(client.world, x, y),
+                    protected: chunkManager.get_protection(client.world, x, y)
+                }
+            }
+        } else if (typeof loadQueueOrX === 'number' && typeof maybeY === 'number') {
+            const x = loadQueueOrX, y = maybeY;
             chunkDatas[`${x},${y}`] = {
                 data: chunkManager.get_chunkdata(client.world, x, y),
                 protected: chunkManager.get_protection(client.world, x, y)
