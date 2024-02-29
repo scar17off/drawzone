@@ -16,7 +16,7 @@ class Client {
          * The world the client is currently in.
          * @type {string}
          */
-        this.world = new URL(ws.handshake.headers.referer).pathname.substring(1) || "main";
+        this.world = ws.handshake.headers.referer ? new URL(ws.handshake.headers.referer).pathname.substring(1) : "main";
         /**
          * The WebSocket connection for the client.
          * @type {Object}
