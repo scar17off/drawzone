@@ -130,7 +130,7 @@ io.on("connection", socket => {
 
         if(!getRankByID(client.rank).permissions.includes("protect") && chunkManager.get_protection(client.world, chunkX, chunkY) === true) return;
         if(config.saving.savePixels) chunkManager.set_pixel(client.world, x, y, color);
-
+        
         socket.broadcast.emit("newPixel", x, y, color);
     });
 
