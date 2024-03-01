@@ -13,6 +13,7 @@ const structure = {
 socket.on("playerJoin", (id) => {
     players[id] = structure;
     events.emit("playerJoined", id);
+    requestRender();
     document.getElementById("players-display").innerText = "Players: " + (Object.keys(players).length + 1);
 });
 
@@ -20,11 +21,13 @@ socket.on("playerLeft", (id) => {
     delete players[id];
     events.emit("playerLeft", id);
     document.getElementById("players-display").innerText = "Players: " + (Object.keys(players).length + 1);
+    requestRender();
 });
 
 socket.on("playerUpdate", (id, tool, color) => {
     if(!players[id]) players[id] = structure;
     players[id].tool = tool, players[id].color = color;
+    requestRender();
     events.emit("playerUpdate", id, tool, color);
 });
 

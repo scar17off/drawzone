@@ -41,8 +41,8 @@ socket.on("connect", () => {
         if (pixelY < 0) pixelY += 16;
 
         if(chunks[`${chunkX},${chunkY}`]) {
-            requestRender();
             chunks[`${chunkX},${chunkY}`].data[pixelX][pixelY] = color;
+            requestRender();
         }
     });
 
