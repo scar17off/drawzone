@@ -72,6 +72,16 @@ class Client {
          * @type {Bucket}
          */
         this.pixelQuota = new Bucket(0, 0);
+        /**
+         * The buffer for storing updates before flushing.
+         * @type {any[]}
+         */
+        this.updateBuffer = [];
+        /**
+         * The timestamp of the last update buffer flush.
+         * @type {number}
+         */
+        this.lastFlushTime = Date.now();
 
         const world = getWorldByName(this.world);
         
@@ -104,6 +114,29 @@ class Client {
             const index = world.clients.indexOf(this);
             if(index !== -1) world.clients.splice(index, 1);
         });
+    }
+
+    /**
+     * Adds an update to the update buffer and flushes updates if conditions are met.
+     * @param {any} update - The update to add to the buffer.
+     */
+    addUpdate(update) {
+        this.updateBuffer.push(update);
+        if (this.updateBuffer.length > 8 || Date.now() - this.lastFlushTime > 125) {
+            this.flushUpdates();
+        }
+    }
+
+    /**
+     * Flushes the update buffer by emitting a bulk update event and resetting the buffer.
+     */
+    flushUpdates() {
+        if (this.updateBuffer.length > 0) {
+            this.ws.emit("bulkUpdate", this.updateBuffer);
+            this.ws.broadcast.emit("bulkUpdate", this.updateBuffer);
+            this.updateBuffer = [];
+            this.lastFlushTime = Date.now();
+        }
     }
 
     /**

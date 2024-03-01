@@ -42,3 +42,5 @@ The game's configuration can be found in `config.json`
 - [ ] Improve the chat interface for better readability and user interaction.
 - [ ] Add more comprehensive error handling and logging throughout the server and client code.
 - [ ] Ensure all user-generated content is sanitized to prevent XSS and other security vulnerabilities.
+- [ ] Optimize network
+  - Make the network do flush updates so placing 999 pixels at once will send less update messages instead of 999.

@@ -119,6 +119,12 @@ io.on("connection", socket => {
 
     socket.broadcast.emit("playerJoin", client.id);
 
+    /*
+    setInterval(() => {
+        client.flushUpdates();
+    }, 1000 / 30);
+    */
+
     socket.on("setPixel", (x, y, color) => {
         x = Math.floor(x);
         y = Math.floor(y);
