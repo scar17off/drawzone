@@ -169,16 +169,17 @@ Object containing all windows
 See client-src/ranks.json
 
 ## DrawZone.tools
-### [DrawZone.tools.Tool](../client-src/tools.js#L46)
+### [DrawZone.tools.Tool](../client-src/tools.js#L31)
 The base tool class
-### [DrawZone.tools.addTool](../client-src/tools.js#L112)
+### [DrawZone.tools.addTool](../client-src/tools.js#L97)
 Creates an object of the Tool class and sets to the game. Allows to specify the Tool class constructor parameters via function parameters. Returns a Tool object.
-### [DrawZone.tools.cursors](../client-src/tools.js#L13)
-Object containing tool icons and icon offsets
-### [DrawZone.tools.tools](../client-src/tools.js#L30)
+### [DrawZone.tools.tools](../client-src/tools.js#L15)
 Object containing player tools
 
-#### [Tool](../client-src/tools.js#L46) Constructor parameters
+## [DrawZone.cursors](../client-src/cursors.js#L4)
+Object containing tool icons and icon offsets
+
+#### [Tool](../client-src/tools.js#L32) Constructor parameters
 - name - The name of the tool.
 - cursor - The cursor object associated with the tool.
 - fxRenderer - An array of effects the tool can apply.
@@ -193,7 +194,7 @@ Save a tool event to the canvas and deactivate on unequip.
 
 #### Example: Circle tool
 ```js
-DrawZone.tools.addTool("Circle", DrawZone.tools.cursors.cursor, [DrawZone.renderer.Fx.NONE], DrawZone.ranks.User, function (tool) {
+DrawZone.tools.addTool("Circle", DrawZone.cursors.cursor, [DrawZone.renderer.Fx.NONE], DrawZone.ranks.User, function (tool) {
     const segmentCount = 15;
     let startPoint = null;
 
