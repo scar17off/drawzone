@@ -172,7 +172,7 @@ See client-src/ranks.json
 ### [DrawZone.tools.Tool](../client-src/tools.js#L46)
 The base tool class
 ### [DrawZone.tools.addTool](../client-src/tools.js#L112)
-Init the Tool class to the client
+Creates an object of the Tool class and sets to the game. Allows to specify the Tool class constructor parameters via function parameters. Returns a Tool object.
 ### [DrawZone.tools.cursors](../client-src/tools.js#L13)
 Object containing tool icons and icon offsets
 ### [DrawZone.tools.tools](../client-src/tools.js#L30)
