@@ -46,6 +46,6 @@ export function loadAndParseTools() {
         Promise.all(promises).then(() => {
             events.emit("toolCtxLoaded", cursors);
         });
-    };
+    }
     img.src = "/img/toolset.png";
 }

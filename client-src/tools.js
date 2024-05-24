@@ -243,7 +243,7 @@ events.on("newRank", (newRank) => {
                 local_player.currentFxRenderer = {
                     type: Fx.LINE,
                     params: [startPoint, endPoint]
-                };
+                }
                 requestRender();
             }
         });
@@ -428,7 +428,7 @@ events.on("newRank", (newRank) => {
                 local_player.currentFxRenderer = {
                     type: Fx.AREA_SELECT,
                     params: [selectionStart, selectionEnd, step]
-                };
+                }
                 requestRender();
             }
         });
@@ -484,7 +484,7 @@ events.on("newRank", (newRank) => {
                 local_player.currentFxRenderer = {
                     type: Fx.AREA_SELECT,
                     params: [selectionStart, selectionEnd, step]
-                };
+                }
                 requestRender();
             }
         });

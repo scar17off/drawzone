@@ -7,7 +7,7 @@ class Plugin {
 		this.filename = props.file;
 		this.took = props.took;
 		this.loaded = props.loaded;
-	};
-};
+	}
+}
 
 module.exports = Plugin;
