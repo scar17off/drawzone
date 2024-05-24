@@ -134,6 +134,8 @@ function addTool() {
         events.emit("setTool", local_player.tool);
     });
 
+    tools[tool.elementName] = tool;
+
     document.getElementById("tools-window").style.top = `calc(50% - ${document.getElementById("tools-window").clientHeight}px / 2)`;
 
     if (Object.keys(tools).length === 1) document.getElementById("tool-" + tool.elementName).click();
