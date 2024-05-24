@@ -51,20 +51,29 @@ class Tool {
         this.minRank = minRank.id;
         this.fxRenderer = { type: fxRenderer[0], params: fxRenderer.slice(1) };
         this.eventListeners = [];
-        this.onInit = onInit;
         this.id = Object.keys(tools).length;
+        if(init) this.setToolInit(init);
     }
+    
+    setToolInit(onInit) {
+        this.onInit = onInit;
+        this.addEvents();
+    }
+    
     setFxRenderer(fx) {
         this.fxRenderer = fx;
     }
+    
     addEvents() {
         if (typeof this.onInit === "function") this.onInit(this);
     }
+    
     setEvent(event, callback) {
         const eventListener = { event, callback };
 
         this.eventListeners.push(eventListener);
     }
+    
     activate() {
         this.eventListeners.forEach(({ event, callback }) => {
             canvas.addEventListener(event, callback);
@@ -74,15 +83,18 @@ class Tool {
             local_player.currentFxRenderer = this.fxRenderer;
         }
     }
+    
     deactivate() {
         this.eventListeners.forEach(({ event, callback }) => {
             canvas.removeEventListener(event, callback);
         });
     }
+    
     show() {
         const toolButton = document.getElementById(`tool-${this.elementName}`);
         if (toolButton) toolButton.style.display = '';
     }
+    
     hide() {
         const toolButton = document.getElementById(`tool-${this.elementName}`);
         if (toolButton) toolButton.style.display = 'none';
@@ -97,8 +109,8 @@ function removeSelectedClass() {
     });
 }
 
-function addTool(tool) {
-    tool.addEvents();
+function addTool() {
+    const tool = new Tool(...arguments);
 
     const toolButton = document.createElement("button");
     toolButton.id = `tool-${tool.elementName}`;
@@ -122,11 +134,7 @@ function addTool(tool) {
         events.emit("setTool", local_player.tool);
     });
 
-    tools[tool.elementName] = tool;
-
-    document.getElementById("tools-window").style.top = `calc(50% - ${document.getElementById("tools-window").clientHeight}px / 2)`;
-
-    if (Object.keys(tools).length === 1) document.getElementById("tool-" + tool.elementName).click();
+    return tool;
 }
 
 events.on("newRank", (newRank) => {
@@ -140,7 +148,7 @@ events.on("newRank", (newRank) => {
 });
 
 {
-    addTool(new Tool("Cursor", cursors.cursor, [Fx.RECT_SELECT_ALIGNED, 1], ranks.User, function (tool) {
+    addTool("Cursor", cursors.cursor, [Fx.RECT_SELECT_ALIGNED, 1], ranks.User, function (tool) {
         function mouseDown(event) {
             if (event.buttons === 1 || event.buttons == 2) {
                 const color = event.buttons === 1 ? local_player.selectedColor : [255, 255, 255];
@@ -155,9 +163,9 @@ events.on("newRank", (newRank) => {
             }
         });
         tool.setEvent('mousedown', mouseDown);
-    }));
+    });
 
-    addTool(new Tool("Pipette", cursors.pipette, [Fx.NONE], ranks.User, function (tool) {
+    addTool("Pipette", cursors.pipette, [Fx.NONE], ranks.User, function (tool) {
         async function mouseDown(event) {
             if (event.buttons === 1) {
                 const color = await world.getPixel(mouse.tileX, mouse.tileY);
@@ -180,9 +188,9 @@ events.on("newRank", (newRank) => {
 
         tool.setEvent('mousemove', mouseDown);
         tool.setEvent('mousedown', mouseDown);
-    }));
+    });
 
-    addTool(new Tool("Pencil", cursors.pencil, [Fx.NONE], ranks.User, function (tool) {
+    addTool("Pencil", cursors.pencil, [Fx.NONE], ranks.User, function (tool) {
         let intervalId = null;
         let drawingStarted = false;
 
@@ -220,9 +228,9 @@ events.on("newRank", (newRank) => {
                 mouse.prevLineY = null;
             }
         });
-    }));
+    });
 
-    addTool(new Tool("Line", cursors.line, [Fx.NONE], ranks.User, function (tool) {
+    addTool("Line", cursors.line, [Fx.NONE], ranks.User, function (tool) {
         let startPoint = null;
 
         tool.setEvent("mousedown", event => {
@@ -251,9 +259,9 @@ events.on("newRank", (newRank) => {
                 requestRender();
             }
         });
-    }));
+    });
 
-    addTool(new Tool("Move", cursors.move, [Fx.NONE], ranks.User, function (tool) {
+    addTool("Move", cursors.move, [Fx.NONE], ranks.User, function (tool) {
         tool.setEvent('mousemove', event => {
             if (event.buttons === 1) {
                 camera.x -= event.movementX;
@@ -262,9 +270,9 @@ events.on("newRank", (newRank) => {
                 events.emit("loadChunks");
             }
         });
-    }));
+    });
 
-    addTool(new Tool("Fill", cursors.fill, [Fx.NONE], ranks.User, function (tool) {
+    addTool("Fill", cursors.fill, [Fx.NONE], ranks.User, function (tool) {
         let filling = false;
 
         const colorEquals = (color1, color2) => color1[0] === color2[0] && color1[1] === color2[1] && color1[2] === color2[2];
@@ -298,9 +306,9 @@ events.on("newRank", (newRank) => {
         tool.setEvent('mouseup', () => {
             filling = false;
         });
-    }));
+    });
 
-    addTool(new Tool("Zoom", cursors.zoom, [Fx.NONE], ranks.User, function (tool) {
+    addTool("Zoom", cursors.zoom, [Fx.NONE], ranks.User, function (tool) {
         tool.setEvent('mousedown', event => {
             if (event.buttons === 1) {
                 camera.editZoom(0.5);
@@ -308,9 +316,9 @@ events.on("newRank", (newRank) => {
                 camera.editZoom(-0.5);
             }
         });
-    }));
+    });
 
-    addTool(new Tool("Protect", cursors.protect, [Fx.NONE], ranks.Moderator, function (tool) {
+    addTool("Protect", cursors.protect, [Fx.NONE], ranks.Moderator, function (tool) {
         const protect = event => {
             if (event.buttons === 0 || event.buttons === 4) return;
             const chunkX = Math.floor(mouse.tileX / 16);
@@ -321,9 +329,9 @@ events.on("newRank", (newRank) => {
 
         tool.setEvent('mousemove', protect);
         tool.setEvent('mousedown', protect);
-    }));
+    });
 
-    addTool(new Tool("Eraser", cursors.eraser, [Fx.RECT_SELECT_ALIGNED, 16], ranks.Moderator, function (tool) {
+    addTool("Eraser", cursors.eraser, [Fx.RECT_SELECT_ALIGNED, 16], ranks.Moderator, function (tool) {
         const erase = event => {
             if (event.buttons === 4 || event.buttons === 0) return;
             const chunkX = Math.floor(mouse.tileX / 16);
@@ -334,9 +342,9 @@ events.on("newRank", (newRank) => {
 
         tool.setEvent('mousemove', erase);
         tool.setEvent('mousedown', erase);
-    }));
+    });
 
-    addTool(new Tool("Paste", cursors.paste, [Fx.NONE], ranks.Moderator, function (tool) {
+    addTool("Paste", cursors.paste, [Fx.NONE], ranks.Moderator, function (tool) {
         function getImageChunkData(imageData) {
             const chunkData = {};
             const width = imageData.width;
@@ -403,9 +411,9 @@ events.on("newRank", (newRank) => {
                 input.click();
             }
         });
-    }));
+    });
 
-    addTool(new Tool("Area Erase", cursors.areaerase, [Fx.NONE], ranks.Moderator, function (tool) {
+    addTool("Area Erase", cursors.areaerase, [Fx.NONE], ranks.Moderator, function (tool) {
         let selectionStart = null;
         let selectionEnd = null;
         let step = 16;
@@ -459,9 +467,9 @@ events.on("newRank", (newRank) => {
                 requestRender();
             }
         });
-    }));
+    });
 
-    addTool(new Tool("Area Protect", cursors.areaprotect, [Fx.NONE], ranks.Moderator, async (tool) => {
+    addTool("Area Protect", cursors.areaprotect, [Fx.NONE], ranks.Moderator, async (tool) => {
         let selectionStart = null;
         let selectionEnd = null;
         let step = 16;
@@ -507,7 +515,7 @@ events.on("newRank", (newRank) => {
                 requestRender();
             }
         });
-    }));
+    });
 }
 
 export default {
