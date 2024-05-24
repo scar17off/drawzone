@@ -522,10 +522,10 @@ events.on("newRank", (newRank) => {
         async function captureAndOpenScreenshot(start, end) {
             const width = Math.abs(end[0] - start[0]) + 1;
             const height = Math.abs(end[1] - start[1]) + 1;
-            const canvas = document.createElement('canvas');
+            const canvas = document.createElement("canvas");
             canvas.width = width;
             canvas.height = height;
-            const ctx = canvas.getContext('2d');
+            const ctx = canvas.getContext("2d");
         
             for (let x = start[0]; x <= end[0]; x++) {
                 for (let y = start[1]; y <= end[1]; y++) {
@@ -540,28 +540,28 @@ events.on("newRank", (newRank) => {
         }
         
         function displayImageInModal(imageSrc) {
-            const modal = document.createElement('div');
-            modal.style.position = 'fixed';
-            modal.style.left = '0';
+            const modal = document.createElement("div");
+            modal.style.position = "fixed";
+            modal.style.left = "0";
             modal.style.top = '0';
-            modal.style.width = '100%';
-            modal.style.height = '100%';
-            modal.style.backgroundColor = 'rgba(0, 0, 0, 0.5)';
-            modal.style.display = 'flex';
-            modal.style.justifyContent = 'center';
-            modal.style.alignItems = 'center';
-            modal.style.zIndex = '1000';
+            modal.style.width = "100%";
+            modal.style.height = "100%";
+            modal.style.backgroundColor = "rgba(0, 0, 0, 0.5)";
+            modal.style.display = "flex";
+            modal.style.justifyContent = 'center";
+            modal.style.alignItems = "center";
+            modal.style.zIndex = "1000";
         
-            const img = document.createElement('img');
+            const img = document.createElement("img");
             img.src = imageSrc;
-            img.style.maxWidth = '90%';
-            img.style.maxHeight = '90%';
+            img.style.maxWidth = "90%";
+            img.style.maxHeight = "90%";
         
-            const closeButton = document.createElement('button');
-            closeButton.textContent = 'Close';
+            const closeButton = document.createElement("button");
+            closeButton.textContent = "Close";
             closeButton.onclick = function() {
                 document.body.removeChild(modal);
-            };
+            }
         
             modal.appendChild(img);
             modal.appendChild(closeButton);
