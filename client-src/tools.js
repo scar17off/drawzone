@@ -149,9 +149,13 @@ function addTool() {
     toolButton.className = "tool-item";
     const toolImageDiv = document.createElement("div");
 
-    events.once("toolCtxLoaded", () => {
+    if(!tool.cursor.base64) {
+        events.once("toolCtxLoaded", () => {
+            toolImageDiv.style.backgroundImage = `url("${tool.cursor.base64}")`;
+        });
+    } else {
         toolImageDiv.style.backgroundImage = `url("${tool.cursor.base64}")`;
-    });
+    }
 
     toolImageDiv.style.margin = tool.cursor?.offset?.join("px ") + "px";
 
