@@ -31,7 +31,7 @@ The game's configuration can be found in `config.json`
   - [ ] Add feature to request and load texts in chunks
 - [ ] Tools
   - [ ] Copy
-  - [ ] Screenshot
+  - [x] Screenshot
 - [ ] Tempmute & Tempban
   - bansManager.js, muteManager.js
 - [ ] Discord Gateway plugin

@@ -548,7 +548,7 @@ events.on("newRank", (newRank) => {
             modal.style.height = "100%";
             modal.style.backgroundColor = "rgba(0, 0, 0, 0.5)";
             modal.style.display = "flex";
-            modal.style.justifyContent = 'center";
+            modal.style.justifyContent = "center";
             modal.style.alignItems = "center";
             modal.style.zIndex = "1000";
         
