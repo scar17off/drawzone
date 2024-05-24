@@ -4,7 +4,8 @@ import { mouse } from "./mouse.js";
 import { players } from "./sharedState.js";
 import local_player from "./local_player.js";
 import Fx from "./fx.js";
-import { cursors, toolIDs } from "./tools.js";
+import { toolIDs } from "./tools.js";
+import { cursors } from "./cursors.js";
 
 export const options = {
     grid: true,

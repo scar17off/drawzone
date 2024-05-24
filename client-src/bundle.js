@@ -12,6 +12,7 @@ import windowSystem from "./windowSystem.js";
 import world from "./world.js";
 import Fx from "./fx.js";
 import ranks from "./shared/ranks.json";
+import { cursors } from "./cursors.js";
 
 window.DrawZone = {
     chat,
@@ -36,7 +37,8 @@ window.DrawZone = {
     players,
     tools,
     windowSystem,
-    ranks
+    ranks,
+    cursors
 }
 
 export default DrawZone;
