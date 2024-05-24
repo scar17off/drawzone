@@ -188,9 +188,9 @@ Object containing player tools
 ### Tool.setEvent
 Save a tool event to the canvas and deactivate on unequip.
 
-#### Example Circle tool
+#### Example: Circle tool
 ```js
-DrawZone.tools.addTool(new DrawZone.tools.Tool("Circle", DrawZone.tools.cursors.cursor, [DrawZone.renderer.Fx.NONE], DrawZone.ranks.User, function (tool) {
+DrawZone.tools.addTool("Circle", DrawZone.tools.cursors.cursor, [DrawZone.renderer.Fx.NONE], DrawZone.ranks.User, function (tool) {
     const segmentCount = 15;
     let startPoint = null;
 
@@ -218,5 +218,5 @@ DrawZone.tools.addTool(new DrawZone.tools.Tool("Circle", DrawZone.tools.cursors.
             startPoint = null;
         }
     });
-}));
+});
 ```
