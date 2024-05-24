@@ -52,7 +52,7 @@ class Tool {
         this.fxRenderer = { type: fxRenderer[0], params: fxRenderer.slice(1) };
         this.eventListeners = [];
         this.id = Object.keys(tools).length;
-        if(init) this.setToolInit(init);
+        if(onInit) this.setToolInit(onInit);
     }
     
     setToolInit(onInit) {
