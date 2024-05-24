@@ -171,7 +171,7 @@ See client-src/ranks.json
 ## DrawZone.tools
 ### [DrawZone.tools.Tool](../client-src/tools.js#L46)
 The base tool class
-### [DrawZone.tools.addTool](../client-src/tools.js#L100)
+### [DrawZone.tools.addTool](../client-src/tools.js#L112)
 Init the Tool class to the client
 ### [DrawZone.tools.cursors](../client-src/tools.js#L13)
 Object containing tool icons and icon offsets
@@ -183,7 +183,10 @@ Object containing player tools
 - cursor - The cursor object associated with the tool.
 - effects - An array of effects the tool can apply.
 - rank - The minimum rank required to use the tool.
-- action - The function to be executed when the tool is used.
+- action - The function to be executed when the tool is used
+
+### Tool.setToolInit
+Set tool init function from the class method above instead. Automatically calls the Tool.addEvents method.
 
 ### Tool.setEvent
 Save a tool event to the canvas and deactivate on unequip.
