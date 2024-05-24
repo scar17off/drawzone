@@ -14,7 +14,7 @@ export const cursors = {
     paste: { x: TS*3, y: 0, offset: [-8] },
     areaerase: { x: TS*3, y: TS*2, offset: [-8] },
     areaprotect: { x: TS*4, y: 0, offset: [-8] },
-    camera: { x: TS*4, y: TS, offset: [] },
+    camera: { x: TS*4, y: TS, offset: [-8] },
     copy: { x: TS*3, y: TS, offset: [-8] }
 }
 

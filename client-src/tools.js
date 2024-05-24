@@ -514,6 +514,85 @@ events.on("newRank", (newRank) => {
             }
         });
     });
+
+    addTool("Screenshot", cursors.camera, [Fx.NONE], ranks.User, function (tool) {
+        let selectionStart = null;
+        let selectionEnd = null;
+
+        async function captureAndOpenScreenshot(start, end) {
+            const width = Math.abs(end[0] - start[0]) + 1;
+            const height = Math.abs(end[1] - start[1]) + 1;
+            const canvas = document.createElement('canvas');
+            canvas.width = width;
+            canvas.height = height;
+            const ctx = canvas.getContext('2d');
+        
+            for (let x = start[0]; x <= end[0]; x++) {
+                for (let y = start[1]; y <= end[1]; y++) {
+                    const color = await world.getPixel(x, y);
+                    ctx.fillStyle = `rgb(${color.join(',')})`;
+                    ctx.fillRect(x - start[0], y - start[1], 1, 1);
+                }
+            }
+        
+            const dataUrl = canvas.toDataURL();
+            displayImageInModal(dataUrl);
+        }
+        
+        function displayImageInModal(imageSrc) {
+            const modal = document.createElement('div');
+            modal.style.position = 'fixed';
+            modal.style.left = '0';
+            modal.style.top = '0';
+            modal.style.width = '100%';
+            modal.style.height = '100%';
+            modal.style.backgroundColor = 'rgba(0, 0, 0, 0.5)';
+            modal.style.display = 'flex';
+            modal.style.justifyContent = 'center';
+            modal.style.alignItems = 'center';
+            modal.style.zIndex = '1000';
+        
+            const img = document.createElement('img');
+            img.src = imageSrc;
+            img.style.maxWidth = '90%';
+            img.style.maxHeight = '90%';
+        
+            const closeButton = document.createElement('button');
+            closeButton.textContent = 'Close';
+            closeButton.onclick = function() {
+                document.body.removeChild(modal);
+            };
+        
+            modal.appendChild(img);
+            modal.appendChild(closeButton);
+            document.body.appendChild(modal);
+        }
+    
+        tool.setEvent("mousedown", event => {
+            if (event.buttons === 1) {
+                selectionStart = [mouse.tileX, mouse.tileY];
+            }
+        });
+    
+        tool.setEvent("mousemove", event => {
+            if (event.buttons === 1 && selectionStart) {
+                selectionEnd = [mouse.tileX, mouse.tileY];
+                local_player.currentFxRenderer = {
+                    type: Fx.AREA_SELECT,
+                    params: [selectionStart, selectionEnd, 1]
+                }
+                requestRender();
+            }
+        });
+    
+        tool.setEvent("mouseup", () => {
+            if (selectionStart && selectionEnd) {
+                captureAndOpenScreenshot(selectionStart, selectionEnd);
+                selectionStart = null;
+                selectionEnd = null;
+            }
+        });
+    });
 }
 
 export default {
