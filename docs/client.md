@@ -171,8 +171,8 @@ See client-src/ranks.json
 ## DrawZone.tools
 ### [DrawZone.tools.Tool](../client-src/tools.js#L46)
 The base tool class
-### [DrawZone.tools.addTool](../client-src/tools.js#L100)
-Init the Tool class to the client
+### [DrawZone.tools.addTool](../client-src/tools.js#L112)
+Creates an object of the Tool class and sets to the game. Allows to specify the Tool class constructor parameters via function parameters. Returns a Tool object.
 ### [DrawZone.tools.cursors](../client-src/tools.js#L13)
 Object containing tool icons and icon offsets
 ### [DrawZone.tools.tools](../client-src/tools.js#L30)
@@ -181,16 +181,19 @@ Object containing player tools
 #### [Tool](../client-src/tools.js#L46) Constructor parameters
 - name - The name of the tool.
 - cursor - The cursor object associated with the tool.
-- effects - An array of effects the tool can apply.
-- rank - The minimum rank required to use the tool.
-- action - The function to be executed when the tool is used.
+- fxRenderer - An array of effects the tool can apply.
+- minRank - The minimum rank required to use the tool.
+- onInit - The function to be executed when the tool is used. When is set, calls the Tool.setToolInit method.
+
+### Tool.setToolInit
+Set tool init function from the class method above instead of the onInit parameter of the Tool class constructor. Automatically calls the Tool.addEvents method.
 
 ### Tool.setEvent
 Save a tool event to the canvas and deactivate on unequip.
 
-#### Example Circle tool
+#### Example: Circle tool
 ```js
-DrawZone.tools.addTool(new DrawZone.tools.Tool("Circle", DrawZone.tools.cursors.cursor, [DrawZone.renderer.Fx.NONE], DrawZone.ranks.User, function (tool) {
+DrawZone.tools.addTool("Circle", DrawZone.tools.cursors.cursor, [DrawZone.renderer.Fx.NONE], DrawZone.ranks.User, function (tool) {
     const segmentCount = 15;
     let startPoint = null;
 
@@ -218,5 +221,5 @@ DrawZone.tools.addTool(new DrawZone.tools.Tool("Circle", DrawZone.tools.cursors.
             startPoint = null;
         }
     });
-}));
+});
 ```
