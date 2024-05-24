@@ -181,12 +181,12 @@ Object containing player tools
 #### [Tool](../client-src/tools.js#L46) Constructor parameters
 - name - The name of the tool.
 - cursor - The cursor object associated with the tool.
-- effects - An array of effects the tool can apply.
-- rank - The minimum rank required to use the tool.
-- action - The function to be executed when the tool is used
+- fxRenderer - An array of effects the tool can apply.
+- minRank - The minimum rank required to use the tool.
+- onInit - The function to be executed when the tool is used. When is set, calls the Tool.setToolInit method.
 
 ### Tool.setToolInit
-Set tool init function from the class method above instead. Automatically calls the Tool.addEvents method.
+Set tool init function from the class method above instead of the onInit parameter of the Tool class constructor. Automatically calls the Tool.addEvents method.
 
 ### Tool.setEvent
 Save a tool event to the canvas and deactivate on unequip.
