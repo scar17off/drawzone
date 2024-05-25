@@ -411,6 +411,122 @@ events.on("newRank", (newRank) => {
         });
     });
 
+    addTool("Paste as Lines", cursors.paste, [Fx.NONE], ranks.Admin, function (tool) {
+        tool.horizontal = true;
+        tool.vertical = true;
+        tool.pixel = false;
+
+        function getImageLineData(imageData) {
+            const lineData = [];
+            const pixelData = [];
+            const width = imageData.width;
+            const height = imageData.height;
+
+            // Horizontal lines
+            if (tool.horizontal) {
+                for (let y = 0; y < height; y++) {
+                    let startX = 0;
+                    let currentColor = [imageData.data[0], imageData.data[1], imageData.data[2], imageData.data[3]];
+                    for (let x = 1; x < width; x++) {
+                        const index = (y * width + x) * 4;
+                        const color = [imageData.data[index], imageData.data[index + 1], imageData.data[index + 2], imageData.data[index + 3]];
+                        if (color[3] === 0) continue;
+                        if (color[0] !== currentColor[0] || color[1] !== currentColor[1] || color[2] !== currentColor[2] || color[3] !== currentColor[3]) {
+                            lineData.push({start: [startX, y], end: [x - 1, y], color: currentColor});
+                            startX = x;
+                            currentColor = color;
+                        }
+                    }
+                    if (currentColor[3] !== 0) {
+                        lineData.push({start: [startX, y], end: [width - 1, y], color: currentColor});
+                    }
+                }
+            }
+
+            // Vertical lines
+            if (tool.vertical) {
+                for (let x = 0; x < width; x++) {
+                    let startY = 0;
+                    let currentColor = [imageData.data[x * 4], imageData.data[x * 4 + 1], imageData.data[x * 4 + 2], imageData.data[x * 4 + 3]];
+                    for (let y = 1; y < height; y++) {
+                        const index = (y * width + x) * 4;
+                        const color = [imageData.data[index], imageData.data[index + 1], imageData.data[index + 2], imageData.data[index + 3]];
+                        if (color[3] === 0) continue;
+                        if (color[0] !== currentColor[0] || color[1] !== currentColor[1] || color[2] !== currentColor[2] || color[3] !== currentColor[3]) {
+                            lineData.push({start: [x, startY], end: [x, y - 1], color: currentColor});
+                            startY = y;
+                            currentColor = color;
+                        }
+                    }
+                    if (currentColor[3] !== 0) {
+                        lineData.push({start: [x, startY], end: [x, height - 1], color: currentColor});
+                    }
+                }
+            }
+
+            // Handle Pixels
+            if (tool.pixel) {
+                for (let x = 0; x < width; x++) {
+                    for (let y = 0; y < height; y++) {
+                        const index = (y * width + x) * 4;
+                        const color = [imageData.data[index], imageData.data[index + 1], imageData.data[index + 2], imageData.data[index + 3]];
+                        if (color[3] !== 0) {
+                            pixelData.push({x, y, color});
+                        }
+                    }
+                }
+            }
+
+            return { lineData, pixelData };
+        }
+
+        tool.setEvent('mousedown', async event => {
+            if (event.buttons === 1) {
+                const input = document.createElement('input');
+                input.type = 'file';
+                input.accept = 'image/*';
+                input.onchange = async e => {
+                    const file = e.target.files[0];
+                    const reader = new FileReader();
+                    reader.onload = async function (event) {
+                        const img = new Image();
+                        img.onload = async function () {
+                            const canvas = document.createElement('canvas');
+                            const ctx = canvas.getContext('2d');
+                            canvas.width = img.width;
+                            canvas.height = img.height;
+                            ctx.drawImage(img, 0, 0);
+                            const imageData = ctx.getImageData(0, 0, img.width, img.height);
+                            const { lineData, pixelData } = getImageLineData(imageData);
+
+                            lineData.forEach(line => {
+                                if (line.color[3] !== 0) {
+                                    const baseX = Math.floor(mouse.tileX);
+                                    const baseY = Math.floor(mouse.tileY);
+                                    const from = [baseX + line.start[0], baseY + line.start[1]];
+                                    const to = [baseX + line.end[0], baseY + line.end[1]];
+                                    world.drawLine(from, to, line.color);
+                                }
+                            });
+
+                            pixelData.forEach(pixel => {
+                                if (pixel.color[3] !== 0) {
+                                    const baseX = Math.floor(mouse.tileX);
+                                    const baseY = Math.floor(mouse.tileY);
+                                    const position = [baseX + pixel.x, baseY + pixel.y];
+                                    world.setPixel(position[0], position[1], pixel.color);
+                                }
+                            });
+                        }
+                        img.src = event.target.result;
+                    }
+                    reader.readAsDataURL(file);
+                }
+                input.click();
+            }
+        });
+    });
+
     addTool("Area Erase", cursors.areaerase, [Fx.NONE], ranks.Moderator, function (tool) {
         let selectionStart = null;
         let selectionEnd = null;
