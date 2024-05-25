@@ -107,11 +107,10 @@ getFilesRecursively("./routing/client/");
     });
 })();
 
-app.get("/*", (req, res) => {
-    if(req.params[0] == '') // ignore requests related to img directory
-        return res.sendFile("./routing/client/index.html", {
-            root: '.'
-        });
+app.get("/:worldName?", (req, res) => {
+    return res.sendFile("./routing/client/index.html", {
+        root: '.'
+    });
 });
 
 io.on("connection", socket => {
