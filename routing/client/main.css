@@ -158,3 +158,6 @@ li.admin {
     right: 10px;
     top: 10px;
 }
+html, body {
+    overflow: hidden;
+}
