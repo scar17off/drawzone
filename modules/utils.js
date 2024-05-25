@@ -75,13 +75,20 @@ function log(type, ...message) {
  * @param {object} client - The client object.
  * @param {object} rank - The rank object.
  * @param {string} message - The message to format.
+ * @param {boolean} [html=true] - Whether to include HTML in the output.
  * @returns {string} - The formatted message.
  */
-function formatMessage(client, rank, message) {
+function formatMessage(client, rank, message, html = true) {
     const chatPrefix = rank.chatPrefix ? `${rank.chatPrefix} ` : '';
-    const senderInfo = client.nickname ? `<span class="rank-${rank.id}">${rank.revealID ? `[${client.id}]` : ''}${chatPrefix}${client.nickname}</span>` : `<span class="id">${rank.revealID ? `[${client.id}]` : ''}${chatPrefix}</span>`;
+    const idDisplay = rank.revealID ? `[${client.id}] ` : '';
+    const senderInfo = client.nickname ? `${idDisplay}${chatPrefix}${client.nickname}` : `${idDisplay}${chatPrefix}`;
     
-    return `${senderInfo}: ${sanitizeXSS(message)}`;
+    if (html) {
+        const senderHtml = `<span class="rank-${rank.id}">${senderInfo}</span>`;
+        return `${senderHtml}: ${sanitizeXSS(message)}`;
+    } else {
+        return `${senderInfo}: ${message}`;
+    }
 }
 
 module.exports = {

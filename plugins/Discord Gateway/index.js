@@ -1,4 +1,4 @@
-const { getPlayersInWorld } = require("../../modules/player/players.js");
+const formatMessage = require("../../modules/utils.js").formatMessage;
 
 module.exports = {
     install: function() {
@@ -19,17 +19,10 @@ module.exports = {
 
         client.on(Events.ClientReady, () => {
             server.events.on("message", (message, client, rank) => {
-                const channelID = worlds[client.world || "main"];
+                const channelID = worlds[client.world];
 
                 if(channelID) {
-                    function formatMessage(client, rank, message) {
-                        const chatPrefix = rank.chatPrefix ? `${rank.chatPrefix} ` : '';
-                        const senderInfo = client.nickname ? `${rank.revealID ? `[${client.id}]` : ''}${chatPrefix}${client.nickname}` : `${rank.revealID ? `[${client.id}]` : ''}${chatPrefix}<span class="id">Unknown</span>`;
-                        
-                        return `${senderInfo}: ${utils.sanitizeXSS(message)}`;
-                    }
-
-                    const formattedMessage = formatMessage(client, rank, message);
+                    const formattedMessage = formatMessage(client, rank, message, false);
 
                     server.discord.channels.fetch(channelID).then(channel => {
                         if(channel) {

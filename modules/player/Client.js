@@ -16,7 +16,7 @@ class Client {
          * The world the client is currently in.
          * @type {string}
          */
-        this.world = ws.handshake.headers.referer ? new URL(ws.handshake.headers.referer).pathname.substring(1) : "main";
+        this._world = ws.handshake.headers.referer ? new URL(ws.handshake.headers.referer).pathname.substring(1) : "main";
         /**
          * The WebSocket connection for the client.
          * @type {Object}
@@ -107,13 +107,21 @@ class Client {
             this.send(server.config.welcomeMessage);
 
             this.setRank(ranks[defaultRank].id);
-            this.send(`[Server] Joined world: "${this.world || "main"}", your ID is: ${this.id}!`);
+            this.send(`[Server] Joined world: "${this.world}", your ID is: ${this.id}!`);
         }
 
         this.ws.on("disconnect", () => {
             const index = world.clients.indexOf(this);
             if(index !== -1) world.clients.splice(index, 1);
         });
+    }
+
+    /**
+     * Gets the current world of the client or "main" if not set.
+     * @returns {string}
+     */
+    get world() {
+        return this._world || "main";
     }
 
     /**

@@ -14,7 +14,7 @@ module.exports = httpServer => {
 
     io.on("connection", socket => {
         const client = new Client(socket);
-        socket.join(client.world || "main");
+        socket.join(client.world);
 
         socket.broadcast.to(client.world).emit("playerJoin", client.id);
 
@@ -127,7 +127,8 @@ module.exports = httpServer => {
             }
 
             const formattedMessage = formatMessage(client, rank, message);
-            server.io.to(client.world).emit("message", formattedMessage);
+            socket.emit("message", formattedMessage);
+            socket.broadcast.to(client.world).emit("message", formattedMessage);
             server.events.emit("message", message, client, rank);
         });
 
