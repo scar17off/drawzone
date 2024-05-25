@@ -1,9 +1,7 @@
+const Client = require("./Client.js");
 const { getRankByID } = require("./rankingUtils.js");
 const ranks = require("../shared/ranks.json");
 const { getPlayersInWorld } = require("../player/players.js");
-
-// this is for JsDoc
-const Client = require("./Client.js");
 
 const loginCommands = Object.values(ranks).reduce((acc, rank) => {
     if(rank.loginCommand) {
@@ -131,6 +129,11 @@ class Command {
     }
 }
 
+/**
+ * Adds a command to the command object.
+ * @param {string} name - The name of the command.
+ * @param {function} func - The function to be executed when the command is called.
+ */
 function addCommand(name, func) {
     Command.prototype[name] = func;
 }

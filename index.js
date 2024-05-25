@@ -19,6 +19,15 @@ const { getRankByID } = require("./modules/player/rankingUtils.js");
 const log = require("./modules/log.js");
 const Plugin = require("./modules/Plugin.js");
 
+/**
+ * Global server object that holds various server configurations and states.
+ * @global
+ * @type {Object}
+ * @property {Array} worlds - An array to store world instances.
+ * @property {Array} plugins - An array to store plugin instances.
+ * @property {Object} config - Server configuration loaded from a JSON file.
+ * @property {Object} env - Environment variables from the process environment.
+ */
 global.server = {
     worlds: [],
     plugins: [],
@@ -98,14 +107,14 @@ const getFilesRecursively = function(directory) {
 getFilesRecursively("./routing/client/");
 
 // Route shared documents with the client
-(function clientShare() {
+{
     const srcPath = path.join(__dirname, "modules", "shared", "ranks.json");
     const destPath = path.join(__dirname, 'client-src', 'shared', "ranks.json");
 
     fs.copyFile(srcPath, destPath, (err) => {
         if (err) throw err;
     });
-})();
+}
 
 app.get("/:worldName?", (req, res) => {
     return res.sendFile("./routing/client/index.html", {
@@ -230,7 +239,6 @@ io.on("connection", socket => {
     });
 
     socket.on("disconnect", () => {
-        // Notify only clients in the same world
         io.to(client.world).emit("playerLeft", client.id);
     });
 });
