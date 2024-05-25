@@ -127,6 +127,23 @@ class Command {
     spawn() {
         this.client.tp(0, 0);
     }
+    tell(id, message) {
+        if(id == this.client.id) {
+            this.client.send("Cannot send a message to yourself.");
+            return;
+        }
+
+        const targetClient = getPlayersInWorld(this.client.world)
+            .find(client => client.id === parseInt(id));
+
+        if (targetClient) {
+            const senderInfo = this.client.nickname ? `${this.client.nickname} (${this.client.id})` : `${this.client.id}`;
+            targetClient.send(`[${senderInfo} -> me]: ${message}`);
+            this.client.send(`[me -> ${senderInfo}]: ${message}`);
+        } else {
+            this.client.send(`Player ${id} not found.`);
+        }
+    }
 }
 
 /**
