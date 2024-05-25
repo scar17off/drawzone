@@ -107,7 +107,7 @@ class Client {
             this.send(server.config.welcomeMessage);
 
             this.setRank(ranks[defaultRank].id);
-            this.send(`[Server] Joined world: "${this.world}", your ID is: ${this.id}!`);
+            this.send(`[Server] Joined world: "${this.world || "main"}", your ID is: ${this.id}!`);
         }
 
         this.ws.on("disconnect", () => {
