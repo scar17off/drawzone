@@ -31,7 +31,7 @@
         "pixelQuota": [1, 0],
         "loginCommand": "adminlogin",
         "greetingMessage": "[Server] You are now an admin. Do /help for a list of commands.",
-        "permissions": ["chat", "setPixel", "protect", "erase", "playerList"],
+        "permissions": ["chat", "setPixel", "protect", "erase", "playerList", "bypassChatLength"],
         "commands": ["nick", "tp", "kick", "kickip", "setrank", "list", "spawn", "tell"],
         "revealID": false,
         "chatPrefix": "[A]"

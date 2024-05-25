@@ -1,6 +1,7 @@
 {
     "port": 3000,
     "welcomeMessage": "[Server] Welcome to the Early Testing of DrawZone!",
+    "maxMessageLength": 128,
     "saving": {
         "savePixels": true,
         "saveLines": false,

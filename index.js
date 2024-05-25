@@ -229,9 +229,10 @@ io.on("connection", socket => {
         socket.emit("chunkLoaded", chunkDatas);
     });
 
-    socket.on("send", (message) => {
+    socket.on("send", message => {
         const rank = getRankByID(client.rank);
         if(!rank.permissions.includes("chat")) return;
+        if(message.length > config.maxMessageLength && !rank.permissions.includes("bypassChatLength")) return;
         
         message = message.trim();
         if(message.startsWith('/')) {
@@ -242,6 +243,7 @@ io.on("connection", socket => {
         function formatMessage(client, rank, message) {
             const chatPrefix = rank.chatPrefix ? `${rank.chatPrefix} ` : '';
             const senderInfo = client.nickname ? `<span class="rank-${rank.id}">${rank.revealID ? `[${client.id}]` : ''}${chatPrefix}${client.nickname}</span>` : `<span class="id">${rank.revealID ? `[${client.id}]` : ''}${chatPrefix}</span>`;
+            
             return `${senderInfo}: ${sanitizeXSS(message)}`;
         }
 
