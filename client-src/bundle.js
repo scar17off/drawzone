@@ -25,7 +25,6 @@ window.DrawZone = {
         ...renderer
     },
     world: {
-        name: location.pathname.substring(1) || "main",
         chunks,
         lines,
         texts,

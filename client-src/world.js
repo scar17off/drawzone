@@ -113,5 +113,6 @@ export default {
             chunks[chunkKey].data = chunkData;
             requestRender();
         }
-    }
+    },
+    name: location.pathname.substring(1) || "main"
 }

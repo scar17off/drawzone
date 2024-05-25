@@ -115,8 +115,9 @@ app.get("/:worldName?", (req, res) => {
 
 io.on("connection", socket => {
     const client = new Client(socket);
+    socket.join(client.world);
 
-    socket.broadcast.emit("playerJoin", client.id);
+    socket.broadcast.to(client.world).emit("playerJoin", client.id);
 
     /*
     setInterval(() => {
@@ -136,19 +137,20 @@ io.on("connection", socket => {
         if(!getRankByID(client.rank).permissions.includes("protect") && chunkManager.get_protection(client.world, chunkX, chunkY) === true) return;
         if(config.saving.savePixels) chunkManager.set_pixel(client.world, x, y, color);
         
-        socket.broadcast.emit("newPixel", x, y, color);
+        // Emit to all clients in the same world
+        io.to(client.world).emit("newPixel", x, y, color);
     });
 
     socket.on("setLine", (from, to) => {
         if(config.saving.saveLines) lineManager.draw_line(client.world, from, to);
 
-        socket.broadcast.emit("newLine", from, to);
+        io.to(client.world).emit("newLine", from, to);
     });
 
     socket.on("setText", (text, x, y) => {
         if(config.saving.saveTexts) textManager.set_text(client.world, text, x, y);
 
-        socket.broadcast.emit("newText", text, x, y);
+        io.to(client.world).emit("newText", text, x, y);
     });
 
     socket.on("setChunk", (color, chunkX, chunkY) => {
@@ -159,7 +161,8 @@ io.on("connection", socket => {
 
         const updates = {};
         updates[`${chunkX},${chunkY}`] = { data: chunkData, protected: isProtected };
-        socket.broadcast.emit("chunkLoaded", updates);
+
+        io.to(client.world).emit("chunkLoaded", updates);
     });
 
     socket.on("setChunkData", (chunkX, chunkY, chunkData) => {
@@ -170,26 +173,27 @@ io.on("connection", socket => {
 
         const updates = {};
         updates[`${chunkX},${chunkY}`] = { data: chunkData, protected: isProtected };
-        socket.broadcast.emit("chunkLoaded", updates);
+
+        io.to(client.world).emit("chunkLoaded", updates);
     });
 
     socket.on("protect", (value, chunkX, chunkY) => {
         if(!getRankByID(client.rank).permissions.includes("protect")) return;
         chunkManager.set_protection(client.world, chunkX, chunkY, value);
-        socket.broadcast.emit("protectionUpdated", chunkX, chunkY, value);
+        io.to(client.world).emit("protectionUpdated", chunkX, chunkY, value);
     });
 
     socket.on("move", (x, y) => {
         client.x = x;
         client.y = y;
 
-        socket.broadcast.emit("playerMoved", client.id, x, y);
+        socket.broadcast.to(client.world).emit("playerMoved", client.id, x, y);
     });
 
     socket.on("setTool", toolID => {
         client.tool = toolID;
 
-        socket.broadcast.emit("playerUpdate", client.id, client.tool, client.color);
+        socket.broadcast.to(client.world).emit("playerUpdate", client.id, client.tool, client.color);
     });
 
     socket.on("loadChunk", (loadQueueOrX, maybeY) => {
@@ -223,12 +227,12 @@ io.on("connection", socket => {
             return;
         }
 
-        socket.emit("message", `${client.id}: ${message}`);
-        socket.broadcast.emit("message", `${client.id}: ${message}`);
+        io.to(client.world).emit("message", `${client.id}: ${message}`);
     });
 
     socket.on("disconnect", () => {
-        socket.broadcast.emit("playerLeft", client.id);
+        // Notify only clients in the same world
+        io.to(client.world).emit("playerLeft", client.id);
     });
 });
 

@@ -2,6 +2,7 @@ import socket from "./network.js";
 import { players } from "../sharedState.js";
 import events from "../events.js";
 import { requestRender } from "../renderer.js";
+import world from "../world.js";
 
 const structure = {
     x: 0,
@@ -10,11 +11,16 @@ const structure = {
     tool: 0
 }
 
+function updateTitle() {
+    document.title = `DrawZone [${Object.keys(players).length + 1}/${world.name}]`;
+}
+
 socket.on("playerJoin", (id) => {
     players[id] = structure;
     events.emit("playerJoined", id);
     requestRender();
     document.getElementById("players-display").innerText = "Players: " + (Object.keys(players).length + 1);
+    updateTitle();
 });
 
 socket.on("playerLeft", (id) => {
@@ -22,6 +28,7 @@ socket.on("playerLeft", (id) => {
     events.emit("playerLeft", id);
     document.getElementById("players-display").innerText = "Players: " + (Object.keys(players).length + 1);
     requestRender();
+    updateTitle();
 });
 
 socket.on("playerUpdate", (id, tool, color) => {
