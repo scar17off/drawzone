@@ -8,23 +8,11 @@ import events from "./events.js";
 import { requestRender } from "./renderer.js";
 import { cursors } from "./cursors.js";
 
+const canvas = document.getElementById("gameCanvas");
 const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 
 export const tools = {};
-
 export const toolIDs = Object.keys(cursors).reduce((acc, toolName, index) => (acc[toolName] = index, acc), {});
-
-export function getCursorOffsetByBase64(base64) {
-    const cursorEntries = Object.entries(cursors);
-
-    for (const [_, cursorData] of cursorEntries)
-        if (cursorData.base64 === base64)
-            return cursorData.offset;
-    
-    return null;
-}
-
-const canvas = document.getElementById("gameCanvas");
 
 class Tool {
     constructor(name, cursor, fxRenderer, minRank, onInit) {
