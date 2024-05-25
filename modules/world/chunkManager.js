@@ -4,9 +4,14 @@ const path = require("path");
 const CHUNK_FILL = [255, 255, 255];
 const CHUNK_SIZE = 16;
 
-const getWorldDir = worldName => typeof worldName !== 'string' ? (() => { throw new Error('worldName must be a string!'); })() : path.join(__dirname, '../../worlds', worldName);
+const getWorldDir = worldName => path.join(__dirname, "../../worlds/", worldName || "main");
 const ensureWorldDirExists = worldDir => { if (!fs.existsSync(worldDir)) fs.mkdirSync(worldDir, { recursive: true }); };
-const getChunkFilePath = (worldName, chunkX, chunkY) => { const worldDir = getWorldDir(worldName); ensureWorldDirExists(worldDir); return path.join(worldDir, `chunk_${chunkX}_${chunkY}.json`); };
+const getChunkFilePath = (worldName, chunkX, chunkY) => {
+    worldName = worldName || "main";
+    const worldDir = getWorldDir(worldName);
+    ensureWorldDirExists(worldDir);
+    return path.join(worldDir, `chunk_${chunkX}_${chunkY}.json`);
+}
 
 function get_chunkdata(worldName, chunkX, chunkY) {
     const chunkPath = getChunkFilePath(worldName, chunkX, chunkY);
