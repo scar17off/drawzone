@@ -91,7 +91,7 @@ class Client {
         } else {
             world.clients.push(this);
             
-            this.setId(world.clients.length);
+            this.setId(world.clients.length + 1);
             
             const quotas = ['lineQuota', 'pixelQuota'];
             quotas.forEach(quotaType => {
