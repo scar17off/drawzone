@@ -106,9 +106,13 @@ button.tool-item > div {
 }
 #chat {
     position: absolute;
-    bottom: 0;
-    left: calc(50% - 500px / 2);
+    /* Centered */
+    /* bottom: 0; */
+    /* left: calc(50% - 500px / 2); */
     width: 500px;
+    /* Right side */
+    right: 50px;
+    bottom: 0;
 }
 #chat-message {
     width: inherit;
@@ -118,11 +122,12 @@ button.tool-item > div {
     margin: 0;
     padding: 0;
     font-size: 16px;
-    max-height: 40vh;
     word-wrap: break-word;
-    overflow: inherit;
+    overflow-x: hidden;
+    overflow-y: scroll;
     vertical-align: bottom;
     list-style: none;  /* Remove the circle that appears when using <li> */
+    max-height: 250px;
 }
 #chat-messages.active > li {
     background-color: initial;
