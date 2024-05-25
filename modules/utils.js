@@ -81,7 +81,7 @@ function formatMessage(client, rank, message) {
     const chatPrefix = rank.chatPrefix ? `${rank.chatPrefix} ` : '';
     const senderInfo = client.nickname ? `<span class="rank-${rank.id}">${rank.revealID ? `[${client.id}]` : ''}${chatPrefix}${client.nickname}</span>` : `<span class="id">${rank.revealID ? `[${client.id}]` : ''}${chatPrefix}</span>`;
     
-    return `${senderInfo}: ${utils.sanitizeXSS(message)}`;
+    return `${senderInfo}: ${sanitizeXSS(message)}`;
 }
 
 module.exports = {
