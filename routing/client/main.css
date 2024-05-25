@@ -63,9 +63,11 @@ body {
 }
 #tools-window {
     background-color: #ADA9A9;
-    width: 72px;
     position: absolute;
     left: 0;
+    overflow-y: scroll;
+    width: 161px;
+    height: 432px;
 }
 button.tool-item {
     background-color: #C9C9C9;
