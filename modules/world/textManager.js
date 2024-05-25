@@ -4,7 +4,7 @@ const path = require("path");
 const CHUNK_SIZE = 16;
 
 const getWorldDir = (worldName) => path.join(__dirname, "../../worlds", worldName, "lines");
-const ensureWorldDirExists = (worldDir) => { if (!fs.existsSync(worldDir)) fs.mkdirSync(worldDir, { recursive: true }); };
+const ensureWorldDirExists = (worldDir) => { if(!fs.existsSync(worldDir)) fs.mkdirSync(worldDir, { recursive: true }); };
 
 function set_text(worldName, text, x, y) {
     const chunkX = Math.floor(x / CHUNK_SIZE);
@@ -17,7 +17,7 @@ function set_text(worldName, text, x, y) {
 
     let texts = {};
 
-    if (fs.existsSync(filePath)) {
+    if(fs.existsSync(filePath)) {
         texts = JSON.parse(fs.readFileSync(filePath, "utf8"));
     }
     texts[`${x},${y}`] = text;
@@ -34,7 +34,7 @@ function del_text(worldName, x, y) {
 
     const filePath = path.join(worldDir, `text_${chunkX},${chunkY}.json`);
 
-    if (fs.existsSync(filePath)) {
+    if(fs.existsSync(filePath)) {
         fs.unlinkSync(filePath);
     }
 }

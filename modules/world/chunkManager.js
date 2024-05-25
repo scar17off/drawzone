@@ -15,7 +15,7 @@ const getWorldDir = worldName => path.join(__dirname, "../../worlds/", worldName
  * Ensures that the world directory exists, creating it if necessary.
  * @param {string} worldDir - The directory path of the world.
  */
-const ensureWorldDirExists = worldDir => { if (!fs.existsSync(worldDir)) fs.mkdirSync(worldDir, { recursive: true }); };
+const ensureWorldDirExists = worldDir => { if(!fs.existsSync(worldDir)) fs.mkdirSync(worldDir, { recursive: true }); };
 
 /**
  * Constructs the file path for a chunk in a specified world.
@@ -41,7 +41,7 @@ const getChunkFilePath = (worldName, chunkX, chunkY) => {
 function get_chunkdata(worldName, chunkX, chunkY) {
     const chunkPath = getChunkFilePath(worldName, chunkX, chunkY);
 
-    if (fs.existsSync(chunkPath)) {
+    if(fs.existsSync(chunkPath)) {
         const chunkData = JSON.parse(fs.readFileSync(chunkPath, "utf8"));
         return chunkData;
     } else {
@@ -77,8 +77,8 @@ function set_chunkdata(worldName, chunkX, chunkY, chunkData) {
     const chunkPath = getChunkFilePath(worldName, chunkX, chunkY);
     // this is experimental space saving feature, may be disabled in the future
     const isAllWhite = chunkData.every(row => row.every(pixel => pixel.every(value => value === 255)));
-    if (isAllWhite) {
-        if (fs.existsSync(chunkPath)) {
+    if(isAllWhite) {
+        if(fs.existsSync(chunkPath)) {
             fs.unlinkSync(chunkPath);
         }
     } else {
@@ -113,10 +113,10 @@ function get_protection(worldName, chunkX, chunkY) {
 function set_protection(worldName, chunkX, chunkY, value) {
     const protectionPath = path.join(getWorldDir(worldName), `protection_${chunkX}_${chunkY}.bool`);
 
-    if (value) {
+    if(value) {
         fs.writeFileSync(protectionPath, value.toString());
     } else {
-        if (fs.existsSync(protectionPath)) {
+        if(fs.existsSync(protectionPath)) {
             fs.unlinkSync(protectionPath);
         }
     }
@@ -166,11 +166,11 @@ function set_pixel(worldName, x, y, color) {
     const chunkY = Math.floor(y / CHUNK_SIZE);
     let pixelX = Math.floor(x % CHUNK_SIZE);
     let pixelY = Math.floor(y % CHUNK_SIZE);
-    if (pixelX < 0) pixelX += CHUNK_SIZE;
-    if (pixelY < 0) pixelY += CHUNK_SIZE;
+    if(pixelX < 0) pixelX += CHUNK_SIZE;
+    if(pixelY < 0) pixelY += CHUNK_SIZE;
     let chunkData = get_chunkdata(worldName, chunkX, chunkY);
 
-    if (!chunkData[pixelX] || !chunkData[pixelX][pixelY]) {
+    if(!chunkData[pixelX] || !chunkData[pixelX][pixelY]) {
         chunkData = initChunk(worldName, chunkX, chunkY);
     }
 

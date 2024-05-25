@@ -9,7 +9,7 @@ import { requestRender } from "./renderer.js";
 import { cursors } from "./cursors.js";
 
 const canvas = document.getElementById("gameCanvas");
-const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
 
 export const tools = {};
 export const toolIDs = Object.keys(cursors).reduce((acc, toolName, index) => (acc[toolName] = index, acc), {});
@@ -36,7 +36,7 @@ class Tool {
     }
     
     addEvents() {
-        if (typeof this.onInit === "function") this.onInit(this);
+        if(typeof this.onInit === "function") this.onInit(this);
     }
     
     setEvent(event, callback) {
@@ -50,7 +50,7 @@ class Tool {
             canvas.addEventListener(event, callback);
         });
 
-        if (typeof this.fxRenderer?.type == "number") {
+        if(typeof this.fxRenderer?.type == "number") {
             local_player.currentFxRenderer = this.fxRenderer;
         }
     }
@@ -63,12 +63,12 @@ class Tool {
     
     show() {
         const toolButton = document.getElementById(`tool-${this.elementName}`);
-        if (toolButton) toolButton.style.display = '';
+        if(toolButton) toolButton.style.display = '';
     }
     
     hide() {
         const toolButton = document.getElementById(`tool-${this.elementName}`);
-        if (toolButton) toolButton.style.display = 'none';
+        if(toolButton) toolButton.style.display = 'none';
     }
 }
 
@@ -103,7 +103,7 @@ function addTool() {
 
     document.getElementById("tool-" + tool.elementName).addEventListener("click", () => {
         const currentTool = Object.values(tools).find(tool => tool.id === local_player.tool);
-        if (tool.id !== currentTool.id) currentTool.deactivate();
+        if(tool.id !== currentTool.id) currentTool.deactivate();
         local_player.tool = tool.id;
         tool.activate();
         removeSelectedClass();
@@ -116,14 +116,14 @@ function addTool() {
 
     document.getElementById("tools-window").style.top = `calc(50% - ${document.getElementById("tools-window").clientHeight}px / 2)`;    
 
-    if (Object.keys(tools).length === 1) document.getElementById("tool-" + tool.elementName).click();
+    if(Object.keys(tools).length === 1) document.getElementById("tool-" + tool.elementName).click();
 
     return tool;
 }
 
-events.on("newRank", (newRank) => {
+events.on("newRank", newRank => {
     Object.values(tools).forEach(tool => {
-        if (newRank >= tool.minRank) {
+        if(newRank >= tool.minRank) {
             tool.show();
         } else {
             tool.hide();
@@ -132,16 +132,16 @@ events.on("newRank", (newRank) => {
 });
 
 {
-    addTool("Cursor", cursors.cursor, [Fx.RECT_SELECT_ALIGNED, 1], ranks.User, function (tool) {
+    addTool("Cursor", cursors.cursor, [Fx.RECT_SELECT_ALIGNED, 1], ranks.User, function(tool) {
         function mouseDown(event) {
-            if (event.buttons === 1 || event.buttons == 2) {
+            if(event.buttons === 1 || event.buttons == 2) {
                 const color = event.buttons === 1 ? local_player.selectedColor : [255, 255, 255];
                 world.setPixel(mouse.tileX, mouse.tileY, color);
             }
         }
         
         tool.setEvent('mousemove', event => {
-            if (event.buttons === 1 || event.buttons == 2) {
+            if(event.buttons === 1 || event.buttons == 2) {
                 const color = event.buttons === 1 ? local_player.selectedColor : [255, 255, 255];
                 world.setPixel(mouse.tileX, mouse.tileY, color);
             }
@@ -149,9 +149,9 @@ events.on("newRank", (newRank) => {
         tool.setEvent('mousedown', mouseDown);
     });
 
-    addTool("Pipette", cursors.pipette, [Fx.NONE], ranks.User, function (tool) {
+    addTool("Pipette", cursors.pipette, [Fx.NONE], ranks.User, function(tool) {
         async function mouseDown(event) {
-            if (event.buttons === 1) {
+            if(event.buttons === 1) {
                 const color = await world.getPixel(mouse.tileX, mouse.tileY);
 
                 const colorExists = local_player.palette.some(existingColor => 
@@ -163,7 +163,7 @@ events.on("newRank", (newRank) => {
 
                 setTimeout(() => {
                     const colorElement = document.querySelector(`.color-item[data-color='${color.join(",")}']`);
-                    if (colorElement) {
+                    if(colorElement) {
                         colorElement.click();
                     }
                 }, 0);
@@ -174,23 +174,23 @@ events.on("newRank", (newRank) => {
         tool.setEvent('mousedown', mouseDown);
     });
 
-    addTool("Pencil", cursors.pencil, [Fx.NONE], ranks.User, function (tool) {
+    addTool("Pencil", cursors.pencil, [Fx.NONE], ranks.User, function(tool) {
         let intervalId = null;
         let drawingStarted = false;
 
         tool.setEvent('mousemove', event => {
-            if (event.buttons === 1) {
-                if (!drawingStarted) {
+            if(event.buttons === 1) {
+                if(!drawingStarted) {
                     drawingStarted = true;
                     mouse.prevLineX = mouse.tileX;
                     mouse.prevLineY = mouse.tileY;
                 }
 
-                if (intervalId === null) {
+                if(intervalId === null) {
                     intervalId = setInterval(() => {
                         const prevPos = [mouse.prevLineX, mouse.prevLineY];
                         const currPos = [mouse.tileX, mouse.tileY];
-                        if (!prevPos[0] || !prevPos[1]) {
+                        if(!prevPos[0] || !prevPos[1]) {
                             mouse.prevLineX = currPos[0];
                             mouse.prevLineY = currPos[1];
                         }
@@ -214,17 +214,17 @@ events.on("newRank", (newRank) => {
         });
     });
 
-    addTool("Line Pencil", cursors.linepencil, [Fx.NONE], ranks.User, function (tool) {
+    addTool("Line Pencil", cursors.linepencil, [Fx.NONE], ranks.User, function(tool) {
         let startPoint = null;
 
         tool.setEvent("mousedown", event => {
-            if (event.buttons === 1) {
+            if(event.buttons === 1) {
                 startPoint = [mouse.tileX, mouse.tileY];
             }
         });
 
         tool.setEvent("mousemove", event => {
-            if (event.buttons === 1 && startPoint) {
+            if(event.buttons === 1 && startPoint) {
                 const endPoint = [mouse.tileX, mouse.tileY];
                 local_player.currentFxRenderer = {
                     type: Fx.LINE,
@@ -235,7 +235,7 @@ events.on("newRank", (newRank) => {
         });
 
         tool.setEvent("mouseup", () => {
-            if (startPoint) {
+            if(startPoint) {
                 const endPoint = [mouse.tileX, mouse.tileY];
                 world.drawLine(startPoint, endPoint);
                 startPoint = null;
@@ -245,18 +245,18 @@ events.on("newRank", (newRank) => {
         });
     });
 
-    addTool("Pixel Line", cursors.line, [Fx.NONE], ranks.User, function (tool) {
+    addTool("Pixel Line", cursors.line, [Fx.NONE], ranks.User, function(tool) {
         let pixelLineStart = null;
         let pixelLineEnd = null;
 
         tool.setEvent("mousedown", event => {
-            if (event.buttons === 1) {
+            if(event.buttons === 1) {
                 pixelLineStart = [mouse.tileX, mouse.tileY];
             }
         });
 
         tool.setEvent("mouseup", () => {
-            if (pixelLineStart) {
+            if(pixelLineStart) {
                 pixelLineEnd = [mouse.tileX, mouse.tileY];
                 const dx = pixelLineEnd[0] - pixelLineStart[0];
                 const dy = pixelLineEnd[1] - pixelLineStart[1];
@@ -280,9 +280,9 @@ events.on("newRank", (newRank) => {
         });
     });
 
-    addTool("Move", cursors.move, [Fx.NONE], ranks.User, function (tool) {
+    addTool("Move", cursors.move, [Fx.NONE], ranks.User, function(tool) {
         tool.setEvent('mousemove', event => {
-            if (event.buttons === 1) {
+            if(event.buttons === 1) {
                 camera.x -= event.movementX;
                 camera.y -= event.movementY;
                 
@@ -291,7 +291,7 @@ events.on("newRank", (newRank) => {
         });
     });
 
-    addTool("Fill", cursors.fill, [Fx.NONE], ranks.User, function (tool) {
+    addTool("Fill", cursors.fill, [Fx.NONE], ranks.User, function(tool) {
         let filling = false;
 
         const colorEquals = (color1, color2) => color1[0] === color2[0] && color1[1] === color2[1] && color1[2] === color2[2];
@@ -299,10 +299,10 @@ events.on("newRank", (newRank) => {
         async function bfsFill(x, y, targetColor, fillColor) {
             let queue = [[x, y]];
             while (queue.length > 0 && filling) {
-                if (!local_player.pixelQuota.canSpend(1)) await sleep(100);
+                if(!local_player.pixelQuota.canSpend(1)) await sleep(100);
                 let [cx, cy] = queue.shift();
                 const currentColor = await world.getPixel(cx, cy);
-                if (colorEquals(currentColor, fillColor) || !colorEquals(currentColor, targetColor)) continue;
+                if(colorEquals(currentColor, fillColor) || !colorEquals(currentColor, targetColor)) continue;
 
                 await world.setPixel(cx, cy, fillColor);
 
@@ -314,7 +314,7 @@ events.on("newRank", (newRank) => {
         }
 
         tool.setEvent('mousedown', async event => {
-            if (event.buttons === 1) {
+            if(event.buttons === 1) {
                 filling = true;
                 const targetColor = await world.getPixel(mouse.tileX, mouse.tileY);
                 const fillColor = local_player.selectedColor;
@@ -327,19 +327,19 @@ events.on("newRank", (newRank) => {
         });
     });
 
-    addTool("Zoom", cursors.zoom, [Fx.NONE], ranks.User, function (tool) {
+    addTool("Zoom", cursors.zoom, [Fx.NONE], ranks.User, function(tool) {
         tool.setEvent('mousedown', event => {
-            if (event.buttons === 1) {
+            if(event.buttons === 1) {
                 camera.editZoom(0.5);
-            } else if (event.buttons === 2) {
+            } else if(event.buttons === 2) {
                 camera.editZoom(-0.5);
             }
         });
     });
 
-    addTool("Protect", cursors.protect, [Fx.NONE], ranks.Moderator, function (tool) {
+    addTool("Protect", cursors.protect, [Fx.NONE], ranks.Moderator, function(tool) {
         const protect = event => {
-            if (event.buttons === 0 || event.buttons === 4) return;
+            if(event.buttons === 0 || event.buttons === 4) return;
             const chunkX = Math.floor(mouse.tileX / 16);
             const chunkY = Math.floor(mouse.tileY / 16);
 
@@ -350,9 +350,9 @@ events.on("newRank", (newRank) => {
         tool.setEvent('mousedown', protect);
     });
 
-    addTool("Eraser", cursors.eraser, [Fx.RECT_SELECT_ALIGNED, 16], ranks.Moderator, function (tool) {
+    addTool("Eraser", cursors.eraser, [Fx.RECT_SELECT_ALIGNED, 16], ranks.Moderator, function(tool) {
         const erase = event => {
-            if (event.buttons === 4 || event.buttons === 0) return;
+            if(event.buttons === 4 || event.buttons === 0) return;
             const chunkX = Math.floor(mouse.tileX / 16);
             const chunkY = Math.floor(mouse.tileY / 16);
 
@@ -363,7 +363,7 @@ events.on("newRank", (newRank) => {
         tool.setEvent('mousedown', erase);
     });
 
-    addTool("Paste", cursors.paste, [Fx.NONE], ranks.Moderator, function (tool) {
+    addTool("Paste", cursors.paste, [Fx.NONE], ranks.Moderator, function(tool) {
         function getImageChunkData(imageData) {
             const chunkData = {};
             const width = imageData.width;
@@ -377,13 +377,13 @@ events.on("newRank", (newRank) => {
                         for (let subY = 0; subY < 16; subY++) {
                             const globalX = x + subX;
                             const globalY = y + subY;
-                            if (globalX < width && globalY < height) {
+                            if(globalX < width && globalY < height) {
                                 const index = (globalY * width + globalX) * 4;
                                 const r = imageData.data[index];
                                 const g = imageData.data[index + 1];
                                 const b = imageData.data[index + 2];
                                 const a = imageData.data[index + 3];
-                                if (globalX % 16 < 16 && globalY % 16 < 16) {
+                                if(globalX % 16 < 16 && globalY % 16 < 16) {
                                     chunkData[chunkKey][globalX % 16][globalY % 16] = [r, g, b, a];
                                 }
                             }
@@ -395,7 +395,7 @@ events.on("newRank", (newRank) => {
         }
 
         tool.setEvent('mousedown', async event => {
-            if (event.buttons === 1) {
+            if(event.buttons === 1) {
                 const input = document.createElement('input');
                 input.type = 'file';
                 input.accept = 'image/*';
@@ -432,7 +432,7 @@ events.on("newRank", (newRank) => {
         });
     });
 
-    addTool("Paste as Lines", cursors.paste, [Fx.NONE], ranks.Admin, function (tool) {
+    addTool("Paste as Lines", cursors.paste, [Fx.NONE], ranks.Admin, function(tool) {
         tool.horizontal = true;
         tool.vertical = true;
         tool.pixel = false;
@@ -444,54 +444,54 @@ events.on("newRank", (newRank) => {
             const height = imageData.height;
 
             // Horizontal lines
-            if (tool.horizontal) {
+            if(tool.horizontal) {
                 for (let y = 0; y < height; y++) {
                     let startX = 0;
                     let currentColor = [imageData.data[0], imageData.data[1], imageData.data[2], imageData.data[3]];
                     for (let x = 1; x < width; x++) {
                         const index = (y * width + x) * 4;
                         const color = [imageData.data[index], imageData.data[index + 1], imageData.data[index + 2], imageData.data[index + 3]];
-                        if (color[3] === 0) continue;
-                        if (color[0] !== currentColor[0] || color[1] !== currentColor[1] || color[2] !== currentColor[2] || color[3] !== currentColor[3]) {
+                        if(color[3] === 0) continue;
+                        if(color[0] !== currentColor[0] || color[1] !== currentColor[1] || color[2] !== currentColor[2] || color[3] !== currentColor[3]) {
                             lineData.push({start: [startX, y], end: [x - 1, y], color: currentColor});
                             startX = x;
                             currentColor = color;
                         }
                     }
-                    if (currentColor[3] !== 0) {
+                    if(currentColor[3] !== 0) {
                         lineData.push({start: [startX, y], end: [width - 1, y], color: currentColor});
                     }
                 }
             }
 
             // Vertical lines
-            if (tool.vertical) {
+            if(tool.vertical) {
                 for (let x = 0; x < width; x++) {
                     let startY = 0;
                     let currentColor = [imageData.data[x * 4], imageData.data[x * 4 + 1], imageData.data[x * 4 + 2], imageData.data[x * 4 + 3]];
                     for (let y = 1; y < height; y++) {
                         const index = (y * width + x) * 4;
                         const color = [imageData.data[index], imageData.data[index + 1], imageData.data[index + 2], imageData.data[index + 3]];
-                        if (color[3] === 0) continue;
-                        if (color[0] !== currentColor[0] || color[1] !== currentColor[1] || color[2] !== currentColor[2] || color[3] !== currentColor[3]) {
+                        if(color[3] === 0) continue;
+                        if(color[0] !== currentColor[0] || color[1] !== currentColor[1] || color[2] !== currentColor[2] || color[3] !== currentColor[3]) {
                             lineData.push({start: [x, startY], end: [x, y - 1], color: currentColor});
                             startY = y;
                             currentColor = color;
                         }
                     }
-                    if (currentColor[3] !== 0) {
+                    if(currentColor[3] !== 0) {
                         lineData.push({start: [x, startY], end: [x, height - 1], color: currentColor});
                     }
                 }
             }
 
             // Handle Pixels
-            if (tool.pixel) {
+            if(tool.pixel) {
                 for (let x = 0; x < width; x++) {
                     for (let y = 0; y < height; y++) {
                         const index = (y * width + x) * 4;
                         const color = [imageData.data[index], imageData.data[index + 1], imageData.data[index + 2], imageData.data[index + 3]];
-                        if (color[3] !== 0) {
+                        if(color[3] !== 0) {
                             pixelData.push({x, y, color});
                         }
                     }
@@ -502,7 +502,7 @@ events.on("newRank", (newRank) => {
         }
 
         tool.setEvent('mousedown', async event => {
-            if (event.buttons === 1) {
+            if(event.buttons === 1) {
                 const input = document.createElement('input');
                 input.type = 'file';
                 input.accept = 'image/*';
@@ -521,7 +521,7 @@ events.on("newRank", (newRank) => {
                             const { lineData, pixelData } = getImageLineData(imageData);
 
                             lineData.forEach(line => {
-                                if (line.color[3] !== 0) {
+                                if(line.color[3] !== 0) {
                                     const baseX = Math.floor(mouse.tileX);
                                     const baseY = Math.floor(mouse.tileY);
                                     const from = [baseX + line.start[0], baseY + line.start[1]];
@@ -531,7 +531,7 @@ events.on("newRank", (newRank) => {
                             });
 
                             pixelData.forEach(pixel => {
-                                if (pixel.color[3] !== 0) {
+                                if(pixel.color[3] !== 0) {
                                     const baseX = Math.floor(mouse.tileX);
                                     const baseY = Math.floor(mouse.tileY);
                                     const position = [baseX + pixel.x, baseY + pixel.y];
@@ -548,19 +548,19 @@ events.on("newRank", (newRank) => {
         });
     });
 
-    addTool("Area Erase", cursors.areaerase, [Fx.NONE], ranks.Moderator, function (tool) {
+    addTool("Area Erase", cursors.areaerase, [Fx.NONE], ranks.Moderator, function(tool) {
         let selectionStart = null;
         let selectionEnd = null;
         let step = 16;
 
         tool.setEvent("mousedown", event => {
-            if (event.buttons === 1) {
+            if(event.buttons === 1) {
                 selectionStart = [mouse.tileX, mouse.tileY];
             }
         });
 
         tool.setEvent("mousemove", event => {
-            if (event.buttons === 1 && selectionStart) {
+            if(event.buttons === 1 && selectionStart) {
                 selectionEnd = [mouse.tileX, mouse.tileY];
                 local_player.currentFxRenderer = {
                     type: Fx.AREA_SELECT,
@@ -571,21 +571,21 @@ events.on("newRank", (newRank) => {
         });
 
         tool.setEvent("mouseup", async () => {
-            if (selectionStart && selectionEnd) {
+            if(selectionStart && selectionEnd) {
                 const playerColor = local_player.selectedColor;
                 const adjustedStartX = step === 16 ? Math.floor(selectionStart[0] / step) * step : selectionStart[0];
                 const adjustedStartY = step === 16 ? Math.floor(selectionStart[1] / step) * step : selectionStart[1];
                 const adjustedEndX = step === 16 ? Math.floor(selectionEnd[0] / step) * step + (step - 1) : selectionEnd[0];
                 const adjustedEndY = step === 16 ? Math.floor(selectionEnd[1] / step) * step + (step - 1) : selectionEnd[1];
 
-                if (step === 1) {
+                if(step === 1) {
                     for (let x = adjustedStartX; x <= adjustedEndX; x++) {
                         for (let y = adjustedStartY; y <= adjustedEndY; y++) {
                             world.setPixel(x, y, playerColor);
                             await sleep(1);
                         }
                     }
-                } else if (step === 16) {
+                } else if(step === 16) {
                     for (let x = adjustedStartX; x <= adjustedEndX; x += 16) {
                         for (let y = adjustedStartY; y <= adjustedEndY; y += 16) {
                             const chunkX = Math.floor(x / 16);
@@ -610,13 +610,13 @@ events.on("newRank", (newRank) => {
         let step = 16;
 
         tool.setEvent("mousedown", event => {
-            if (event.buttons === 1 && !selectionStart) {
+            if(event.buttons === 1 && !selectionStart) {
                 selectionStart = [mouse.tileX, mouse.tileY];
             }
         });
 
         tool.setEvent("mousemove", event => {
-            if (event.buttons === 1 && selectionStart) {
+            if(event.buttons === 1 && selectionStart) {
                 selectionEnd = [mouse.tileX, mouse.tileY];
                 local_player.currentFxRenderer = {
                     type: Fx.AREA_SELECT,
@@ -627,7 +627,7 @@ events.on("newRank", (newRank) => {
         });
 
         tool.setEvent("mousedown", async (event) => {
-            if (selectionStart && selectionEnd) {
+            if(selectionStart && selectionEnd) {
                 const adjustedStartX = Math.floor(selectionStart[0] / 16) * 16;
                 const adjustedStartY = Math.floor(selectionStart[1] / 16) * 16;
                 const adjustedEndX = Math.floor((selectionEnd[0] / 16)) * 16 + 15;
@@ -652,7 +652,7 @@ events.on("newRank", (newRank) => {
         });
     });
 
-    addTool("Screenshot", cursors.camera, [Fx.NONE], ranks.User, function (tool) {
+    addTool("Screenshot", cursors.camera, [Fx.NONE], ranks.User, function(tool) {
         let selectionStart = null;
         let selectionEnd = null;
 
@@ -706,13 +706,13 @@ events.on("newRank", (newRank) => {
         }
     
         tool.setEvent("mousedown", event => {
-            if (event.buttons === 1) {
+            if(event.buttons === 1) {
                 selectionStart = [mouse.tileX, mouse.tileY];
             }
         });
     
         tool.setEvent("mousemove", event => {
-            if (event.buttons === 1 && selectionStart) {
+            if(event.buttons === 1 && selectionStart) {
                 selectionEnd = [mouse.tileX, mouse.tileY];
                 local_player.currentFxRenderer = {
                     type: Fx.AREA_SELECT,
@@ -723,7 +723,7 @@ events.on("newRank", (newRank) => {
         });
     
         tool.setEvent("mouseup", () => {
-            if (selectionStart && selectionEnd) {
+            if(selectionStart && selectionEnd) {
                 captureAndOpenScreenshot(selectionStart, selectionEnd);
                 selectionStart = null;
                 selectionEnd = null;

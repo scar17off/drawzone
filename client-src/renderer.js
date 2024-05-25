@@ -148,7 +148,7 @@ export function renderChunk(chunkData, chunkX, chunkY) {
             }
 
             /*
-            if (mouse.x > pixelX && mouse.x < pixelX + camera.zoom && mouse.y > pixelY && mouse.y < pixelY + camera.zoom) {
+            if(mouse.x > pixelX && mouse.x < pixelX + camera.zoom && mouse.y > pixelY && mouse.y < pixelY + camera.zoom) {
                 ctx.strokeStyle = `rgb(${local_player.selectedColor.join(", ")}, 1.0)`;
                 ctx.lineWidth = 2;
                 ctx.strokeRect(pixelX, pixelY, camera.zoom, camera.zoom);
@@ -168,7 +168,7 @@ export function renderAllChunks() {
     for (let y = topChunkIndex; y < bottomChunkIndex; y++) {
         for (let x = leftChunkIndex; x < rightChunkIndex; x++) {
             const chunkKey = `${x},${y}`;
-            if (chunks.hasOwnProperty(chunkKey)) {
+            if(chunks.hasOwnProperty(chunkKey)) {
                 const chunkData = chunks[chunkKey];
                 renderChunk(chunkData, x, y);
             } else {
@@ -212,12 +212,12 @@ function renderPlayers() {
         ctx.setLineDash([]);
 
         const toolData = cursors[toolName];
-        if (toolData && toolData.base64) {
+        if(toolData && toolData.base64) {
             const img = new Image(72, 72);
             img.src = toolData.base64;
 
             let toolSize;
-            if (camera.zoom < 16) {
+            if(camera.zoom < 16) {
                 toolSize = Math.min(72, 72 / (camera.zoom / 8)) / 2;
             } else {
                 toolSize = Math.min(72, 72 / (camera.zoom / 8));
@@ -240,7 +240,7 @@ function renderAllLines() {
 
 export function renderAllTexts() {
     for (const key in texts) {
-        if (texts.hasOwnProperty(key)) {
+        if(texts.hasOwnProperty(key)) {
             const [text, pos] = [texts[key], key];
             const [x, y] = pos.split(',').map(Number);
             
@@ -255,7 +255,7 @@ export function requestRender() {
 }
 
 function onRender() {
-    if (!options.needsUpdate) return;
+    if(!options.needsUpdate) return;
     options.needsUpdate = false;
 
     ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -279,7 +279,7 @@ function onRender() {
             ctx.strokeRect(startX * camera.zoom - camera.x, startY * camera.zoom - camera.y, size * camera.zoom, size * camera.zoom);
             break;
         case Fx.AREA_SELECT:
-            if (local_player.currentFxRenderer.params.length !== 3) return;
+            if(local_player.currentFxRenderer.params.length !== 3) return;
             const [start, end, step] = local_player.currentFxRenderer.params;
             const adjustedStartX = step === CHUNK_SIZE ? Math.floor(start[0] / step) * step : start[0];
             const adjustedStartY = step === CHUNK_SIZE ? Math.floor(start[1] / step) * step : start[1];
@@ -291,13 +291,13 @@ function onRender() {
 
             for (let x = adjustedStartX; x <= adjustedEndX; x += step) {
                 for (let y = adjustedStartY; y <= adjustedEndY; y += step) {
-                    if ((x === adjustedStartX || x === adjustedEndX || y === adjustedStartY || y === adjustedEndY)) {
+                    if((x === adjustedStartX || x === adjustedEndX || y === adjustedStartY || y === adjustedEndY)) {
                         ctx.strokeRect(Math.floor(x * camera.zoom - camera.x), Math.floor(y * camera.zoom - camera.y), step * camera.zoom, step * camera.zoom);
                     }
                 }
             }
         case Fx.LINE:
-            if (local_player.currentFxRenderer.params.length !== 2) return;
+            if(local_player.currentFxRenderer.params.length !== 2) return;
             const [startPoint, endPoint] = local_player.currentFxRenderer.params;
 
             ctx.strokeStyle = `rgb(0, 0, 0, 1.0)`;

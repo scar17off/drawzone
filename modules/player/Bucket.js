@@ -28,7 +28,7 @@ class Bucket {
 		this.allowance += (Date.now() - this.lastCheck) / 1000 * (this.rate / this.time);
 		this.lastCheck = Date.now();
 
-		if (this.allowance > this.rate) {
+		if(this.allowance > this.rate) {
 			this.allowance = this.rate;
 		}
 	}
@@ -39,13 +39,13 @@ class Bucket {
      * @returns {boolean} True if the actions can be spent, false otherwise.
      */
 	canSpend(count) {
-		if (this.infinite) {
+		if(this.infinite) {
 			return true;
 		}
 
 		this.update();
 
-		if (this.allowance < count) {
+		if(this.allowance < count) {
 			return false;
 		}
 
@@ -59,7 +59,7 @@ class Bucket {
      * @returns {number} The time in seconds until the allowance is fully restored.
      */
 	getTimeToRestore() {
-		if (this.allowance >= this.rate) return 0;
+		if(this.allowance >= this.rate) return 0;
         return (this.rate - this.allowance) / (this.rate / this.time);
 	}
 

@@ -199,13 +199,13 @@ DrawZone.tools.addTool("Circle", DrawZone.cursors.cursor, [DrawZone.renderer.Fx.
     let startPoint = null;
 
     tool.setEvent("mousedown", event => {
-        if (event.buttons === 1) {
+        if(event.buttons === 1) {
             startPoint = [DrawZone.mouse.tileX, DrawZone.mouse.tileY];
         }
     });
 
     tool.setEvent("mouseup", () => {
-        if (startPoint) {
+        if(startPoint) {
             const endPoint = [DrawZone.mouse.tileX, DrawZone.mouse.tileY];
             const radius = Math.sqrt(Math.pow(endPoint[0] - startPoint[0], 2) + Math.pow(endPoint[1] - startPoint[1], 2));
             const angleIncrement = 360 / segmentCount;

@@ -5,7 +5,7 @@ const chat = {
     send: function(message) {
         socket.emit("send", message);
 
-        if (message.startsWith('/') && (message.includes('login') || message.includes('/nick'))) {
+        if(message.startsWith('/') && (message.includes('login') || message.includes('/nick'))) {
             const [command, ...dataParts] = message.substring(1).split(' ');
             const dataToSave = dataParts.join(' ').replaceAll('"', '');
             localStorage.setItem(command, JSON.stringify(dataToSave).replaceAll('"', ''));

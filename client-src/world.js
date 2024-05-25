@@ -12,12 +12,12 @@ function canDraw(x, y, color) {
     const chunkKey = `${chunkX},${chunkY}`;
     let pixelX = Math.floor(x % 16);
     let pixelY = Math.floor(y % 16);
-    if (pixelX < 0) pixelX += 16;
-    if (pixelY < 0) pixelY += 16;
+    if(pixelX < 0) pixelX += 16;
+    if(pixelY < 0) pixelY += 16;
     const existingColor = chunks[chunkKey] && chunks[chunkKey].data[pixelX] ? chunks[chunkKey].data[pixelX][pixelY] : null;
     const colorMatches = existingColor && existingColor.every((val, index) => val === color[index]);
 
-    if (colorMatches) return false;
+    if(colorMatches) return false;
     
     const hasPermission = getRankByID(local_player.rank).permissions.includes("protect");
     local_player.pixelQuota.update();
@@ -37,15 +37,15 @@ export default {
         let pixelX = Math.floor(x % 16);
         let pixelY = Math.floor(y % 16);
 
-        if (pixelX < 0) pixelX += 16;
-        if (pixelY < 0) pixelY += 16;
+        if(pixelX < 0) pixelX += 16;
+        if(pixelY < 0) pixelY += 16;
 
-        if (!canDraw(x, y, color)) return false;
+        if(!canDraw(x, y, color)) return false;
 
         x = Math.floor(x), y = Math.floor(y);
         socket.emit("setPixel", x, y, color);
         const chunkKey = `${chunkX},${chunkY}`;
-        if (chunks[chunkKey]) chunks[chunkKey].data[pixelX][pixelY] = color;
+        if(chunks[chunkKey]) chunks[chunkKey].data[pixelX][pixelY] = color;
         requestRender();
     },
     drawLine: (from, to) => {
@@ -58,7 +58,7 @@ export default {
 
         const hasLineQuota = local_player.lineQuota.allowance > 0 || (local_player.lineQuota.rate === 1 && local_player.lineQuota.time === 0);
 
-        if ((chunks[chunkKeyFrom] && chunks[chunkKeyFrom].protected) || 
+        if((chunks[chunkKeyFrom] && chunks[chunkKeyFrom].protected) || 
             (chunks[chunkKeyTo] && chunks[chunkKeyTo].protected) || 
             !hasLineQuota) return false;
 
@@ -72,17 +72,17 @@ export default {
         let pixelX = Math.floor(x % 16);
         let pixelY = Math.floor(y % 16);
     
-        if (pixelX < 0) pixelX += 16;
-        if (pixelY < 0) pixelY += 16;
+        if(pixelX < 0) pixelX += 16;
+        if(pixelY < 0) pixelY += 16;
 
         const chunkKey = `${chunkX},${chunkY}`;
-        if (!chunks[chunkKey]) {
+        if(!chunks[chunkKey]) {
             await new Promise((resolve) => {
                 socket.emit("loadChunk", [[chunkX, chunkY]]);
 
                 socket.once("chunkLoaded", (chunkDatas) => {
                     for (let key in chunkDatas) {
-                        if (key === chunkKey) {
+                        if(key === chunkKey) {
                             chunks[key] = chunkDatas[key].data;
 
                             resolve();
@@ -104,7 +104,7 @@ export default {
 
         const chunkKey = `${chunkX},${chunkY}`;
 
-        if (chunks.hasOwnProperty(chunkKey)) {
+        if(chunks.hasOwnProperty(chunkKey)) {
             const chunkData = Array.from({ length: CHUNK_SIZE }, () => Array.from({ length: CHUNK_SIZE }, () => color));
             chunks[chunkKey].data = chunkData;
             requestRender();
@@ -115,7 +115,7 @@ export default {
 
         const chunkKey = `${chunkX},${chunkY}`;
 
-        if (chunks.hasOwnProperty(chunkKey)) {
+        if(chunks.hasOwnProperty(chunkKey)) {
             chunks[chunkKey].data = chunkData;
             requestRender();
         }

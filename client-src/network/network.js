@@ -37,8 +37,8 @@ socket.on("connect", () => {
         let pixelX = Math.floor(x % 16);
         let pixelY = Math.floor(y % 16);
         
-        if (pixelX < 0) pixelX += 16;
-        if (pixelY < 0) pixelY += 16;
+        if(pixelX < 0) pixelX += 16;
+        if(pixelY < 0) pixelY += 16;
 
         if(chunks[`${chunkX},${chunkY}`]) {
             chunks[`${chunkX},${chunkY}`].data[pixelX][pixelY] = color;
@@ -104,13 +104,13 @@ export function loadVisibleChunks() {
     for (let y = topChunkIndex; y < bottomChunkIndex; y++) {
         for (let x = leftChunkIndex; x < rightChunkIndex; x++) {
             const chunkKey = `${x},${y}`;
-            if (!chunks.hasOwnProperty(chunkKey)) {
+            if(!chunks.hasOwnProperty(chunkKey)) {
                 chunkPositionsToLoad.push([x, y]);
             }
         }
     }
 
-    if (chunkPositionsToLoad.length > 0) {
+    if(chunkPositionsToLoad.length > 0) {
         socket.emit("loadChunk", chunkPositionsToLoad);
     }
 }
@@ -130,7 +130,7 @@ export function unloadInvisibleChunks() {
     }
 
     const chunksToDelete = Object.keys(chunks).filter(chunkKey => !visibleChunksKeys.has(chunkKey));
-    if (chunksToDelete.length > Object.keys(chunks).length / 2) {
+    if(chunksToDelete.length > Object.keys(chunks).length / 2) {
         chunksToDelete.forEach(chunkKey => delete chunks[chunkKey]);
         requestRender();
     }

@@ -15,7 +15,7 @@ function getPlayersWithIP(ip) {
  */
 function getPlayersInWorld(worldName) {
     worldName = worldName || "main";
-    if (worldName) {
+    if(worldName) {
         const world = server.worlds.find(w => w.name === worldName);
         return world ? world.clients : [];
     } else {

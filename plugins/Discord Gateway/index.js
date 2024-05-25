@@ -21,7 +21,7 @@ module.exports = {
             server.events.on("message", (message, client, rank) => {
                 const channelID = worlds[client.world || "main"];
 
-                if (channelID) {
+                if(channelID) {
                     function formatMessage(client, rank, message) {
                         const chatPrefix = rank.chatPrefix ? `${rank.chatPrefix} ` : '';
                         const senderInfo = client.nickname ? `${rank.revealID ? `[${client.id}]` : ''}${chatPrefix}${client.nickname}` : `${rank.revealID ? `[${client.id}]` : ''}${chatPrefix}<span class="id">Unknown</span>`;
@@ -32,7 +32,7 @@ module.exports = {
                     const formattedMessage = formatMessage(client, rank, message);
 
                     server.discord.channels.fetch(channelID).then(channel => {
-                        if (channel) {
+                        if(channel) {
                             channel.send(`${formattedMessage}`);
                         }
                     }).catch(error => console.error(`Failed to fetch channel: ${error}`));
@@ -44,18 +44,18 @@ module.exports = {
             if(message.author.bot) return;
             const worldKey = Object.keys(worlds).find(key => worlds[key] === message.channelId);
 
-            if (worldKey) {
+            if(worldKey) {
                 let discordMessage = `<span class="discord">[D] ${message.author.username}</span>: `;
-                if (message.content.trim() !== '') {
+                if(message.content.trim() !== '') {
                     discordMessage += `${message.content}`;
                 }
 
-                if (message.attachments.size > 0) {
+                if(message.attachments.size > 0) {
                     const attachments = Array.from(message.attachments.values()).map(attachment => `<img src="${attachment.url}" alt="Discord Attachment" style="max-width: 100%; height: auto;">`).join('');
                     discordMessage += `<details><summary>View ${message.attachments.size} Attachment(s)</summary>${attachments}</details>`;
                 }
 
-                if (discordMessage.trim() !== `<span class="discord">[D] ${message.author.username}</span>: `) {
+                if(discordMessage.trim() !== `<span class="discord">[D] ${message.author.username}</span>: `) {
                     server.io.to(worldKey).emit("message", discordMessage);
                 }
             }

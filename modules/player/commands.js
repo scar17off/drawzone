@@ -86,10 +86,10 @@ class Command {
         const targetClient = getPlayersInWorld(this.client.world)
             .find(client => client.id === parseInt(id));
 
-        if (targetClient) targetClient.kick();
+        if(targetClient) targetClient.kick();
     }
     kickip(ipOrId) {
-        if (isNaN(ipOrId)) {
+        if(isNaN(ipOrId)) {
             // kick by IP
             const targetClients = getPlayersInWorld()
                 .filter(client => client.ip === ipOrId);
@@ -100,20 +100,20 @@ class Command {
             const targetClient = getPlayersInWorld(this.client.world)
                 .find(client => client.id === parseInt(ipOrId));
             
-            if (targetClient) targetClient.kick();
+            if(targetClient) targetClient.kick();
         }
     }
     setrank(id, rank) {
         const targetClient = getPlayersInWorld(this.client.world)
             .find(client => client.id === parseInt(id));
 
-        if (targetClient) targetClient.setRank(rank);
+        if(targetClient) targetClient.setRank(rank);
     }
     list() {
         const clients = getPlayersInWorld(this.client.world);
         const ranksWithClients = clients.reduce((acc, client) => {
             const rankKey = Object.keys(ranks).find(key => ranks[key].id === client.rank);
-            if (!acc[rankKey]) {
+            if(!acc[rankKey]) {
                 acc[rankKey] = [];
             }
             acc[rankKey].push(client.nickname ? `${client.nickname} (${client.id})` : client.id);
@@ -136,7 +136,7 @@ class Command {
         const targetClient = getPlayersInWorld(this.client.world)
             .find(client => client.id === parseInt(id));
 
-        if (targetClient) {
+        if(targetClient) {
             const senderInfo = this.client.nickname ? `${this.client.nickname} (${this.client.id})` : `${this.client.id}`;
             targetClient.send(`[${senderInfo} -> me]: ${message}`);
             this.client.send(`[me -> ${senderInfo}]: ${message}`);

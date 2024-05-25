@@ -14,18 +14,18 @@ class Bucket {
 		this.allowance += (Date.now() - this.lastCheck) / 1000 * (this.rate / this.time);
 		this.lastCheck = Date.now();
 
-		if (this.allowance > this.rate) {
+		if(this.allowance > this.rate) {
 			this.allowance = this.rate;
 		}
 	}
 	canSpend(count) {
-		if (this.infinite) {
+		if(this.infinite) {
 			return true;
 		}
 
 		this.update();
 
-		if (this.allowance < count) {
+		if(this.allowance < count) {
 			return false;
 		}
 
@@ -34,7 +34,7 @@ class Bucket {
 		return true;
 	}
 	getTimeToRestore() {
-		if (this.allowance >= this.rate) return 0;
+		if(this.allowance >= this.rate) return 0;
         return (this.rate - this.allowance) / (this.rate / this.time);
 	}
 	async waitUntilRestore() {
@@ -73,18 +73,18 @@ const local_player = {
 local_player.selectedColor = local_player.palette[0];
 
 window.addEventListener('keypress', event => {
-    if (event.key.length === 1) local_player.text += event.key;
+    if(event.key.length === 1) local_player.text += event.key;
 });
 
 window.addEventListener('keydown', event => {
     const activeElementTag = document.activeElement.tagName.toLowerCase();
     const isTextInputActive = ['input', 'textarea'].includes(activeElementTag);
 	
-    if (event.key === 'Enter' && !isTextInputActive) {
+    if(event.key === 'Enter' && !isTextInputActive) {
         events.emit("addText", local_player.text, mouse.tileX, mouse.tileY);
         texts[`${mouse.tileX},${mouse.tileY}`] = local_player.text;
         local_player.text = '';
-    } else if (event.key === 'Backspace') {
+    } else if(event.key === 'Backspace') {
         local_player.text = local_player.text.slice(0, -1);
     }
 });

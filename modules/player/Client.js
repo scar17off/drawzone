@@ -122,7 +122,7 @@ class Client {
      */
     addUpdate(update) {
         this.updateBuffer.push(update);
-        if (this.updateBuffer.length > 8 || Date.now() - this.lastFlushTime > 125) {
+        if(this.updateBuffer.length > 8 || Date.now() - this.lastFlushTime > 125) {
             this.flushUpdates();
         }
     }
@@ -131,7 +131,7 @@ class Client {
      * Flushes the update buffer by emitting a bulk update event and resetting the buffer.
      */
     flushUpdates() {
-        if (this.updateBuffer.length > 0) {
+        if(this.updateBuffer.length > 0) {
             this.ws.emit("bulkUpdate", this.updateBuffer);
             this.ws.broadcast.emit("bulkUpdate", this.updateBuffer);
             this.updateBuffer = [];

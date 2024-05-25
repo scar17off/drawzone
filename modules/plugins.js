@@ -42,23 +42,23 @@ function loadPlugins() {
         const filePath = path.join(folder, file);
         let plugin;
 
-        if (fs.statSync(filePath).isDirectory()) {
-            if (file.startsWith("-")) return;
+        if(fs.statSync(filePath).isDirectory()) {
+            if(file.startsWith("-")) return;
             const pluginIndex = path.join(filePath, 'index.js');
-            if (!fs.existsSync(pluginIndex)) return;
+            if(!fs.existsSync(pluginIndex)) return;
             plugin = require(pluginIndex);
             plugin.filename = file;
         } else {
-            if (!file.endsWith(".js") || file.startsWith("-")) return;
+            if(!file.endsWith(".js") || file.startsWith("-")) return;
             plugin = require(filePath);
             plugin.filename = file;
         }
 
         plugin.loaded = true;
         
-        if (plugin.loaded) {
+        if(plugin.loaded) {
             log(`${plugin.name}`, `Loading ${plugin.name} v${plugin.version}`);
-            if (followSyntax(plugin)) {
+            if(followSyntax(plugin)) {
                 const start = Date.now();
                 plugin.install();
                 const end = Date.now();

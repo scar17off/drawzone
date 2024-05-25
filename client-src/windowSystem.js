@@ -70,14 +70,14 @@ class GUIWindow {
         this.closeButton.innerHTML = '&times;';
         this.closeButton.onclick = () => this.close();
 
-        if (this.options.centered) {
+        if(this.options.centered) {
             this.frame.style.position = 'fixed';
             this.frame.style.top = '50%';
             this.frame.style.left = '50%';
             this.frame.style.transform = 'translate(-50%, -50%)';
         }
 
-        if (this.options.background) {
+        if(this.options.background) {
             this.frame.style.background = this.options.background.frame;
             this.titleBar.style.background = this.options.background.titleBar;
             this.container.style.background = this.options.background.container;
@@ -114,7 +114,7 @@ class GUIWindow {
 const getRankByID = (rankId) => Object.values(ranks).find(rank => rank.id === parseInt(rankId));
 
 events.on("newRank", (id) => {
-    if (getRankByID(id).permissions.includes("playerList")) {
+    if(getRankByID(id).permissions.includes("playerList")) {
         const playerListWindow = new GUIWindow('Player List', {}, (win) => {
             const table = document.createElement('table');
             const thead = document.createElement('thead');
@@ -171,7 +171,7 @@ events.on("newRank", (id) => {
     } else {
         const playerListWindow = windows["Player List"];
 
-        if (playerListWindow) {
+        if(playerListWindow) {
             events.off("playerMoved", playerListWindow.updatePlayerList);
             events.off("playerJoined", playerListWindow.updatePlayerList);
             events.off("playerLeft", playerListWindow.updatePlayerList);

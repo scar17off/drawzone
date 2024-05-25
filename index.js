@@ -59,7 +59,7 @@ getFilesRecursively("./routing/client/");
     const destPath = path.join(__dirname, 'client-src', 'shared', "ranks.json");
 
     fs.copyFile(srcPath, destPath, (err) => {
-        if (err) throw err;
+        if(err) throw err;
     });
 }
 

@@ -29,9 +29,9 @@ export function isVisible(x, y, w, h) {
 function editZoom(change) {
     let nzoom = change > 0 ? camera.zoom * (1 + Math.abs(change)) : camera.zoom / (1 + Math.abs(change));
 
-    if (nzoom > camera.maxZoom) {
+    if(nzoom > camera.maxZoom) {
         camera.zoom = camera.maxZoom;
-    } else if (nzoom < camera.minZoom) {
+    } else if(nzoom < camera.minZoom) {
         camera.zoom = camera.minZoom;
     } else {
         camera.zoom = Math.round(nzoom);
@@ -60,7 +60,7 @@ function zoomOut() {
 }
 
 function handleMouseDown(event) {
-    if (event.button === 1) {
+    if(event.button === 1) {
         mouseDown = true;
     }
 }
@@ -72,7 +72,7 @@ function handleMouseUp() {
 function handleMouseMove(event) {
     requestRender();
 
-    if (mouseDown) {
+    if(mouseDown) {
         camera.x -= event.movementX;
         camera.y -= event.movementY;
 
@@ -105,9 +105,9 @@ function handleKeyDown(event) {
 }
 
 function handleWheel(event) {
-    if (!event.ctrlKey) {
+    if(!event.ctrlKey) {
         event.preventDefault();
-        if (event.deltaY < 0) zoomIn();
+        if(event.deltaY < 0) zoomIn();
         else zoomOut();
     }
 }
