@@ -1,17 +1,23 @@
 function getPlayersWithIP(ip) {
-    return server.worlds.flatMap(world => world.clients).filter(client => client.ip === ip);
+    return getAllPlayers().filter(client => client.ip === ip);
 }
 
 function getPlayersInWorld(worldName) {
-    if(worldName) {
+    worldName = worldName || "main";
+    if (worldName) {
         const world = server.worlds.find(w => w.name === worldName);
         return world ? world.clients : [];
     } else {
-        return server.worlds.flatMap(world => world.clients);
+        throw new Error("World name is required");
     }
+}
+
+function getAllPlayers() {
+    return server.worlds.flatMap(world => world.clients);
 }
 
 module.exports = {
     getPlayersWithIP,
-    getPlayersInWorld
-}
+    getPlayersInWorld,
+    getAllPlayers
+} 
