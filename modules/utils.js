@@ -70,8 +70,23 @@ function log(type, ...message) {
     console.log(logMessage);
 }
 
+/**
+ * Formats a message with the sender's information and the message itself.
+ * @param {object} client - The client object.
+ * @param {object} rank - The rank object.
+ * @param {string} message - The message to format.
+ * @returns {string} - The formatted message.
+ */
+function formatMessage(client, rank, message) {
+    const chatPrefix = rank.chatPrefix ? `${rank.chatPrefix} ` : '';
+    const senderInfo = client.nickname ? `<span class="rank-${rank.id}">${rank.revealID ? `[${client.id}]` : ''}${chatPrefix}${client.nickname}</span>` : `<span class="id">${rank.revealID ? `[${client.id}]` : ''}${chatPrefix}</span>`;
+    
+    return `${senderInfo}: ${utils.sanitizeXSS(message)}`;
+}
+
 module.exports = {
     sanitizeXSS,
     convertTime,
-    log
+    log,
+    formatMessage
 }
