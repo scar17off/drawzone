@@ -9,8 +9,7 @@ const config = require("./config.json");
 const app = express();
 const httpServer = http.createServer(app);
 
-const Plugin = require("./modules/Plugin.js");
-const { log, convertTime } = require("./modules/utils.js");
+const { log } = require("./modules/utils.js");
 
 /**
  * Global server object that holds various server configurations and states.
@@ -31,52 +30,7 @@ global.server = {
 }
 
 require("./modules/io.js")(httpServer);
-
-function followSyntax(plugin) {
-    if(typeof plugin.name == "string" &&
-        typeof plugin.version == "string" &&
-        typeof plugin.install == "function") return true;
-    else return false;
-}
-
-function loadPlugins() {
-    const folder = path.join(__dirname, 'plugins');
-    fs.readdirSync(folder).forEach(file => {
-        const filePath = path.join(folder, file);
-        let plugin;
-
-        if (fs.statSync(filePath).isDirectory()) {
-            if (file.startsWith("-")) return;
-            const pluginIndex = path.join(filePath, 'index.js');
-            if (!fs.existsSync(pluginIndex)) return;
-            plugin = require(pluginIndex);
-            plugin.filename = file;
-        } else {
-            if (!file.endsWith(".js") || file.startsWith("-")) return;
-            plugin = require(filePath);
-            plugin.filename = file;
-        }
-
-        plugin.loaded = true;
-        
-        if (plugin.loaded) {
-            log(`${plugin.name}`, `Loading ${plugin.name} v${plugin.version}`);
-            if (followSyntax(plugin)) {
-                const start = Date.now();
-                plugin.install();
-                const end = Date.now();
-                plugin.took = end - start;
-                log(`${plugin.name}`, `Enabling ${plugin.name} v${plugin.version} took ${convertTime(plugin.took / 1000)}`);
-            } else {
-                plugin.loaded = false;
-                log("ERROR", `Could not load '${filePath}'\nDoesn't follow syntax`);
-            }
-        }
-        server.plugins.push(new Plugin(plugin));
-    });
-}
-
-loadPlugins();
+require("./modules/plugins.js");
 
 const files = [];
 const getFilesRecursively = function(directory) {
