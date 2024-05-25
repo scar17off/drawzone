@@ -50,3 +50,5 @@ export function loadAndParseTools() {
     }
     img.src = "/img/toolset.png";
 }
+
+loadAndParseTools();

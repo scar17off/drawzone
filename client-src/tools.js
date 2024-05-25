@@ -6,9 +6,7 @@ import Fx from "./fx.js";
 import ranks from "./shared/ranks.json";
 import events from "./events.js";
 import { requestRender } from "./renderer.js";
-import { cursors, loadAndParseTools } from "./cursors.js";
-
-loadAndParseTools();
+import { cursors } from "./cursors.js";
 
 const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 
