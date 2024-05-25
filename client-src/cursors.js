@@ -5,7 +5,7 @@ export const cursors = {
     cursor: { x: 0, y: 0, offset: [-8] },
     pipette: { x: TS*3, y: TS*2, offset: [-8] },
     pencil: { x: 0, y: TS*2, offset: [-8] },
-    line: { x: TS, y: 0, offset: [-8] },
+    linepencil: { x: TS, y: 0, offset: [-8] },
     move: { x: TS, y: TS, offset: [-8] },
     fill: { x: TS, y: TS*2, offset: [-8] },
     zoom: { x: TS*2, y: 0, offset: [-8] },
@@ -15,7 +15,8 @@ export const cursors = {
     areaerase: { x: TS*3, y: TS*2, offset: [-8] },
     areaprotect: { x: TS*4, y: 0, offset: [-8] },
     camera: { x: TS*4, y: TS, offset: [-8] },
-    copy: { x: TS*3, y: TS, offset: [-8] }
+    copy: { x: TS*3, y: TS, offset: [-8] },
+    line: { x: TS*4, y: TS*2, offset: [-8] }
 }
 
 export function loadAndParseTools() {

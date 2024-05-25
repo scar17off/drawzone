@@ -228,7 +228,7 @@ events.on("newRank", (newRank) => {
         });
     });
 
-    addTool("Line", cursors.line, [Fx.NONE], ranks.User, function (tool) {
+    addTool("Line Pencil", cursors.linepencil, [Fx.NONE], ranks.User, function (tool) {
         let startPoint = null;
 
         tool.setEvent("mousedown", event => {
@@ -255,6 +255,41 @@ events.on("newRank", (newRank) => {
                 startPoint = null;
                 local_player.currentFxRenderer = { type: Fx.NONE, params: [] };
                 requestRender();
+            }
+        });
+    });
+
+    addTool("Pixel Line", cursors.line, [Fx.NONE], ranks.User, function (tool) {
+        let pixelLineStart = null;
+        let pixelLineEnd = null;
+
+        tool.setEvent("mousedown", event => {
+            if (event.buttons === 1) {
+                pixelLineStart = [mouse.tileX, mouse.tileY];
+            }
+        });
+
+        tool.setEvent("mouseup", () => {
+            if (pixelLineStart) {
+                pixelLineEnd = [mouse.tileX, mouse.tileY];
+                const dx = pixelLineEnd[0] - pixelLineStart[0];
+                const dy = pixelLineEnd[1] - pixelLineStart[1];
+                const steps = Math.max(Math.abs(dx), Math.abs(dy));
+                const xIncrement = dx / steps;
+                const yIncrement = dy / steps;
+
+                let x = pixelLineStart[0];
+                let y = pixelLineStart[1];
+
+                for (let i = 0; i <= steps; i++) {
+                    world.setPixel(Math.round(x), Math.round(y), local_player.selectedColor);
+                    x += xIncrement;
+                    y += yIncrement;
+                }
+
+                requestRender();
+                pixelLineStart = null;
+                pixelLineEnd = null;
             }
         });
     });
