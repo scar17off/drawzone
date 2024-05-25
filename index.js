@@ -131,12 +131,6 @@ io.on("connection", socket => {
 
     socket.broadcast.to(client.world).emit("playerJoin", client.id);
 
-    /*
-    setInterval(() => {
-        client.flushUpdates();
-    }, 1000 / 30);
-    */
-
     socket.on("setPixel", (x, y, color) => {
         x = Math.floor(x);
         y = Math.floor(y);
@@ -146,6 +140,9 @@ io.on("connection", socket => {
         const chunkX = Math.floor(x / 16);
         const chunkY = Math.floor(y / 16);
 
+        client.pixelQuota.update();
+        const hasQuota = client.pixelQuota.canSpend(1) || (client.pixelQuota.rate === 1 && client.pixelQuota.time === 0);
+        if(!hasQuota) return;
         if(!getRankByID(client.rank).permissions.includes("protect") && chunkManager.get_protection(client.world, chunkX, chunkY) === true) return;
         if(config.saving.savePixels) chunkManager.set_pixel(client.world, x, y, color);
         
@@ -153,8 +150,9 @@ io.on("connection", socket => {
     });
 
     socket.on("setLine", (from, to) => {
+        if(!client.lineQuota.canSpend(1)) return;
         if(config.saving.saveLines) lineManager.draw_line(client.world, from, to);
-
+        
         io.to(client.world).emit("newLine", from, to);
     });
 
