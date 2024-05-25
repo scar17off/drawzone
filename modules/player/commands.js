@@ -1,6 +1,6 @@
 const { getRankByID } = require("./rankingUtils.js");
 const ranks = require("../shared/ranks.json");
-const { getWorldClients } = require("../world/worldManager.js");
+const { getPlayersInWorld } = require("../player/players.js");
 
 // this is for JsDoc
 const Client = require("./Client.js");
@@ -51,7 +51,7 @@ class Command {
     tp(...args) {
         if(args.length === 1) {
             // teleport to player by id
-            const targetClient = getWorldClients(this.client.world)
+            const targetClient = getPlayersInWorld(this.client.world)
                 .find(client => client.id === parseInt(args[0]));
             if(targetClient) {
                 this.client.tp(targetClient.x, targetClient.y);
@@ -64,12 +64,12 @@ class Command {
             }
         } else if(args.length === 3) {
             // teleport another player to a player or coordinates
-            const targetClient = getWorldClients(this.client.world)
+            const targetClient = getPlayersInWorld(this.client.world)
                 .find(client => client.id === parseInt(args[0]));
             if(targetClient) {
                 if(isNaN(Number(args[1]))) {
                     // teleport to player by id
-                    const destinationClient = getWorldClients(this.client.world)
+                    const destinationClient = getPlayersInWorld(this.client.world)
                         .find(client => client.id === parseInt(args[1]));
                     if(destinationClient) {
                         targetClient.tp(destinationClient.x, destinationClient.y);
@@ -85,7 +85,7 @@ class Command {
         }
     }
     kick(id) {
-        const targetClient = getWorldClients(this.client.world)
+        const targetClient = getPlayersInWorld(this.client.world)
             .find(client => client.id === parseInt(id));
 
         if (targetClient) targetClient.kick();
@@ -93,26 +93,26 @@ class Command {
     kickip(ipOrId) {
         if (isNaN(ipOrId)) {
             // kick by IP
-            const targetClients = getWorldClients()
+            const targetClients = getPlayersInWorld()
                 .filter(client => client.ip === ipOrId);
             
             targetClients.forEach(client => client.kick());
         } else {
             // kick by ID
-            const targetClient = getWorldClients(this.client.world)
+            const targetClient = getPlayersInWorld(this.client.world)
                 .find(client => client.id === parseInt(ipOrId));
             
             if (targetClient) targetClient.kick();
         }
     }
     setrank(id, rank) {
-        const targetClient = getWorldClients(this.client.world)
+        const targetClient = getPlayersInWorld(this.client.world)
             .find(client => client.id === parseInt(id));
 
         if (targetClient) targetClient.setRank(rank);
     }
     list() {
-        const clients = getWorldClients(this.client.world);
+        const clients = getPlayersInWorld(this.client.world);
         const ranksWithClients = clients.reduce((acc, client) => {
             const rankKey = Object.keys(ranks).find(key => ranks[key].id === client.rank);
             if (!acc[rankKey]) {

@@ -73,7 +73,7 @@ function loadPlugins() {
 
 loadPlugins();
 
-// some modules require global server variables
+// Certain modules may necessitate the use of global server variables
 const { Command } = require("./modules/player/commands.js");
 
 const files = [];
@@ -97,7 +97,7 @@ const getFilesRecursively = function(directory) {
 }
 getFilesRecursively("./routing/client/");
 
-// share important files with client
+// Route shared documents with the client
 (function clientShare() {
     const srcPath = path.join(__dirname, "modules", "shared", "ranks.json");
     const destPath = path.join(__dirname, 'client-src', 'shared', "ranks.json");
@@ -137,7 +137,6 @@ io.on("connection", socket => {
         if(!getRankByID(client.rank).permissions.includes("protect") && chunkManager.get_protection(client.world, chunkX, chunkY) === true) return;
         if(config.saving.savePixels) chunkManager.set_pixel(client.world, x, y, color);
         
-        // Emit to all clients in the same world
         io.to(client.world).emit("newPixel", x, y, color);
     });
 
