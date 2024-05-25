@@ -1,6 +1,5 @@
 import socket from "./network.js";
 
-const sanitizeXSS = (input) => !input ? input : input.replace(/[&<>"'/]/g, (match) => ({'&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#x27;', '/': '&#x2F;'})[match] || match);
 
 const chat = {
     send: function(message) {
@@ -15,14 +14,14 @@ const chat = {
     local: function(message) {
         console.log(message);
         document.getElementById("chat-messages").insertAdjacentHTML("beforeend", 
-        `<li class="user">
-            <span>${message}</span>
+        `<li>
+            ${message}
         </li>`);
     }
 }
 
 socket.on("message", message => {
-    chat.local(sanitizeXSS(message));
+    chat.local(message);
 });
 
 document.getElementById("chat-message").addEventListener("keydown", event => {

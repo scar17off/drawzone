@@ -35,6 +35,8 @@ global.server = {
     env: process.env
 }
 
+const sanitizeXSS = input => !input ? input : input.replace(/[&<>"'/]/g, (match) => ({'&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#x27;', '/': '&#x2F;'})[match] || match);
+
 function followSyntax(plugin) {
     if(typeof plugin.name == "string" &&
         typeof plugin.version == "string" &&
@@ -228,14 +230,23 @@ io.on("connection", socket => {
     });
 
     socket.on("send", (message) => {
-        if(!getRankByID(client.rank).permissions.includes("chat")) return;
+        const rank = getRankByID(client.rank);
+        if(!rank.permissions.includes("chat")) return;
+        
         message = message.trim();
         if(message.startsWith('/')) {
             new Command(client, message);
             return;
         }
 
-        io.to(client.world).emit("message", `${client.id}: ${message}`);
+        function formatMessage(client, rank, message) {
+            const chatPrefix = rank.chatPrefix ? `${rank.chatPrefix} ` : '';
+            const senderInfo = client.nickname ? `<span class="rank-${rank.id}">${rank.revealID ? `[${client.id}]` : ''}${chatPrefix}${client.nickname}</span>` : `<span class="id">${rank.revealID ? `[${client.id}]` : ''}${chatPrefix}</span>`;
+            return `${senderInfo}: ${sanitizeXSS(message)}`;
+        }
+
+        const formattedMessage = formatMessage(client, rank, message);
+        io.to(client.world).emit("message", formattedMessage);
     });
 
     socket.on("disconnect", () => {

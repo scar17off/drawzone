@@ -2,6 +2,10 @@ body {
     margin: 0;
     background-image: url(./img/unloaded.png);
 }
+* {
+    font-family: 'rainyhearts';
+    font-size: 18px;
+}
 #top-overlay {
     z-index: 1;
     position: fixed;
@@ -162,4 +166,14 @@ li.admin {
 }
 html, body {
     overflow: hidden;
+}
+
+.rank-1 {
+    color: #4242e2;
+}
+.rank-2 {
+    color: #82ce72;
+}
+.rank-3 {
+    color: #c54242;
 }
