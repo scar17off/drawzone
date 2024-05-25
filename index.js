@@ -3,12 +3,14 @@ const http = require("http");
 const socketIO = require("socket.io");
 const path = require("path");
 const fs = require("fs");
+const EventEmitter = require("events");
 require("dotenv").config();
 
 const app = express();
 const httpServer = http.createServer(app);
 const io = socketIO(httpServer);
 
+const utils = require("./modules/utils.js");
 const Client = require("./modules/player/Client.js");
 const chunkManager = require("./modules/world/chunkManager.js");
 const textManager = require("./modules/world/textManager.js");
@@ -16,7 +18,6 @@ const lineManager = require("./modules/world/lineManager.js");
 
 const config = require("./config.json");
 const { getRankByID } = require("./modules/player/rankingUtils.js");
-const log = require("./modules/log.js");
 const Plugin = require("./modules/Plugin.js");
 
 /**
@@ -27,15 +28,16 @@ const Plugin = require("./modules/Plugin.js");
  * @property {Array} plugins - An array to store plugin instances.
  * @property {Object} config - Server configuration loaded from a JSON file.
  * @property {Object} env - Environment variables from the process environment.
+ * @property {EventEmitter} events - EventEmitter instance to emit server events.
  */
 global.server = {
     worlds: [],
     plugins: [],
     config,
-    env: process.env
+    env: process.env,
+    events: new EventEmitter(),
+    io
 }
-
-const sanitizeXSS = input => !input ? input : input.replace(/[&<>"'/]/g, (match) => ({'&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#x27;', '/': '&#x2F;'})[match] || match);
 
 function followSyntax(plugin) {
     if(typeof plugin.name == "string" &&
@@ -44,38 +46,37 @@ function followSyntax(plugin) {
     else return false;
 }
 
-function timeConverter(seconds) {
-    let minutes = Math.floor(seconds / 60);
-    let sec = Math.floor(seconds % 60);
-    let hours = Math.floor(minutes / 60);
-    minutes %= 60;
-    let days = Math.floor(hours / 24);
-    hours %= 24;
-    let milliseconds = Math.floor((seconds % 1) * 1000);
-
-    return `${days ? `${days}d ` : ""}${hours ? `${hours}h ` : ""}${minutes ? `${minutes}m ` : ""}${sec ? `${sec}s` : ""}${milliseconds ? ` ${milliseconds}ms` : ""}`;
-}
-
 function loadPlugins() {
     const folder = path.join(__dirname, 'plugins');
     fs.readdirSync(folder).forEach(file => {
         const filePath = path.join(folder, file);
-        if (!file.endsWith(".js")) return;
-        const plugin = require(filePath);
-        plugin.filename = file;
-        plugin.loaded = !file.startsWith("-");
+        let plugin;
+
+        if (fs.statSync(filePath).isDirectory()) {
+            if (file.startsWith("-")) return;
+            const pluginIndex = path.join(filePath, 'index.js');
+            if (!fs.existsSync(pluginIndex)) return;
+            plugin = require(pluginIndex);
+            plugin.filename = file;
+        } else {
+            if (!file.endsWith(".js") || file.startsWith("-")) return;
+            plugin = require(filePath);
+            plugin.filename = file;
+        }
+
+        plugin.loaded = true;
         
         if (plugin.loaded) {
-            log(`${plugin.name}`, `Loading ${plugin.name} v${plugin.version}`);
+            utils.log(`${plugin.name}`, `Loading ${plugin.name} v${plugin.version}`);
             if (followSyntax(plugin)) {
                 const start = Date.now();
                 plugin.install();
                 const end = Date.now();
                 plugin.took = end - start;
-                log(`${plugin.name}`, `Enabling ${plugin.name} v${plugin.version} took${timeConverter(plugin.took / 1000)}`);
+                utils.log(`${plugin.name}`, `Enabling ${plugin.name} v${plugin.version} took ${utils.convertTime(plugin.took / 1000)}`);
             } else {
                 plugin.loaded = false;
-                log("ERROR", `Could not load '${filePath}'\nDoesn't follow syntax`);
+                utils.log("ERROR", `Could not load '${filePath}'\nDoesn't follow syntax`);
             }
         }
         server.plugins.push(new Plugin(plugin));
@@ -126,7 +127,7 @@ app.get("/:worldName?", (req, res) => {
 
 io.on("connection", socket => {
     const client = new Client(socket);
-    socket.join(client.world);
+    socket.join(client.world || "main");
 
     socket.broadcast.to(client.world).emit("playerJoin", client.id);
 
@@ -244,11 +245,12 @@ io.on("connection", socket => {
             const chatPrefix = rank.chatPrefix ? `${rank.chatPrefix} ` : '';
             const senderInfo = client.nickname ? `<span class="rank-${rank.id}">${rank.revealID ? `[${client.id}]` : ''}${chatPrefix}${client.nickname}</span>` : `<span class="id">${rank.revealID ? `[${client.id}]` : ''}${chatPrefix}</span>`;
             
-            return `${senderInfo}: ${sanitizeXSS(message)}`;
+            return `${senderInfo}: ${utils.sanitizeXSS(message)}`;
         }
 
         const formattedMessage = formatMessage(client, rank, message);
         io.to(client.world).emit("message", formattedMessage);
+        server.events.emit("message", message, client, rank);
     });
 
     socket.on("disconnect", () => {
@@ -257,5 +259,5 @@ io.on("connection", socket => {
 });
 
 httpServer.listen(config.port, () => {
-    log("INFO", `Server is running at *:${config.port}`);
-});
+    utils.log("INFO", `Server is running at *:${config.port}`);
+}); 
