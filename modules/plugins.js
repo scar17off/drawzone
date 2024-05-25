@@ -2,6 +2,11 @@ const fs = require("fs");
 const path = require("path");
 const { log, convertTime } = require("./utils.js");
 
+/**
+ * Checks if a plugin follows the correct syntax
+ * @param {Object} plugin - The plugin to check
+ * @returns {Boolean} - Returns true if the plugin follows the correct syntax, false otherwise
+ */
 function followSyntax(plugin) {
     if(typeof plugin.name == "string" &&
         typeof plugin.version == "string" &&
@@ -9,7 +14,14 @@ function followSyntax(plugin) {
     else return false;
 }
 
+/**
+ * Represents a plugin with its properties.
+ */
 class Plugin {
+    /**
+     * Constructs an instance of the Plugin class.
+     * @param {Object} props - The properties of the plugin.
+     */
 	constructor(props) {
 		this.name = props.name;
 		this.version = props.version;
@@ -21,6 +33,9 @@ class Plugin {
 	}
 }
 
+/**
+ * Loads plugins from the plugins directory and initializes them.
+ */
 function loadPlugins() {
     const folder = path.join(__dirname, '../plugins');
     fs.readdirSync(folder).forEach(file => {
