@@ -10,7 +10,7 @@ module.exports = httpServer => {
     const socketIO = require("socket.io");
 
     const io = socketIO(httpServer);
-    global.server.io = io;
+    server.io = io;
 
     io.on("connection", socket => {
         const client = new Client(socket);
@@ -31,22 +31,22 @@ module.exports = httpServer => {
             const hasQuota = client.pixelQuota.canSpend(1) || (client.pixelQuota.rate === 1 && client.pixelQuota.time === 0);
             if(!hasQuota) return;
             if(!getRankByID(client.rank).permissions.includes("protect") && chunkManager.get_protection(client.world, chunkX, chunkY) === true) return;
-            if(global.server.config.saving.savePixels) chunkManager.set_pixel(client.world, x, y, color);
+            if(server.config.saving.savePixels) chunkManager.set_pixel(client.world, x, y, color);
             
-            global.server.io.to(client.world).emit("newPixel", x, y, color);
+            server.io.to(client.world).emit("newPixel", x, y, color);
         });
 
         socket.on("setLine", (from, to) => {
             if(!client.lineQuota.canSpend(1)) return;
-            if(global.server.config.saving.saveLines) lineManager.draw_line(client.world, from, to);
+            if(server.config.saving.saveLines) lineManager.draw_line(client.world, from, to);
             
-            global.server.io.to(client.world).emit("newLine", from, to);
+            server.io.to(client.world).emit("newLine", from, to);
         });
 
         socket.on("setText", (text, x, y) => {
-            if(global.server.config.saving.saveTexts) textManager.set_text(client.world, text, x, y);
+            if(server.config.saving.saveTexts) textManager.set_text(client.world, text, x, y);
 
-            global.server.io.to(client.world).emit("newText", text, x, y);
+            server.io.to(client.world).emit("newText", text, x, y);
         });
 
         socket.on("setChunk", (color, chunkX, chunkY) => {
@@ -58,7 +58,7 @@ module.exports = httpServer => {
             const updates = {};
             updates[`${chunkX},${chunkY}`] = { data: chunkData, protected: isProtected };
 
-            global.server.io.to(client.world).emit("chunkLoaded", updates);
+            server.io.to(client.world).emit("chunkLoaded", updates);
         });
 
         socket.on("setChunkData", (chunkX, chunkY, chunkData) => {
@@ -70,13 +70,13 @@ module.exports = httpServer => {
             const updates = {};
             updates[`${chunkX},${chunkY}`] = { data: chunkData, protected: isProtected };
 
-            global.server.io.to(client.world).emit("chunkLoaded", updates);
+            server.io.to(client.world).emit("chunkLoaded", updates);
         });
 
         socket.on("protect", (value, chunkX, chunkY) => {
             if(!getRankByID(client.rank).permissions.includes("protect")) return;
             chunkManager.set_protection(client.world, chunkX, chunkY, value);
-            global.server.io.to(client.world).emit("protectionUpdated", chunkX, chunkY, value);
+            server.io.to(client.world).emit("protectionUpdated", chunkX, chunkY, value);
         });
 
         socket.on("move", (x, y) => {
@@ -118,7 +118,7 @@ module.exports = httpServer => {
         socket.on("send", message => {
             const rank = getRankByID(client.rank);
             if(!rank.permissions.includes("chat")) return;
-            if(message.length > global.server.config.maxMessageLength && !rank.permissions.includes("bypassChatLength")) return;
+            if(message.length > server.config.maxMessageLength && !rank.permissions.includes("bypassChatLength")) return;
             
             message = message.trim();
             if(message.startsWith('/')) {
@@ -127,12 +127,12 @@ module.exports = httpServer => {
             }
 
             const formattedMessage = formatMessage(client, rank, message);
-            global.server.io.to(client.world).emit("message", formattedMessage);
-            global.server.events.emit("message", message, client, rank);
+            server.io.to(client.world).emit("message", formattedMessage);
+            server.events.emit("message", message, client, rank);
         });
 
         socket.on("disconnect", () => {
-            global.server.io.to(client.world).emit("playerLeft", client.id);
+            server.io.to(client.world).emit("playerLeft", client.id);
         });
     });
 }
