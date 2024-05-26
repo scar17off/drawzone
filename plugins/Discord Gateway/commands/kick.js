@@ -22,6 +22,7 @@ module.exports = {
         const player = getPlayerByID(id);
 
         if(player) {
+            player.send(`You have been kicked from the server for reason: ${reason}`);
             player.kick(reason);
 
             const embed = new EmbedBuilder()
