@@ -3,6 +3,7 @@ import { players } from "../sharedState.js";
 import events from "../events.js";
 import { requestRender } from "../renderer.js";
 import world from "../world.js";
+import local_player from "../local_player.js";
 
 const structure = {
     x: 0,
@@ -12,37 +13,56 @@ const structure = {
 }
 
 function updateTitle() {
-    document.title = `DrawZone [${Object.keys(players).length + 1}/${world.name}]`;
+    const playerCount = Object.keys(players).length;
+    document.title = `DrawZone [${playerCount + 1}/${world.name}]`;
+    if(playerCount === 1) document.title = "DrawZone";
 }
 
-socket.on("playerJoin", (id) => {
-    players[id] = structure;
-    events.emit("playerJoined", id);
-    requestRender();
-    document.getElementById("players-display").innerText = "Players: " + (Object.keys(players).length + 1);
-    updateTitle();
-});
+socket.on("bulkUpdate", updates => {
+    updates.forEach(update => {
+        switch (update.type) {
+            case "playerJoin":
+                const idJoin = update.id;
 
-socket.on("playerLeft", (id) => {
-    delete players[id];
-    events.emit("playerLeft", id);
-    document.getElementById("players-display").innerText = "Players: " + (Object.keys(players).length + 1);
-    requestRender();
-    updateTitle();
-});
+                players[idJoin] = {...structure};
+                events.emit("playerJoined", idJoin);
+                requestRender();
+                document.getElementById("players-display").innerText = "Players: " + (Object.keys(players).length + 1);
+                updateTitle();
 
-socket.on("playerUpdate", (id, tool, color) => {
-    if(!players[id]) players[id] = structure;
-    players[id].tool = tool, players[id].color = color;
-    requestRender();
-    events.emit("playerUpdate", id, tool, color);
-});
+                break;
+            case "playerLeft":
+                const idLeft = update.id;
 
-socket.on("playerMoved", (id, x, y) => {
-    if(!players[id]) players[id] = structure;
-    players[id].x = x, players[id].y = y;
-    requestRender();
-    events.emit("playerMoved", id, x, y);
+                delete players[idLeft];
+                events.emit("playerLeft", idLeft);
+                document.getElementById("players-display").innerText = "Players: " + (Object.keys(players).length + 1);
+                requestRender();
+                updateTitle();
+
+                break;
+            case "playerUpdate":
+                const { id: idUpdate, tool, color } = update;
+
+                if (!players[idUpdate]) players[idUpdate] = {...structure};
+                players[idUpdate].tool = tool;
+                players[idUpdate].color = color;
+                requestRender();
+                events.emit("playerUpdate", idUpdate, tool, color);
+                
+                break;
+            case "playerMoved":
+                const { id: idMoved, x, y } = update;
+
+                if (!players[idMoved]) players[idMoved] = {...structure};
+                players[idMoved].x = x;
+                players[idMoved].y = y;
+                requestRender();
+                events.emit("playerMoved", idMoved, x, y);
+
+                break;
+        }
+    });
 });
 
 export default players;

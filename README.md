@@ -35,5 +35,3 @@ The game's configuration can be found in `config.json`
 - [ ] Tempmute & Tempban
   - bansManager.js, muteManager.js
 - [ ] Add Customizable World Templates
-- [ ] Optimize network
-  - Make the network do flush updates so placing 999 pixels at once will send less update messages instead of 999.

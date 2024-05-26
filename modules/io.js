@@ -3,6 +3,7 @@ module.exports = httpServer => {
     const chunkManager = require("./world/chunkManager.js");
     const textManager = require("./world/textManager.js");
     const lineManager = require("./world/lineManager.js");
+    const { getWorldByName } = require("./world/worldManager.js");
     const { getRankByID } = require("./player/rankingUtils.js");
     const { formatMessage } = require("./utils.js");
     const { Command } = require("./player/commands.js");
@@ -12,11 +13,15 @@ module.exports = httpServer => {
     const io = socketIO(httpServer);
     server.io = io;
 
+    function broadcastMessage(world, message) {
+        getWorldByName(world).addUpdate(message);
+    }
+
     io.on("connection", socket => {
         const client = new Client(socket);
         socket.join(client.world);
 
-        socket.broadcast.to(client.world).emit("playerJoin", client.id);
+        broadcastMessage(client.world, { type: "playerJoin", id: client.id });
 
         socket.on("setPixel", (x, y, color) => {
             x = Math.floor(x);
@@ -33,20 +38,20 @@ module.exports = httpServer => {
             if(!getRankByID(client.rank).permissions.includes("protect") && chunkManager.get_protection(client.world, chunkX, chunkY) === true) return;
             if(server.config.saving.savePixels) chunkManager.set_pixel(client.world, x, y, color);
             
-            server.io.to(client.world).emit("newPixel", x, y, color);
+            broadcastMessage(client.world, { type: "newPixel", x, y, color });
         });
 
         socket.on("setLine", (from, to) => {
             if(!client.lineQuota.canSpend(1)) return;
             if(server.config.saving.saveLines) lineManager.draw_line(client.world, from, to);
             
-            server.io.to(client.world).emit("newLine", from, to);
+            broadcastMessage(client.world, { type: "newLine", from, to });
         });
 
         socket.on("setText", (text, x, y) => {
             if(server.config.saving.saveTexts) textManager.set_text(client.world, text, x, y);
 
-            server.io.to(client.world).emit("newText", text, x, y);
+            broadcastMessage(client.world, { type: "newText", text, x, y });
         });
 
         socket.on("setChunk", (color, chunkX, chunkY) => {
@@ -58,7 +63,7 @@ module.exports = httpServer => {
             const updates = {};
             updates[`${chunkX},${chunkY}`] = { data: chunkData, protected: isProtected };
 
-            server.io.to(client.world).emit("chunkLoaded", updates);
+            broadcastMessage(client.world, { type: "chunkLoaded", updates });
         });
 
         socket.on("setChunkData", (chunkX, chunkY, chunkData) => {
@@ -70,26 +75,27 @@ module.exports = httpServer => {
             const updates = {};
             updates[`${chunkX},${chunkY}`] = { data: chunkData, protected: isProtected };
 
-            server.io.to(client.world).emit("chunkLoaded", updates);
+            broadcastMessage(client.world, { type: "chunkLoaded", updates });
         });
 
         socket.on("protect", (value, chunkX, chunkY) => {
             if(!getRankByID(client.rank).permissions.includes("protect")) return;
             chunkManager.set_protection(client.world, chunkX, chunkY, value);
-            server.io.to(client.world).emit("protectionUpdated", chunkX, chunkY, value);
+
+            broadcastMessage(client.world, { type: "protectionUpdated", chunkX, chunkY, value });
         });
 
         socket.on("move", (x, y) => {
             client.x = x;
             client.y = y;
 
-            socket.broadcast.to(client.world).emit("playerMoved", client.id, x, y);
+            broadcastMessage(client.world, { type: "playerMoved", id: client.id, x, y });
         });
 
         socket.on("setTool", toolID => {
             client.tool = toolID;
 
-            socket.broadcast.to(client.world).emit("playerUpdate", client.id, client.tool, client.color);
+            broadcastMessage(client.world, { type: "playerUpdate", id: client.id, tool: client.tool, color: client.color });
         });
 
         socket.on("loadChunk", (loadQueueOrX, maybeY) => {
@@ -128,12 +134,12 @@ module.exports = httpServer => {
 
             const formattedMessage = formatMessage(client, rank, message);
             socket.emit("message", formattedMessage);
-            socket.broadcast.to(client.world).emit("message", formattedMessage);
+            broadcastMessage(client.world, { type: "message", message: formattedMessage });
             server.events.emit("message", message, client, rank);
         });
 
         socket.on("disconnect", () => {
-            server.io.to(client.world).emit("playerLeft", client.id);
+            broadcastMessage(client.world, { type: "playerLeft", id: client.id });
         });
     });
 }

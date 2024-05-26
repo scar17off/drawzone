@@ -432,7 +432,7 @@ events.on("newRank", newRank => {
         });
     });
 
-    addTool("Paste as Lines", cursors.paste, [Fx.NONE], ranks.Admin, function(tool) {
+    addTool("Paste as Lines", cursors.linepaste, [Fx.NONE], ranks.Admin, function(tool) {
         tool.horizontal = true;
         tool.vertical = true;
         tool.pixel = false;

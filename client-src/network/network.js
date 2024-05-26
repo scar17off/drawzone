@@ -21,42 +21,52 @@ socket.on("connect", () => {
         socket.emit("send", `/${key} ${value}`);
     });
     if(localStorage.getItem("nick")) socket.emit("send", "/nick " + localStorage.getItem("nick"));
-    
-    socket.on("chunkLoaded", chunkDatas => {
-        for(let key in chunkDatas) {
+
+    function handleChunkLoaded(update) {
+        Object.keys(update.updates).forEach(key => {
             const [x, y] = key.split(',').map(Number);
-            addChunk(chunkDatas[key].data, x, y, chunkDatas[key].protected);
-        }
+            addChunk(update.updates[key].data, x, y, update.updates[key].protected);
+        });
+    }
+    
+    socket.on("bulkUpdate", updates => {
+        updates.forEach(update => {
+            switch (update.type) {
+                case "chunkLoaded":
+                    handleChunkLoaded(update);
+                    break;
+                case "newPixel":
+                    const { x, y, color } = update;
+                    var chunkX = Math.floor(x / CHUNK_SIZE);
+                    var chunkY = Math.floor(y / CHUNK_SIZE);
+
+                    let pixelX = Math.floor(x % 16);
+                    let pixelY = Math.floor(y % 16);
+                    
+                    if(pixelX < 0) pixelX += 16;
+                    if(pixelY < 0) pixelY += 16;
+
+                    if(chunks[`${chunkX},${chunkY}`]) {
+                        chunks[`${chunkX},${chunkY}`].data[pixelX][pixelY] = color;
+                    }
+                    break;
+                case "protectionUpdated":
+                    var { chunkX, chunkY, value } = update;
+                    chunks[`${chunkX},${chunkY}`].protected = value;
+                    break;
+                case "newLine":
+                    lines.push([update.from, update.to]);
+                    break;
+                case "newText":
+                    texts[`${update.x},${update.y}`] = update.text;
+                    break;
+            }
+        });
         requestRender();
     });
 
-    socket.on("newPixel", (x, y, color) => {
-        const chunkX = Math.floor(x / CHUNK_SIZE);
-        const chunkY = Math.floor(y / CHUNK_SIZE);
-
-        let pixelX = Math.floor(x % 16);
-        let pixelY = Math.floor(y % 16);
-        
-        if(pixelX < 0) pixelX += 16;
-        if(pixelY < 0) pixelY += 16;
-
-        if(chunks[`${chunkX},${chunkY}`]) {
-            chunks[`${chunkX},${chunkY}`].data[pixelX][pixelY] = color;
-            requestRender();
-        }
-    });
-
-    socket.on("protectionUpdated", (chunkX, chunkY, value) => {
-        chunks[`${chunkX},${chunkY}`].protected = value;
-        requestRender();
-    });
-
-    socket.on("newLine", (from, to) => {
-        lines.push([from, to]);
-        requestRender();
-    });
-    socket.on("newText", (text, x, y) => {
-        texts[`${x},${y}`] = text;
+    socket.on("chunkLoaded", data => {
+        handleChunkLoaded({ updates: data });
         requestRender();
     });
 
