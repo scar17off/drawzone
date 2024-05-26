@@ -2,6 +2,7 @@ const Client = require("./Client.js");
 const { getRankByID } = require("./rankingUtils.js");
 const ranks = require("../shared/ranks.json");
 const { getPlayersInWorld } = require("../player/players.js");
+const { sanitizeXSS } = require("../utils.js");
 
 const loginCommands = Object.values(ranks).reduce((acc, rank) => {
     if(rank.loginCommand) {
@@ -142,6 +143,33 @@ class Command {
             this.client.send(`[me -> ${senderInfo}]: ${message}`);
         } else {
             this.client.send(`Player ${id} not found.`);
+        }
+    }
+    help(page = 1) {
+        const commandsPerPage = 10;
+        const commands = [
+            "/nick <nickname> - Set your nickname.",
+            "/tp <player|coordinates> - Teleport to a player or coordinates.",
+            "/kick <player|IP> - Kick a player or a player with a specific IP.",
+            "/setrank <player> <rank> - Set the rank of a player.",
+            "/list - List all players by rank.",
+            "/spawn - Teleport to the spawn.",
+            "/tell <player> <message> - Send a private message to a player."
+        ];
+
+        const totalPages = Math.ceil(commands.length / commandsPerPage);
+        page = Math.max(1, Math.min(page, totalPages)); // Ensure page is within bounds
+
+        const startIndex = (page - 1) * commandsPerPage;
+        const endIndex = startIndex + commandsPerPage;
+
+        this.client.send(`Commands Page ${page} of ${totalPages}:`);
+        commands.slice(startIndex, endIndex).forEach(command => {
+            this.client.send(sanitizeXSS(command));
+        });
+
+        if (page < totalPages) {
+            this.client.send(`Type /help ${page + 1} to see more commands.`);
         }
     }
 }

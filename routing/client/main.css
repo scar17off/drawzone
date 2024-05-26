@@ -113,6 +113,8 @@ button.tool-item > div {
     /* Right side */
     right: 50px;
     bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    color: white;
 }
 #chat-message {
     width: inherit;

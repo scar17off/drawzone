@@ -9,7 +9,7 @@
         "lineQuota": [10, 1],
         "pixelQuota": [100, 2],
         "permissions": ["chat", "setPixel"],
-        "commands": ["nick", "spawn", "tell"],
+        "commands": ["help", "nick", "spawn", "tell"],
         "revealID": true
     },
     "Moderator": {
@@ -20,7 +20,7 @@
         "loginCommand": "modlogin",
         "greetingMessage": "[Server] You are now a moderator. Do /help for a list of commands.",
         "permissions": ["chat", "setPixel", "protect", "erase", "playerList"],
-        "commands": ["nick", "tp", "list", "spawn", "tell"],
+        "commands": ["help", "nick", "tp", "list", "spawn", "tell"],
         "revealID": false,
         "chatPrefix": "[M]"
     },
@@ -32,7 +32,7 @@
         "loginCommand": "adminlogin",
         "greetingMessage": "[Server] You are now an admin. Do /help for a list of commands.",
         "permissions": ["chat", "setPixel", "protect", "erase", "playerList", "bypassChatLength"],
-        "commands": ["nick", "tp", "kick", "kickip", "setrank", "list", "spawn", "tell"],
+        "commands": ["help", "nick", "tp", "kick", "kickip", "setrank", "list", "spawn", "tell"],
         "revealID": false,
         "chatPrefix": "[A]"
     }
