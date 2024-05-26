@@ -8,6 +8,16 @@ function getPlayersWithIP(ip) {
 }
 
 /**
+ * Retrieves a player by their ID.
+ * @param {number} id - The ID of the player to find.
+ * @param {string} [world="main"] - The name of the world to find the player in.
+ * @returns {Object} The player object if found, null otherwise.
+ */
+function getPlayerByID(id, world = "main") {
+    return server.worlds.find(w => w.name === world).clients.find(client => client.id === id);
+}
+
+/**
  * Retrieves all players present in a specified world.
  * @param {string} [worldName="main"] - The name of the world to find players in.
  * @returns {Array} An array of player objects in the specified world.
@@ -34,5 +44,6 @@ function getAllPlayers() {
 module.exports = {
     getPlayersWithIP,
     getPlayersInWorld,
-    getAllPlayers
+    getAllPlayers,
+    getPlayerByID
 } 

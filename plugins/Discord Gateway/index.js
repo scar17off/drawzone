@@ -1,7 +1,7 @@
-const formatMessage = require("../../modules/utils.js").formatMessage;
-
 module.exports = {
     install: function() {
+        const formatMessage = require("../../modules/utils.js").formatMessage;
+        const fs = require("fs");
         const { Client, GatewayIntentBits, Events } = require("discord.js");
         const client = new Client({
             intents: [
@@ -10,8 +10,14 @@ module.exports = {
                 GatewayIntentBits.MessageContent
             ]
         });
-        const utils = require("../../modules/utils.js");
         global.server.discord = client;
+
+        const commandFiles = fs.readdirSync("./plugins/Discord Gateway/commands", { recursive: true }).filter(file => file.endsWith(".js"));    
+        const commands = new Map();
+        for (const file of commandFiles) {
+            const command = require(`./commands/${file}`);
+            commands.set(command.data.name, command);
+        }
 
         const worlds = {
             "main": "1243967546034618542"
@@ -52,6 +58,17 @@ module.exports = {
                     server.io.to(worldKey).emit("message", discordMessage);
                 }
             }
+        });
+
+        client.on(Events.InteractionCreate, async interaction => {
+            if (!interaction.isCommand()) return;
+            
+            const { commandName } = interaction;
+
+            const command = commands.get(commandName);
+            if (!command) return;
+
+            await command.execute(interaction);
         });
 
         client.login(process.env.DISCORD_BOT_TOKEN);
