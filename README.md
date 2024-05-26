@@ -15,10 +15,14 @@ DrawZone is a hybrid game inspired by OWOP, OWOT, and Cursors.io. It allows play
 
 To get started with DrawZone, follow these steps:
 
-1. Clone the repository to your machine.
+1. Clone the repository by running `git clone https://github.com/scar17off/drawzone`.
 2. Install the dependencies by running `npm install`.
 3. Build the client using `npm run build`.
-4. Start the server using `npm start`.
+4. Create a .env file template by running:
+```bash
+echo adminlogin= > .env && echo DISCORD_BOT_TOKEN= >> .env
+```
+5. Start the server using `npm start`.
 
 ## Configuration
 
