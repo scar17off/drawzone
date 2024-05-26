@@ -3,7 +3,7 @@
 - [ ] Commands
   - [ ] Ban
   - [ ] Unban
-  - [ ] Kick
+  - [x] Kick
   - [ ] Mute
   - [ ] Unmute
   - [ ] Whois
