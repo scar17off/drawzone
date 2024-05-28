@@ -187,6 +187,8 @@ export function renderAllChunks() {
 
 function renderPlayers() {
     Object.entries(players).forEach(([id, player]) => {
+        if(player.id === local_player.id || id === local_player.id) return;
+
         const playerX = player.x * camera.zoom - camera.x;
         const playerY = player.y * camera.zoom - camera.y;
 

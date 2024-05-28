@@ -88,6 +88,10 @@ socket.on("connect", () => {
     socket.on("teleport", (x, y) => {
         camera.centerAt(x, y);
     });
+
+    socket.on("gotID", id => {
+        local_player.id = id;
+    });
 });
 
 events.on("addText", (text, x, y) => {

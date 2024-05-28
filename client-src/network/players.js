@@ -23,8 +23,9 @@ socket.on("bulkUpdate", updates => {
         switch (update.type) {
             case "playerJoin":
                 const idJoin = update.id;
+                if(idJoin === local_player.id) return;
 
-                players[idJoin] = {...structure};
+                players[idJoin] = structure;
                 events.emit("playerJoined", idJoin);
                 requestRender();
                 document.getElementById("players-display").innerText = "Players: " + (Object.keys(players).length + 1);
@@ -33,6 +34,7 @@ socket.on("bulkUpdate", updates => {
                 break;
             case "playerLeft":
                 const idLeft = update.id;
+                if(idLeft === local_player.id) return;
 
                 delete players[idLeft];
                 events.emit("playerLeft", idLeft);
@@ -43,8 +45,9 @@ socket.on("bulkUpdate", updates => {
                 break;
             case "playerUpdate":
                 const { id: idUpdate, tool, color } = update;
+                if(idUpdate === local_player.id) return;
 
-                if (!players[idUpdate]) players[idUpdate] = {...structure};
+                if (!players[idUpdate]) players[idUpdate] = structure;
                 players[idUpdate].tool = tool;
                 players[idUpdate].color = color;
                 requestRender();
@@ -53,8 +56,9 @@ socket.on("bulkUpdate", updates => {
                 break;
             case "playerMoved":
                 const { id: idMoved, x, y } = update;
+                if(idMoved === local_player.id) return;
 
-                if (!players[idMoved]) players[idMoved] = {...structure};
+                if (!players[idMoved]) players[idMoved] = structure;
                 players[idMoved].x = x;
                 players[idMoved].y = y;
                 requestRender();

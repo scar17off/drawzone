@@ -120,6 +120,7 @@ class Client {
      */
     setId(id) {
         this.id = id;
+        this.ws.emit("gotID", id);
     }
 
     /**
