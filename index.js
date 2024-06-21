@@ -11,6 +11,26 @@ const httpServer = http.createServer(app);
 
 const { log } = require("./modules/utils.js");
 
+// Build the project if it's not already built
+const { exec } = require('child_process');
+
+const appJsPath = path.join(__dirname, 'routing', 'client', 'bundle.js');
+
+if (!fs.existsSync(appJsPath)) {
+    console.log('Building project as bundle.js does not exist...');
+    exec('npm run build', (error, stdout, stderr) => {
+        if (error) {
+            console.error(`Error during build: ${error.message}`);
+            return;
+        }
+        if (stderr) {
+            console.error(`Build stderr: ${stderr}`);
+            return;
+        }
+        console.log(`Build stdout: ${stdout}`);
+    });
+}
+
 /**
  * Global server object that holds various server configurations and states.
  * @global
