@@ -1,19 +1,19 @@
 import local_player from "./local_player.js";
 import socket from "./network/network.js";
-import { CHUNK_SIZE, requestRender } from "./renderer.js";
-import { chunks, lines } from "./sharedState.js";
+import { requestRender } from "./render/renderer.js";
+import { options, chunks, lines } from "./sharedState.js";
 import ranks from "./shared/ranks.json";
 
 const getRankByID = (rankId) => Object.values(ranks).find(rank => rank.id === parseInt(rankId));
 
 function canDraw(x, y, color) {
-    const chunkX = Math.floor(x / 16);
-    const chunkY = Math.floor(y / 16);
+    const chunkX = Math.floor(x / options.chunkSize);
+    const chunkY = Math.floor(y / options.chunkSize);
     const chunkKey = `${chunkX},${chunkY}`;
-    let pixelX = Math.floor(x % 16);
-    let pixelY = Math.floor(y % 16);
-    if(pixelX < 0) pixelX += 16;
-    if(pixelY < 0) pixelY += 16;
+    let pixelX = Math.floor(x % options.chunkSize);
+    let pixelY = Math.floor(y % options.chunkSize);
+    if(pixelX < 0) pixelX += options.chunkSize;
+    if(pixelY < 0) pixelY += options.chunkSize;
     const existingColor = chunks[chunkKey] && chunks[chunkKey].data[pixelX] ? chunks[chunkKey].data[pixelX][pixelY] : null;
     const colorMatches = existingColor && existingColor.every((val, index) => val === color[index]);
 
@@ -32,13 +32,13 @@ export default {
         socket.emit("move", x, y);
     },
     setPixel: (x, y, color) => {
-        const chunkX = Math.floor(x / 16);
-        const chunkY = Math.floor(y / 16);
-        let pixelX = Math.floor(x % 16);
-        let pixelY = Math.floor(y % 16);
+        const chunkX = Math.floor(x / options.chunkSize);
+        const chunkY = Math.floor(y / options.chunkSize);
+        let pixelX = Math.floor(x % options.chunkSize);
+        let pixelY = Math.floor(y % options.chunkSize);
 
-        if(pixelX < 0) pixelX += 16;
-        if(pixelY < 0) pixelY += 16;
+        if(pixelX < 0) pixelX += options.chunkSize;
+        if(pixelY < 0) pixelY += options.chunkSize;
 
         if(!canDraw(x, y, color)) return false;
 
@@ -49,10 +49,10 @@ export default {
         requestRender();
     },
     drawLine: (from, to) => {
-        const chunkXFrom = Math.floor(from[0] / 16);
-        const chunkYFrom = Math.floor(from[1] / 16);
-        const chunkXTo = Math.floor(to[0] / 16);
-        const chunkYTo = Math.floor(to[1] / 16);
+        const chunkXFrom = Math.floor(from[0] / options.chunkSize);
+        const chunkYFrom = Math.floor(from[1] / options.chunkSize);
+        const chunkXTo = Math.floor(to[0] / options.chunkSize);
+        const chunkYTo = Math.floor(to[1] / options.chunkSize);
         const chunkKeyFrom = `${chunkXFrom},${chunkYFrom}`;
         const chunkKeyTo = `${chunkXTo},${chunkYTo}`;
 
@@ -67,13 +67,13 @@ export default {
         requestRender();
     },
     getPixel: async (x, y) => {
-        const chunkX = Math.floor(x / 16);
-        const chunkY = Math.floor(y / 16);
-        let pixelX = Math.floor(x % 16);
-        let pixelY = Math.floor(y % 16);
+        const chunkX = Math.floor(x / options.chunkSize);
+        const chunkY = Math.floor(y / options.chunkSize);
+        let pixelX = Math.floor(x % options.chunkSize);
+        let pixelY = Math.floor(y % options.chunkSize);
     
-        if(pixelX < 0) pixelX += 16;
-        if(pixelY < 0) pixelY += 16;
+        if(pixelX < 0) pixelX += options.chunkSize;
+        if(pixelY < 0) pixelY += options.chunkSize;
 
         const chunkKey = `${chunkX},${chunkY}`;
         if(!chunks[chunkKey]) {
@@ -105,7 +105,7 @@ export default {
         const chunkKey = `${chunkX},${chunkY}`;
 
         if(chunks.hasOwnProperty(chunkKey)) {
-            const chunkData = Array.from({ length: CHUNK_SIZE }, () => Array.from({ length: CHUNK_SIZE }, () => color));
+            const chunkData = Array.from({ length: options.chunkSize }, () => Array.from({ length: options.chunkSize }, () => color));
             chunks[chunkKey].data = chunkData;
             requestRender();
         }

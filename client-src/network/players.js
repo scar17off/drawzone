@@ -1,7 +1,7 @@
 import socket from "./network.js";
 import { players } from "../sharedState.js";
 import events from "../events.js";
-import { requestRender } from "../renderer.js";
+import { requestRender } from "../render/renderer.js";
 import world from "../world.js";
 import local_player from "../local_player.js";
 

@@ -1,9 +1,10 @@
 import { camera, canvas } from "../camera.js";
-import { CHUNK_SIZE, requestRender } from "../renderer.js";
-import { chunks, lines, texts } from "../sharedState.js";
+import { requestRender } from "../render/renderer.js";
+import { options, chunks, lines, texts } from "../sharedState.js";
 import events from "../events.js";
 import local_player from "../local_player.js";
 import Bucket from "../../modules/player/Bucket.js";
+import ChunkCluster from "../render/ChunkCluster.js";
 
 const socket = io();
 
@@ -37,17 +38,17 @@ socket.on("connect", () => {
                     break;
                 case "newPixel":
                     const { x, y, color } = update;
-                    var chunkX = Math.floor(x / CHUNK_SIZE);
-                    var chunkY = Math.floor(y / CHUNK_SIZE);
+                    var chunkX = Math.floor(x / options.chunkSize);
+                    var chunkY = Math.floor(y / options.chunkSize);
 
-                    let pixelX = Math.floor(x % 16);
-                    let pixelY = Math.floor(y % 16);
+                    let pixelX = Math.floor(x % options.chunkSize);
+                    let pixelY = Math.floor(y % options.chunkSize);
                     
-                    if(pixelX < 0) pixelX += 16;
-                    if(pixelY < 0) pixelY += 16;
+                    if(pixelX < 0) pixelX += options.chunkSize;
+                    if(pixelY < 0) pixelY += options.chunkSize;
 
                     if(chunks[`${chunkX},${chunkY}`]) {
-                        chunks[`${chunkX},${chunkY}`].data[pixelX][pixelY] = color;
+                        chunks[`${chunkX},${chunkY}`].setPixel(pixelX, pixelY, color);
                     }
                     break;
                 case "protectionUpdated":
@@ -104,11 +105,12 @@ events.on("setTool", toolID => {
 
 function addChunk(chunkData, chunkX, chunkY, isProtected) {
     const key = `${chunkX},${chunkY}`;
-    chunks[key] = { data: chunkData, protected: isProtected };
+    chunks[key] = new ChunkCluster(chunkData);
+    chunks[key].protected = isProtected;
 }
 
 export function loadVisibleChunks() {
-    const chunkSizeInPixels = CHUNK_SIZE * camera.zoom;
+    const chunkSizeInPixels = options.chunkSize * camera.zoom;
     const leftChunkIndex = Math.floor(camera.x / chunkSizeInPixels);
     const rightChunkIndex = Math.ceil((camera.x + canvas.width) / chunkSizeInPixels);
     const topChunkIndex = Math.floor(camera.y / chunkSizeInPixels);
@@ -130,7 +132,7 @@ export function loadVisibleChunks() {
 }
 
 export function unloadInvisibleChunks() {
-    const chunkSizeInPixels = CHUNK_SIZE * camera.zoom;
+    const chunkSizeInPixels = options.chunkSize * camera.zoom;
     const leftChunkIndex = Math.floor(camera.x / chunkSizeInPixels);
     const rightChunkIndex = Math.ceil((camera.x + canvas.width) / chunkSizeInPixels);
     const topChunkIndex = Math.floor(camera.y / chunkSizeInPixels);

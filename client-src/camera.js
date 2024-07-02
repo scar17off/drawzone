@@ -1,5 +1,5 @@
 import events from "./events.js";
-import { requestRender } from "./renderer.js";
+import { requestRender } from "./render/renderer.js";
 
 export const canvas = document.getElementById("gameCanvas");
 

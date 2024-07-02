@@ -1,23 +1,17 @@
-import { camera } from "./camera.js";
-import { chunks, lines, texts } from "./sharedState.js";
-import { mouse } from "./mouse.js";
-import { players } from "./sharedState.js";
-import local_player from "./local_player.js";
-import Fx from "./fx.js";
-import { toolIDs } from "./tools.js";
-import { cursors } from "./cursors.js";
-
-export const options = {
-    grid: true,
-    text: true,
-    lines: true,
-    pixels: true,
-    needsUpdate: false
-}
+import { camera } from "../camera.js";
+import { options, chunks, lines, texts } from "../sharedState.js";
+import { mouse } from "../mouse.js";
+import { players } from "../sharedState.js";
+import local_player from "../local_player.js";
+import Fx from "../fx.js";
+import { toolIDs } from "../tools.js";
+import { cursors } from "../cursors.js";
+import ChunkCluster from "./ChunkCluster.js";
 
 const unloadedChunkImage = new Image();
 unloadedChunkImage.src = './img/unloaded.png';
 
+// Canvas autosize
 const canvas = document.getElementById("gameCanvas");
 const ctx = canvas.getContext("2d");
 
@@ -29,25 +23,23 @@ window.addEventListener("resize", () => {
     canvas.height = window.innerHeight;
 });
 
-export const CHUNK_SIZE = 16;
-
 export function drawGrid() {
     const gridColor = 'rgba(0, 0, 0, 0.2)';
     ctx.strokeStyle = gridColor;
     ctx.lineWidth = 1;
 
     // chunk grid
-    for (let x = 0; x < canvas.width; x += camera.zoom * CHUNK_SIZE) {
+    for (let x = 0; x < canvas.width; x += camera.zoom * options.chunkSize) {
         ctx.beginPath();
-        ctx.moveTo(x - camera.x % (camera.zoom * CHUNK_SIZE), 0);
-        ctx.lineTo(x - camera.x % (camera.zoom * CHUNK_SIZE), canvas.height);
+        ctx.moveTo(x - camera.x % (camera.zoom * options.chunkSize), 0);
+        ctx.lineTo(x - camera.x % (camera.zoom * options.chunkSize), canvas.height);
         ctx.stroke();
     }
 
-    for (let y = 0; y < canvas.height; y += camera.zoom * CHUNK_SIZE) {
+    for (let y = 0; y < canvas.height; y += camera.zoom * options.chunkSize) {
         ctx.beginPath();
-        ctx.moveTo(0, y - camera.y % (camera.zoom * CHUNK_SIZE));
-        ctx.lineTo(canvas.width, y - camera.y % (camera.zoom * CHUNK_SIZE));
+        ctx.moveTo(0, y - camera.y % (camera.zoom * options.chunkSize));
+        ctx.lineTo(canvas.width, y - camera.y % (camera.zoom * options.chunkSize));
         ctx.stroke();
     }
 
@@ -85,10 +77,10 @@ export function renderChunkOutline(chunkX, chunkY) {
     const isTopChunkProtected = chunks.hasOwnProperty(`${chunkX},${chunkY-1}`) ? chunks[`${chunkX},${chunkY-1}`].protected : false;
     const isBottomChunkProtected = chunks.hasOwnProperty(`${chunkX},${chunkY+1}`) ? chunks[`${chunkX},${chunkY+1}`].protected : false;
 
-    const startX = chunkX * CHUNK_SIZE * camera.zoom - camera.x;
-    const startY = chunkY * CHUNK_SIZE * camera.zoom - camera.y;
-    const endX = startX + CHUNK_SIZE * camera.zoom;
-    const endY = startY + CHUNK_SIZE * camera.zoom;
+    const startX = chunkX * options.chunkSize * camera.zoom - camera.x;
+    const startY = chunkY * options.chunkSize * camera.zoom - camera.y;
+    const endX = startX + options.chunkSize * camera.zoom;
+    const endY = startY + options.chunkSize * camera.zoom;
 
     ctx.strokeStyle = "black";
     ctx.lineWidth = 1;
@@ -131,55 +123,40 @@ export function renderText(text, x, y) {
 }
 
 export function renderChunk(chunkData, chunkX, chunkY) {
-    const startX = chunkX * CHUNK_SIZE * camera.zoom - camera.x;
-    const startY = chunkY * CHUNK_SIZE * camera.zoom - camera.y;
+    const chunkCluster = new ChunkCluster(chunkData.data);
+    const startX = chunkX * options.chunkSize * camera.zoom - camera.x;
+    const startY = chunkY * options.chunkSize * camera.zoom - camera.y;
 
-    for (let x = 0; x < CHUNK_SIZE; x++) {
-        for (let y = 0; y < CHUNK_SIZE; y++) {
-            const pixel = chunkData.data[x][y];
-            const pixelX = startX + x * camera.zoom;
-            const pixelY = startY + y * camera.zoom;
+    ctx.drawImage(chunkCluster.getCanvas(), startX, startY, options.chunkSize * camera.zoom, options.chunkSize * camera.zoom);
 
-            ctx.fillStyle = `rgb(${pixel[0]}, ${pixel[1]}, ${pixel[2]})`;
-            ctx.fillRect(pixelX, pixelY, camera.zoom, camera.zoom);
-
-            if(chunkData.protected) {
-                renderChunkOutline(chunkX, chunkY);
-            }
-
-            /*
-            if(mouse.x > pixelX && mouse.x < pixelX + camera.zoom && mouse.y > pixelY && mouse.y < pixelY + camera.zoom) {
-                ctx.strokeStyle = `rgb(${local_player.selectedColor.join(", ")}, 1.0)`;
-                ctx.lineWidth = 2;
-                ctx.strokeRect(pixelX, pixelY, camera.zoom, camera.zoom);
-            }
-            */
-        }
-    }
+    if(chunkData.protected) renderChunkOutline(chunkX, chunkY);
 }
 
 export function renderAllChunks() {
-    const chunkSizeInPixels = CHUNK_SIZE * camera.zoom;
+    const chunkSizeInPixels = options.chunkSize * camera.zoom;
     const leftChunkIndex = Math.floor(camera.x / chunkSizeInPixels);
     const rightChunkIndex = Math.ceil((camera.x + canvas.width) / chunkSizeInPixels);
     const topChunkIndex = Math.floor(camera.y / chunkSizeInPixels);
     const bottomChunkIndex = Math.ceil((camera.y + canvas.height) / chunkSizeInPixels);
+    
+    ctx.imageSmoothingEnabled = false;
 
     for (let y = topChunkIndex; y < bottomChunkIndex; y++) {
         for (let x = leftChunkIndex; x < rightChunkIndex; x++) {
             const chunkKey = `${x},${y}`;
+            
             if(chunks.hasOwnProperty(chunkKey)) {
-                const chunkData = chunks[chunkKey];
-                renderChunk(chunkData, x, y);
+                const chunkCluster = chunks[chunkKey];
+                const startX = x * options.chunkSize * camera.zoom - camera.x;
+                const startY = y * options.chunkSize * camera.zoom - camera.y;
+
+                ctx.drawImage(chunkCluster.getCanvas(), startX, startY, options.chunkSize * camera.zoom, options.chunkSize * camera.zoom);
+
+                if(chunkCluster.protected) renderChunkOutline(x, y);
             } else {
-                // prevent blur
-                ctx.imageSmoothingEnabled = false;
-
-                const startX = x * CHUNK_SIZE * camera.zoom - camera.x;
-                const startY = y * CHUNK_SIZE * camera.zoom - camera.y;
-                ctx.drawImage(unloadedChunkImage, startX, startY, CHUNK_SIZE * camera.zoom, CHUNK_SIZE * camera.zoom);
-
-                ctx.imageSmoothingEnabled = true;
+                const startX = x * options.chunkSize * camera.zoom - camera.x;
+                const startY = y * options.chunkSize * camera.zoom - camera.y;
+                ctx.drawImage(unloadedChunkImage, startX, startY, options.chunkSize * camera.zoom, options.chunkSize * camera.zoom);
             }
         }
     }
@@ -283,10 +260,10 @@ function onRender() {
         case Fx.AREA_SELECT:
             if(local_player.currentFxRenderer.params.length !== 3) return;
             const [start, end, step] = local_player.currentFxRenderer.params;
-            const adjustedStartX = step === CHUNK_SIZE ? Math.floor(start[0] / step) * step : start[0];
-            const adjustedStartY = step === CHUNK_SIZE ? Math.floor(start[1] / step) * step : start[1];
-            const adjustedEndX = step === CHUNK_SIZE ? Math.floor(end[0] / step) * step : end[0];
-            const adjustedEndY = step === CHUNK_SIZE ? Math.floor(end[1] / step) * step : end[1];
+            const adjustedStartX = step === options.chunkSize ? Math.floor(start[0] / step) * step : start[0];
+            const adjustedStartY = step === options.chunkSize ? Math.floor(start[1] / step) * step : start[1];
+            const adjustedEndX = step === options.chunkSize ? Math.floor(end[0] / step) * step : end[0];
+            const adjustedEndY = step === options.chunkSize ? Math.floor(end[1] / step) * step : end[1];
 
             ctx.strokeStyle = `rgba(${local_player.selectedColor.join(", ")}, 0.5)`;
             ctx.lineWidth = 2;
@@ -320,6 +297,5 @@ export default {
     renderText,
     renderChunk,
     renderAllChunks,
-    options,
     requestRender
 }

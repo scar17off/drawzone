@@ -1,9 +1,9 @@
 import chat from "./network/chat.js";
 import socket from "./network/network.js";
 import { camera } from "./camera.js";
-import renderer from "./renderer.js";
+import renderer from "./render/renderer.js";
 import { mouse } from "./mouse.js";
-import { chunks, lines, texts } from "./sharedState.js";
+import { chunks, lines, options, texts } from "./sharedState.js";
 import local_player from "./local_player.js";
 import tools from "./tools.js";
 import players from "./network/players.js";
@@ -22,6 +22,7 @@ window.DrawZone = {
     camera,
     renderer: {
         Fx,
+        options,
         ...renderer
     },
     world: {

@@ -5,8 +5,11 @@ import world from "./world.js";
 import Fx from "./fx.js";
 import ranks from "./shared/ranks.json";
 import events from "./events.js";
-import { requestRender } from "./renderer.js";
+import { requestRender } from "./render/renderer.js";
 import { cursors } from "./cursors.js";
+import { options } from "./sharedState.js";
+
+const chunkSize = options.chunkSize;
 
 const canvas = document.getElementById("gameCanvas");
 const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
@@ -340,8 +343,8 @@ events.on("newRank", newRank => {
     addTool("Protect", cursors.protect, [Fx.NONE], ranks.Moderator, function(tool) {
         const protect = event => {
             if(event.buttons === 0 || event.buttons === 4) return;
-            const chunkX = Math.floor(mouse.tileX / 16);
-            const chunkY = Math.floor(mouse.tileY / 16);
+            const chunkX = Math.floor(mouse.tileX / chunkSize);
+            const chunkY = Math.floor(mouse.tileY / chunkSize);
 
             world.setProtection(event.buttons === 1, chunkX, chunkY);
         }
@@ -350,11 +353,11 @@ events.on("newRank", newRank => {
         tool.setEvent('mousedown', protect);
     });
 
-    addTool("Eraser", cursors.eraser, [Fx.RECT_SELECT_ALIGNED, 16], ranks.Moderator, function(tool) {
+    addTool("Eraser", cursors.eraser, [Fx.RECT_SELECT_ALIGNED, chunkSize], ranks.Moderator, function(tool) {
         const erase = event => {
             if(event.buttons === 4 || event.buttons === 0) return;
-            const chunkX = Math.floor(mouse.tileX / 16);
-            const chunkY = Math.floor(mouse.tileY / 16);
+            const chunkX = Math.floor(mouse.tileX / chunkSize);
+            const chunkY = Math.floor(mouse.tileY / chunkSize);
 
             world.setChunk(event.buttons === 1 ? local_player.selectedColor : [255, 255, 255], chunkX, chunkY);
         }
@@ -369,12 +372,12 @@ events.on("newRank", newRank => {
             const width = imageData.width;
             const height = imageData.height;
 
-            for (let x = 0; x < width; x += 16) {
-                for (let y = 0; y < height; y += 16) {
-                    const chunkKey = `${Math.floor(x / 16)},${Math.floor(y / 16)}`;
-                    chunkData[chunkKey] = Array(16).fill().map(() => Array(16).fill([0, 0, 0, 0]));
-                    for (let subX = 0; subX < 16; subX++) {
-                        for (let subY = 0; subY < 16; subY++) {
+            for (let x = 0; x < width; x += chunkSize) {
+                for (let y = 0; y < height; y += chunkSize) {
+                    const chunkKey = `${Math.floor(x / chunkSize)},${Math.floor(y / chunkSize)}`;
+                    chunkData[chunkKey] = Array(chunkSize).fill().map(() => Array(chunkSize).fill([0, 0, 0, 0]));
+                    for (let subX = 0; subX < chunkSize; subX++) {
+                        for (let subY = 0; subY < chunkSize; subY++) {
                             const globalX = x + subX;
                             const globalY = y + subY;
                             if(globalX < width && globalY < height) {
@@ -383,8 +386,8 @@ events.on("newRank", newRank => {
                                 const g = imageData.data[index + 1];
                                 const b = imageData.data[index + 2];
                                 const a = imageData.data[index + 3];
-                                if(globalX % 16 < 16 && globalY % 16 < 16) {
-                                    chunkData[chunkKey][globalX % 16][globalY % 16] = [r, g, b, a];
+                                if(globalX % chunkSize < chunkSize && globalY % chunkSize < chunkSize) {
+                                    chunkData[chunkKey][globalX % chunkSize][globalY % chunkSize] = [r, g, b, a];
                                 }
                             }
                         }
@@ -415,8 +418,8 @@ events.on("newRank", newRank => {
 
                             Object.entries(chunkData).forEach(([chunkKey, chunk]) => {
                                 const [chunkOffsetX, chunkOffsetY] = chunkKey.split(',').map(Number);
-                                const baseChunkX = Math.floor(mouse.tileX / 16);
-                                const baseChunkY = Math.floor(mouse.tileY / 16);
+                                const baseChunkX = Math.floor(mouse.tileX / chunkSize);
+                                const baseChunkY = Math.floor(mouse.tileY / chunkSize);
                                 const chunkX = baseChunkX + chunkOffsetX;
                                 const chunkY = baseChunkY + chunkOffsetY;
 
@@ -551,7 +554,7 @@ events.on("newRank", newRank => {
     addTool("Area Erase", cursors.areaerase, [Fx.NONE], ranks.Moderator, function(tool) {
         let selectionStart = null;
         let selectionEnd = null;
-        let step = 16;
+        let step = chunkSize;
 
         tool.setEvent("mousedown", event => {
             if(event.buttons === 1) {
@@ -573,10 +576,10 @@ events.on("newRank", newRank => {
         tool.setEvent("mouseup", async () => {
             if(selectionStart && selectionEnd) {
                 const playerColor = local_player.selectedColor;
-                const adjustedStartX = step === 16 ? Math.floor(selectionStart[0] / step) * step : selectionStart[0];
-                const adjustedStartY = step === 16 ? Math.floor(selectionStart[1] / step) * step : selectionStart[1];
-                const adjustedEndX = step === 16 ? Math.floor(selectionEnd[0] / step) * step + (step - 1) : selectionEnd[0];
-                const adjustedEndY = step === 16 ? Math.floor(selectionEnd[1] / step) * step + (step - 1) : selectionEnd[1];
+                const adjustedStartX = step === chunkSize ? Math.floor(selectionStart[0] / step) * step : selectionStart[0];
+                const adjustedStartY = step === chunkSize ? Math.floor(selectionStart[1] / step) * step : selectionStart[1];
+                const adjustedEndX = step === chunkSize ? Math.floor(selectionEnd[0] / step) * step + (step - 1) : selectionEnd[0];
+                const adjustedEndY = step === chunkSize ? Math.floor(selectionEnd[1] / step) * step + (step - 1) : selectionEnd[1];
 
                 if(step === 1) {
                     for (let x = adjustedStartX; x <= adjustedEndX; x++) {
@@ -585,11 +588,11 @@ events.on("newRank", newRank => {
                             await sleep(1);
                         }
                     }
-                } else if(step === 16) {
-                    for (let x = adjustedStartX; x <= adjustedEndX; x += 16) {
-                        for (let y = adjustedStartY; y <= adjustedEndY; y += 16) {
-                            const chunkX = Math.floor(x / 16);
-                            const chunkY = Math.floor(y / 16);
+                } else if(step === chunkSize) {
+                    for (let x = adjustedStartX; x <= adjustedEndX; x += chunkSize) {
+                        for (let y = adjustedStartY; y <= adjustedEndY; y += chunkSize) {
+                            const chunkX = Math.floor(x / chunkSize);
+                            const chunkY = Math.floor(y / chunkSize);
                             world.setChunk(playerColor, chunkX, chunkY);
                             await sleep(3);
                         }
@@ -607,7 +610,7 @@ events.on("newRank", newRank => {
     addTool("Area Protect", cursors.areaprotect, [Fx.NONE], ranks.Moderator, async (tool) => {
         let selectionStart = null;
         let selectionEnd = null;
-        let step = 16;
+        let step = chunkSize;
 
         tool.setEvent("mousedown", event => {
             if(event.buttons === 1 && !selectionStart) {
@@ -628,17 +631,17 @@ events.on("newRank", newRank => {
 
         tool.setEvent("mousedown", async (event) => {
             if(selectionStart && selectionEnd) {
-                const adjustedStartX = Math.floor(selectionStart[0] / 16) * 16;
-                const adjustedStartY = Math.floor(selectionStart[1] / 16) * 16;
-                const adjustedEndX = Math.floor((selectionEnd[0] / 16)) * 16 + 15;
-                const adjustedEndY = Math.floor((selectionEnd[1] / 16)) * 16 + 15;
+                const adjustedStartX = Math.floor(selectionStart[0] / chunkSize) * chunkSize;
+                const adjustedStartY = Math.floor(selectionStart[1] / chunkSize) * chunkSize;
+                const adjustedEndX = Math.floor((selectionEnd[0] / chunkSize)) * chunkSize + 15;
+                const adjustedEndY = Math.floor((selectionEnd[1] / chunkSize)) * chunkSize + 15;
 
                 const protectValue = event.buttons === 1; // left click to protect, right click to unprotect
 
-                for (let x = adjustedStartX; x <= adjustedEndX; x += 16) {
-                    for (let y = adjustedStartY; y <= adjustedEndY; y += 16) {
-                        const chunkX = Math.floor(x / 16);
-                        const chunkY = Math.floor(y / 16);
+                for (let x = adjustedStartX; x <= adjustedEndX; x += chunkSize) {
+                    for (let y = adjustedStartY; y <= adjustedEndY; y += chunkSize) {
+                        const chunkX = Math.floor(x / chunkSize);
+                        const chunkY = Math.floor(y / chunkSize);
                         world.setProtection(protectValue, chunkX, chunkY);
                         await sleep(0);
                     }
