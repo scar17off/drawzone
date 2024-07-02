@@ -254,6 +254,29 @@ function handleFx() {
                 }
             }
         }
+    case Fx.LINE:
+        const [startPoint, endPoint] = local_player.currentFxRenderer.params;
+        renderLine(startPoint[0], startPoint[1], endPoint[0], endPoint[1]);
+        break;
+    case Fx.PIXEL_LINE:
+        const [pixelLineStart, pixelLineEnd] = local_player.currentFxRenderer.params;
+        const dx = pixelLineEnd[0] - pixelLineStart[0];
+        const dy = pixelLineEnd[1] - pixelLineStart[1];
+        const steps = Math.max(Math.abs(dx), Math.abs(dy));
+        const xIncrement = dx / steps;
+        const yIncrement = dy / steps;
+
+        let x = pixelLineStart[0] + 0.5;
+        let y = pixelLineStart[1] + 0.5;
+
+        for (let i = 0; i <= steps; i++) {
+            ctx.strokeStyle = `rgb(${local_player.selectedColor.join(", ")}, 1.0)`;
+            ctx.lineWidth = 2;
+            ctx.strokeRect(Math.floor(x) * camera.zoom - camera.x, Math.floor(y) * camera.zoom - camera.y, camera.zoom, camera.zoom);
+            x += xIncrement;
+            y += yIncrement;
+        }
+        break;
     }
 }
 

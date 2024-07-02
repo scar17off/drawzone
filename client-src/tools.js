@@ -250,7 +250,6 @@ events.on("newRank", newRank => {
 
     addTool("Pixel Line", cursors.line, [Fx.NONE], ranks.User, function(tool) {
         let pixelLineStart = null;
-        let pixelLineEnd = null;
 
         tool.setEvent("mousedown", event => {
             if(event.buttons === 1) {
@@ -258,9 +257,20 @@ events.on("newRank", newRank => {
             }
         });
 
+        tool.setEvent("mousemove", event => {
+            if(event.buttons === 1 && pixelLineStart) {
+                const pixelLineEnd = [mouse.tileX, mouse.tileY];
+                local_player.currentFxRenderer = {
+                    type: Fx.PIXEL_LINE,
+                    params: [pixelLineStart, pixelLineEnd]
+                }
+                requestRender();
+            }
+        });
+
         tool.setEvent("mouseup", () => {
             if(pixelLineStart) {
-                pixelLineEnd = [mouse.tileX, mouse.tileY];
+                const pixelLineEnd = [mouse.tileX, mouse.tileY];
                 const dx = pixelLineEnd[0] - pixelLineStart[0];
                 const dy = pixelLineEnd[1] - pixelLineStart[1];
                 const steps = Math.max(Math.abs(dx), Math.abs(dy));
@@ -276,9 +286,9 @@ events.on("newRank", newRank => {
                     y += yIncrement;
                 }
 
+                local_player.currentFxRenderer = { type: Fx.NONE, params: [] };
                 requestRender();
                 pixelLineStart = null;
-                pixelLineEnd = null;
             }
         });
     });
