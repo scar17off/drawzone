@@ -9,5 +9,6 @@ export const options = {
     pixels: true,
     needsUpdate: false,
     chunkSize: 16,
-    squaring: true
+    squaring: true,
+    fx: true
 }

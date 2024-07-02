@@ -3,10 +3,10 @@ import { options, chunks, lines, texts } from "../sharedState.js";
 import { mouse } from "../mouse.js";
 import { players } from "../sharedState.js";
 import local_player from "../local_player.js";
-import Fx from "../fx.js";
 import { toolIDs } from "../tools.js";
 import { cursors } from "../cursors.js";
 import ChunkCluster from "./ChunkCluster.js";
+import Fx from '../fx.js';
 
 const unloadedChunkImage = new Image();
 unloadedChunkImage.src = './img/unloaded.png';
@@ -122,16 +122,6 @@ export function renderText(text, x, y) {
     ctx.fillText(text, startX, startY);
 }
 
-export function renderChunk(chunkData, chunkX, chunkY) {
-    const chunkCluster = new ChunkCluster(chunkData.data);
-    const startX = chunkX * options.chunkSize * camera.zoom - camera.x;
-    const startY = chunkY * options.chunkSize * camera.zoom - camera.y;
-
-    ctx.drawImage(chunkCluster.getCanvas(), startX, startY, options.chunkSize * camera.zoom, options.chunkSize * camera.zoom);
-
-    if(chunkData.protected) renderChunkOutline(chunkX, chunkY);
-}
-
 export function renderAllChunks() {
     const chunkSizeInPixels = options.chunkSize * camera.zoom;
     const leftChunkIndex = Math.floor(camera.x / chunkSizeInPixels);
@@ -233,6 +223,40 @@ export function requestRender() {
     onRender();
 }
 
+function handleFx() {
+    switch(local_player.currentFxRenderer.type) {
+    case Fx.RECT_SELECT_ALIGNED:
+        const color = local_player.selectedColor;
+        const size = local_player.currentFxRenderer.params[0];
+
+        const startX = Math.floor(mouse.tileX / size) * size;
+        const startY = Math.floor(mouse.tileY / size) * size;
+
+        ctx.strokeStyle = `rgb(${color.join(", ")}, 1.0)`;
+        ctx.lineWidth = 2;
+        ctx.strokeRect(startX * camera.zoom - camera.x, startY * camera.zoom - camera.y, size * camera.zoom, size * camera.zoom);
+        break;
+    case Fx.AREA_SELECT:
+        if(local_player.currentFxRenderer.params.length !== 3) return;
+        const [start, end, step] = local_player.currentFxRenderer.params;
+        const adjustedStartX = step === options.chunkSize ? Math.floor(start[0] / step) * step : start[0];
+        const adjustedStartY = step === options.chunkSize ? Math.floor(start[1] / step) * step : start[1];
+        const adjustedEndX = step === options.chunkSize ? Math.floor(end[0] / step) * step : end[0];
+        const adjustedEndY = step === options.chunkSize ? Math.floor(end[1] / step) * step : end[1];
+
+        ctx.strokeStyle = `rgba(${local_player.selectedColor.join(", ")}, 0.5)`;
+        ctx.lineWidth = 2;
+
+        for (let x = adjustedStartX; x <= adjustedEndX; x += step) {
+            for (let y = adjustedStartY; y <= adjustedEndY; y += step) {
+                if((x === adjustedStartX || x === adjustedEndX || y === adjustedStartY || y === adjustedEndY)) {
+                    ctx.strokeRect(Math.floor(x * camera.zoom - camera.x), Math.floor(y * camera.zoom - camera.y), step * camera.zoom, step * camera.zoom);
+                }
+            }
+        }
+    }
+}
+
 function onRender() {
     if(!options.needsUpdate) return;
     options.needsUpdate = false;
@@ -243,59 +267,13 @@ function onRender() {
     if(options.grid) drawGrid();
     if(options.lines) renderAllLines();
     if(options.text) renderAllTexts();
-
-    // player fx
-    switch(local_player.currentFxRenderer.type) {
-        case Fx.RECT_SELECT_ALIGNED:
-            const color = local_player.selectedColor;
-            const size = local_player.currentFxRenderer.params[0];
-
-            const startX = Math.floor(mouse.tileX / size) * size;
-            const startY = Math.floor(mouse.tileY / size) * size;
-
-            ctx.strokeStyle = `rgb(${color.join(", ")}, 1.0)`;
-            ctx.lineWidth = 2;
-            ctx.strokeRect(startX * camera.zoom - camera.x, startY * camera.zoom - camera.y, size * camera.zoom, size * camera.zoom);
-            break;
-        case Fx.AREA_SELECT:
-            if(local_player.currentFxRenderer.params.length !== 3) return;
-            const [start, end, step] = local_player.currentFxRenderer.params;
-            const adjustedStartX = step === options.chunkSize ? Math.floor(start[0] / step) * step : start[0];
-            const adjustedStartY = step === options.chunkSize ? Math.floor(start[1] / step) * step : start[1];
-            const adjustedEndX = step === options.chunkSize ? Math.floor(end[0] / step) * step : end[0];
-            const adjustedEndY = step === options.chunkSize ? Math.floor(end[1] / step) * step : end[1];
-
-            ctx.strokeStyle = `rgba(${local_player.selectedColor.join(", ")}, 0.5)`;
-            ctx.lineWidth = 2;
-
-            for (let x = adjustedStartX; x <= adjustedEndX; x += step) {
-                for (let y = adjustedStartY; y <= adjustedEndY; y += step) {
-                    if((x === adjustedStartX || x === adjustedEndX || y === adjustedStartY || y === adjustedEndY)) {
-                        ctx.strokeRect(Math.floor(x * camera.zoom - camera.x), Math.floor(y * camera.zoom - camera.y), step * camera.zoom, step * camera.zoom);
-                    }
-                }
-            }
-        case Fx.LINE:
-            if(local_player.currentFxRenderer.params.length !== 2) return;
-            const [startPoint, endPoint] = local_player.currentFxRenderer.params;
-
-            ctx.strokeStyle = `rgb(0, 0, 0, 1.0)`;
-            ctx.lineWidth = 1;
-            ctx.beginPath();
-            ctx.moveTo(startPoint[0] * camera.zoom - camera.x, startPoint[1] * camera.zoom - camera.y);
-            ctx.lineTo(endPoint[0] * camera.zoom - camera.x, endPoint[1] * camera.zoom - camera.y);
-            ctx.stroke();
-            break;
-        default:
-            break;
-    }
+    if(options.fx) handleFx();
 
     renderPlayers();
 }
 
 export default {
     renderText,
-    renderChunk,
     renderAllChunks,
     requestRender
 }
