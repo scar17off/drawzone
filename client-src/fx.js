@@ -15,7 +15,6 @@ export default {
     },
     AREA_SELECT: (start, end, step, color) => (x, y, ctx) => {
         color = local_player.selectedColor;
-        if(local_player.currentFxRenderer.params.length !== 3) return;
         const adjustedStartX = step === options.chunkSize ? Math.floor(start[0] / step) * step : start[0];
         const adjustedStartY = step === options.chunkSize ? Math.floor(start[1] / step) * step : start[1];
         const adjustedEndX = step === options.chunkSize ? Math.floor(end[0] / step) * step : end[0];
