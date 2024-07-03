@@ -2,6 +2,7 @@ const { getWorldByName } = require("../world/worldManager.js");
 const ranks = require("../shared/ranks.json");
 const Bucket = require("./Bucket.js");
 const { defaultRank, getRankByID } = require("./rankingUtils.js");
+const { getPlayersWithIP } = require("./players.js");
 
 /**
  * Represents a client connected to the server.
@@ -73,11 +74,17 @@ class Client {
          */
         this.pixelQuota = new Bucket(0, 0);
 
+        if(getPlayersWithIP(this.ip).length >= server.config.maxConnectionsPerIp) {
+            this.send("You have reached the maximum number of connections per IP.");
+            this.ws.disconnect();
+            return;
+        }
+
         const world = getWorldByName(this.world);
         
         if(world.isFull()) {
             this.send("The world is full.");
-            this.ws.close();
+            this.ws.disconnect();
         } else {
             world.clients.push(this);
             

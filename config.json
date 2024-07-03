@@ -1,4 +1,5 @@
 {
+    "maxConnectionsPerIp": 1,
     "port": 3000,
     "welcomeMessage": "[Server] Welcome to the Early Testing of DrawZone!",
     "maxMessageLength": 128,
