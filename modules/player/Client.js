@@ -182,6 +182,16 @@ class Client {
 
         this.ws.emit("teleport", x, y);
     }
+
+    /**
+     * Checks if the client has a specific permission.
+     * @param {string} permission - The permission to check for.
+     * @returns {boolean}
+     */
+    hasPermission(permission) {
+        const rankData = getRankByID(this.rank);
+        return rankData.permissions.includes(permission);
+    }
 }
 
 module.exports = Client;

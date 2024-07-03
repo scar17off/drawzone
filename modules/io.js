@@ -24,7 +24,8 @@ module.exports = httpServer => {
         broadcastMessage(client.world, { type: "playerJoin", id: client.id });
 
         socket.on("setPixel", (x, y, color) => {
-            if(getWorldByName(client.world).readonly) return;
+            if(getWorldByName(client.world).readonly && !client.hasPermission("bypassReadOnly")) return;
+            if(!client.hasPermission("setPixel")) return;
 
             x = Math.floor(x);
             y = Math.floor(y);
@@ -37,14 +38,19 @@ module.exports = httpServer => {
             client.pixelQuota.update();
             const hasQuota = client.pixelQuota.canSpend(1) || (client.pixelQuota.rate === 1 && client.pixelQuota.time === 0);
             if(!hasQuota) return;
-            if(!getRankByID(client.rank).permissions.includes("protect") && chunkManager.get_protection(client.world, chunkX, chunkY) === true) return;
+            if(!client.hasPermission("protect") && chunkManager.get_protection(client.world, chunkX, chunkY) === true) return;
             if(server.config.saving.savePixels) chunkManager.set_pixel(client.world, x, y, color);
             
             broadcastMessage(client.world, { type: "newPixel", x, y, color });
         });
 
         socket.on("setLine", (from, to) => {
-            if(getWorldByName(client.world).readonly) return;
+            if(getWorldByName(client.world).readonly && !client.hasPermission("bypassReadOnly")) return;
+
+            const maxLength = 64;
+            const distance = Math.sqrt(Math.pow(to.x - from.x, 2) + Math.pow(to.y - from.y, 2));
+            if(distance > maxLength && !client.hasPermission("bypassLineLength")) return;
+
             if(!client.lineQuota.canSpend(1)) return;
             if(server.config.saving.saveLines) lineManager.draw_line(client.world, from, to);
             
@@ -52,14 +58,16 @@ module.exports = httpServer => {
         });
 
         socket.on("setText", (text, x, y) => {
-            if(getWorldByName(client.world).readonly) return;
+            if(getWorldByName(client.world).readonly && !client.hasPermission("bypassReadOnly")) return;
+            if(!client.hasPermission("bypassTextLength") && text.length > 128) return;
             if(server.config.saving.saveTexts) textManager.set_text(client.world, text, x, y);
 
             broadcastMessage(client.world, { type: "newText", text, x, y });
         });
 
         socket.on("setChunk", (color, chunkX, chunkY) => {
-            if(!getRankByID(client.rank).permissions.includes("erase")) return;
+            if(getWorldByName(client.world).readonly && !client.hasPermission("bypassReadOnly")) return;
+            if(!client.hasPermission("erase")) return;
 
             const chunkData = chunkManager.set_rgb(client.world, chunkX, chunkY, color);
             const isProtected = chunkManager.get_protection(client.world, chunkX, chunkY);
@@ -71,7 +79,8 @@ module.exports = httpServer => {
         });
 
         socket.on("setChunkData", (chunkX, chunkY, chunkData) => {
-            if(!getRankByID(client.rank).permissions.includes("erase")) return;
+            if(getWorldByName(client.world).readonly && !client.hasPermission("bypassReadOnly")) return;
+            if(!client.hasPermission("erase")) return;
 
             chunkManager.set_chunkdata(client.world, chunkX, chunkY, chunkData);
             const isProtected = chunkManager.get_protection(client.world, chunkX, chunkY);
@@ -83,7 +92,7 @@ module.exports = httpServer => {
         });
 
         socket.on("protect", (value, chunkX, chunkY) => {
-            if(!getRankByID(client.rank).permissions.includes("protect")) return;
+            if(!client.hasPermission("protect")) return;
             chunkManager.set_protection(client.world, chunkX, chunkY, value);
 
             broadcastMessage(client.world, { type: "protectionUpdated", chunkX, chunkY, value });
@@ -126,9 +135,8 @@ module.exports = httpServer => {
         });
 
         socket.on("send", message => {
-            const rank = getRankByID(client.rank);
-            if(!rank.permissions.includes("chat")) return;
-            if(message.length > server.config.maxMessageLength && !rank.permissions.includes("bypassChatLength")) return;
+            if(!client.hasPermission("chat")) return;
+            if(message.length > server.config.maxMessageLength && !client.hasPermission("bypassChatLength")) return;
             
             message = message.trim();
             if(message.startsWith('/')) {
