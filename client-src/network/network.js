@@ -93,6 +93,14 @@ socket.on("connect", () => {
     socket.on("gotID", id => {
         local_player.id = id;
     });
+
+    socket.on("newWorld", worldName => {
+        chunks = {};
+        lines = [];
+        texts = {};
+        requestRender();
+        events.emit("newWorld", worldName);
+    });
 });
 
 events.on("addText", (text, x, y) => {
@@ -153,7 +161,7 @@ export function unloadInvisibleChunks() {
 }
 
 events.on("loadChunks", () => {
-    unloadInvisibleChunks(); // removing this improves performance but stores more chunks in memory
+    unloadInvisibleChunks();
     loadVisibleChunks();
 });
 

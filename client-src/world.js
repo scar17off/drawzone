@@ -3,6 +3,7 @@ import socket from "./network/network.js";
 import { requestRender } from "./render/renderer.js";
 import { options, chunks, lines } from "./sharedState.js";
 import ranks from "./shared/ranks.json";
+import events from "./events.js";
 
 const getRankByID = (rankId) => Object.values(ranks).find(rank => rank.id === parseInt(rankId));
 
@@ -26,7 +27,7 @@ function canDraw(x, y, color) {
     return (!chunks[chunkKey] || !chunks[chunkKey].protected || hasPermission) && hasQuota;
 }
 
-export default {
+const world = {
     canDraw,
     move: (x, y) => {
         socket.emit("move", x, y);
@@ -122,3 +123,13 @@ export default {
     },
     name: location.pathname.substring(1) || "main"
 }
+
+events.on("newWorld", worldName => {
+    chunks = {};
+    texts = {};
+    lines = [];
+    world.name = worldName;
+    events.emit("loadChunks");
+});
+
+export default world;

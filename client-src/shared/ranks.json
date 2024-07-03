@@ -32,7 +32,7 @@
         "loginCommand": "adminlogin",
         "greetingMessage": "[Server] You are now an admin. Do /help for a list of commands.",
         "permissions": ["chat", "setPixel", "protect", "erase", "playerList", "bypassChatLength"],
-        "commands": ["help", "nick", "tp", "kick", "kickip", "setrank", "list", "spawn", "tell", "world"],
+        "commands": ["help", "nick", "tp", "kick", "kickip", "setrank", "list", "spawn", "tell", "world", "join"],
         "revealID": false,
         "chatPrefix": "[A]"
     }

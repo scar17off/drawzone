@@ -149,6 +149,15 @@ class Client {
     }
 
     /**
+     * Sets the client's world.
+     * @param {string} worldName - The name of the world to set for the client.
+     */
+    setWorld(worldName) {
+        this._world = worldName;
+        this.ws.emit("newWorld", worldName);
+    }
+
+    /**
      * Disconnects the client from the server.
      */
     kick() {
