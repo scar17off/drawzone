@@ -38,7 +38,7 @@ module.exports = httpServer => {
             client.pixelQuota.update();
             const hasQuota = client.pixelQuota.canSpend(1) || (client.pixelQuota.rate === 1 && client.pixelQuota.time === 0);
             if(!hasQuota) return;
-            if(!client.hasPermission("protect") && chunkManager.get_protection(client.world, chunkX, chunkY) === true) return;
+            if(!client.hasPermission("bypassProtection") && chunkManager.get_protection(client.world, chunkX, chunkY) === true) return;
             if(server.config.saving.savePixels) chunkManager.set_pixel(client.world, x, y, color);
             
             broadcastMessage(client.world, { type: "newPixel", x, y, color });
@@ -52,6 +52,24 @@ module.exports = httpServer => {
             if(distance > maxLength && !client.hasPermission("bypassLineLength")) return;
 
             if(!client.lineQuota.canSpend(1)) return;
+
+            // Check for intersection with protected chunks
+            const dx = to.x - from.x;
+            const dy = to.y - from.y;
+            const steps = Math.max(Math.abs(dx), Math.abs(dy));
+            const xIncrement = dx / steps;
+            const yIncrement = dy / steps;
+            let x = from.x;
+            let y = from.y;
+
+            for(let i = 0; i <= steps; i++) {
+                const chunkX = Math.floor(x / 16);
+                const chunkY = Math.floor(y / 16);
+                if(!client.hasPermission("bypassProtection") && chunkManager.get_protection(client.world, chunkX, chunkY) === true) return;
+                x += xIncrement;
+                y += yIncrement;
+            }
+
             if(server.config.saving.saveLines) lineManager.draw_line(client.world, from, to);
             
             broadcastMessage(client.world, { type: "newLine", from, to });

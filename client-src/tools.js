@@ -200,7 +200,31 @@ events.on("newRank", newRank => {
                         mouse.lineX = currPos[0];
                         mouse.lineY = currPos[1];
 
-                        world.drawLine(prevPos, currPos);
+                        const dx = currPos[0] - prevPos[0];
+                        const dy = currPos[1] - prevPos[1];
+                        const steps = Math.max(Math.abs(dx), Math.abs(dy));
+                        const xIncrement = dx / steps;
+                        const yIncrement = dy / steps;
+                        let x = prevPos[0];
+                        let y = prevPos[1];
+
+                        let intersectsProtectedChunk = false;
+
+                        for (let i = 0; i <= steps; i++) {
+                            const chunkX = Math.floor(x / 16);
+                            const chunkY = Math.floor(y / 16);
+                            if (DrawZone.world.chunks[`${chunkX},${chunkY}`].protected === true) {
+                                intersectsProtectedChunk = true;
+                                break;
+                            }
+                            x += xIncrement;
+                            y += yIncrement;
+                        }
+
+                        if (!intersectsProtectedChunk) {
+                            world.drawLine(prevPos, currPos);
+                        }
+
                         mouse.prevLineX = currPos[0];
                         mouse.prevLineY = currPos[1];
                     }, 1000 / 10);
@@ -219,6 +243,7 @@ events.on("newRank", newRank => {
 
     addTool("Line Pencil", cursors.linepencil, [Fx.NONE], ranks.User, function(tool) {
         let startPoint = null;
+        const maxLength = 64;
 
         tool.setEvent("mousedown", event => {
             if(event.buttons === 1) {
@@ -229,18 +254,47 @@ events.on("newRank", newRank => {
         tool.setEvent("mousemove", event => {
             if(event.buttons === 1 && startPoint) {
                 const endPoint = [mouse.tileX, mouse.tileY];
-                local_player.currentFxRenderer = {
-                    type: Fx.LINE,
-                    params: [startPoint, endPoint]
+                const distance = Math.sqrt(Math.pow(endPoint[0] - startPoint[0], 2) + Math.pow(endPoint[1] - startPoint[1], 2));
+                if(distance <= maxLength) {
+                    local_player.currentFxRenderer = {
+                        type: Fx.LINE,
+                        params: [startPoint, endPoint]
+                    }
+                    requestRender();
                 }
-                requestRender();
             }
         });
 
         tool.setEvent("mouseup", () => {
             if(startPoint) {
                 const endPoint = [mouse.tileX, mouse.tileY];
-                world.drawLine(startPoint, endPoint);
+                const distance = Math.sqrt(Math.pow(endPoint[0] - startPoint[0], 2) + Math.pow(endPoint[1] - startPoint[1], 2));
+                if(distance <= maxLength) {
+                    const dx = endPoint[0] - startPoint[0];
+                    const dy = endPoint[1] - startPoint[1];
+                    const steps = Math.max(Math.abs(dx), Math.abs(dy));
+                    const xIncrement = dx / steps;
+                    const yIncrement = dy / steps;
+
+                    let x = startPoint[0];
+                    let y = startPoint[1];
+                    let intersectsProtectedChunk = false;
+
+                    for (let i = 0; i <= steps; i++) {
+                        const chunkX = Math.floor(x / 16);
+                        const chunkY = Math.floor(y / 16);
+                        if (DrawZone.world.chunks[`${chunkX},${chunkY}`].protected === true) {
+                            intersectsProtectedChunk = true;
+                            break;
+                        }
+                        x += xIncrement;
+                        y += yIncrement;
+                    }
+
+                    if (!intersectsProtectedChunk) {
+                        world.drawLine(startPoint, endPoint);
+                    }
+                }
                 startPoint = null;
                 local_player.currentFxRenderer = { type: Fx.NONE, params: [] };
                 requestRender();
