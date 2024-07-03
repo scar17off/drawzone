@@ -4,7 +4,8 @@ import { options } from "./sharedState.js";
 
 export default {
     NONE: null,
-    RECT_SELECT_ALIGNED: (size, color = local_player.selectedColor) => (x, y, ctx) => {
+    RECT_SELECT_ALIGNED: (size, color) => (x, y, ctx) => {
+        color = local_player.selectedColor;
         const startX = Math.floor(x / size) * size;
         const startY = Math.floor(y / size) * size;
 
@@ -12,7 +13,8 @@ export default {
         ctx.lineWidth = 2;
         ctx.strokeRect(startX * camera.zoom - camera.x, startY * camera.zoom - camera.y, size * camera.zoom, size * camera.zoom);
     },
-    AREA_SELECT: (start, end, step, color = local_player.selectedColor) => (x, y, ctx) => {
+    AREA_SELECT: (start, end, step, color) => (x, y, ctx) => {
+        color = local_player.selectedColor;
         if(local_player.currentFxRenderer.params.length !== 3) return;
         const adjustedStartX = step === options.chunkSize ? Math.floor(start[0] / step) * step : start[0];
         const adjustedStartY = step === options.chunkSize ? Math.floor(start[1] / step) * step : start[1];
@@ -42,14 +44,16 @@ export default {
         ctx.fillStyle = "black";
         ctx.fillText(text, textX, textY);
     },
-    LINE: (startPoint, endPoint, color = [0, 0, 0]) => (x, y, ctx) => {
+    LINE: (startPoint, endPoint, color) => (x, y, ctx) => {
+        color = [0, 0, 0];
         ctx.strokeStyle = `rgb(${color.join(", ")})`;
         ctx.beginPath();
         ctx.moveTo(startPoint[0] * camera.zoom - camera.x, startPoint[1] * camera.zoom - camera.y);
         ctx.lineTo(endPoint[0] * camera.zoom - camera.x, endPoint[1] * camera.zoom - camera.y);
         ctx.stroke();
     },
-    PIXEL_LINE: (startPoint, endPoint, color = local_player.selectedColor) => (x, y, ctx) => {
+    PIXEL_LINE: (startPoint, endPoint, color) => (x, y, ctx) => {
+        color = local_player.selectedColor;
         const dx = endPoint[0] - startPoint[0];
         const dy = endPoint[1] - startPoint[1];
         const steps = Math.max(Math.abs(dx), Math.abs(dy));

@@ -5,3 +5,4 @@ package-lock.json
 chunks
 worlds
 routing/client/bundle.js
+modules/world/worlds.json
