@@ -71,7 +71,7 @@ class Tool {
     
     hide() {
         const toolButton = document.getElementById(`tool-${this.elementName}`);
-        if(toolButton) toolButton.style.display = 'none';
+        if(toolButton) toolButton.style.display = "none";
     }
 }
 
@@ -143,13 +143,13 @@ events.on("newRank", newRank => {
             }
         }
         
-        tool.setEvent('mousemove', event => {
+        tool.setEvent("mousemove", event => {
             if(event.buttons === 1 || event.buttons == 2) {
                 const color = event.buttons === 1 ? local_player.selectedColor : [255, 255, 255];
                 world.setPixel(mouse.tileX, mouse.tileY, color);
             }
         });
-        tool.setEvent('mousedown', mouseDown);
+        tool.setEvent("mousedown", mouseDown);
     });
 
     addTool("Pipette", cursors.pipette, [Fx.NONE], ranks.User, function(tool) {
@@ -165,7 +165,7 @@ events.on("newRank", newRank => {
                 local_player.selectedColor = color;
 
                 setTimeout(() => {
-                    const colorElement = document.querySelector(`.color-item[data-color='${color.join(",")}']`);
+                    const colorElement = document.querySelector(`.color-item[data-color="${color.join(",")}"]`);
                     if(colorElement) {
                         colorElement.click();
                     }
@@ -173,15 +173,15 @@ events.on("newRank", newRank => {
             }
         }
 
-        tool.setEvent('mousemove', mouseDown);
-        tool.setEvent('mousedown', mouseDown);
+        tool.setEvent("mousemove", mouseDown);
+        tool.setEvent("mousedown", mouseDown);
     });
 
     addTool("Pencil", cursors.pencil, [Fx.NONE], ranks.User, function(tool) {
         let intervalId = null;
         let drawingStarted = false;
 
-        tool.setEvent('mousemove', event => {
+        tool.setEvent("mousemove", event => {
             if(event.buttons === 1) {
                 if(!drawingStarted) {
                     drawingStarted = true;
@@ -348,7 +348,7 @@ events.on("newRank", newRank => {
     });
 
     addTool("Move", cursors.move, [Fx.NONE], ranks.User, function(tool) {
-        tool.setEvent('mousemove', event => {
+        tool.setEvent("mousemove", event => {
             if(event.buttons === 1) {
                 camera.x -= event.movementX;
                 camera.y -= event.movementY;
@@ -380,7 +380,7 @@ events.on("newRank", newRank => {
             }
         }
 
-        tool.setEvent('mousedown', async event => {
+        tool.setEvent("mousedown", async event => {
             if(event.buttons === 1) {
                 filling = true;
                 const targetColor = await world.getPixel(mouse.tileX, mouse.tileY);
@@ -389,13 +389,13 @@ events.on("newRank", newRank => {
                 bfsFill(mouse.tileX, mouse.tileY, targetColor, fillColor);
             }
         });
-        tool.setEvent('mouseup', () => {
+        tool.setEvent("mouseup", () => {
             filling = false;
         });
     });
 
     addTool("Zoom", cursors.zoom, [Fx.NONE], ranks.User, function(tool) {
-        tool.setEvent('mousedown', event => {
+        tool.setEvent("mousedown", event => {
             if(event.buttons === 1) {
                 camera.editZoom(0.5);
             } else if(event.buttons === 2) {
@@ -413,8 +413,8 @@ events.on("newRank", newRank => {
             world.setProtection(event.buttons === 1, chunkX, chunkY);
         }
 
-        tool.setEvent('mousemove', protect);
-        tool.setEvent('mousedown', protect);
+        tool.setEvent("mousemove", protect);
+        tool.setEvent("mousedown", protect);
     });
 
     addTool("Eraser", cursors.eraser, [Fx.RECT_SELECT_ALIGNED, chunkSize], ranks.Moderator, function(tool) {
@@ -426,8 +426,8 @@ events.on("newRank", newRank => {
             world.setChunk(event.buttons === 1 ? local_player.selectedColor : [255, 255, 255], chunkX, chunkY);
         }
 
-        tool.setEvent('mousemove', erase);
-        tool.setEvent('mousedown', erase);
+        tool.setEvent("mousemove", erase);
+        tool.setEvent("mousedown", erase);
     });
 
     addTool("Paste", cursors.paste, [Fx.NONE], ranks.Moderator, function(tool) {
@@ -461,19 +461,19 @@ events.on("newRank", newRank => {
             return chunkData;
         }
 
-        tool.setEvent('mousedown', async event => {
+        tool.setEvent("mousedown", async event => {
             if(event.buttons === 1) {
-                const input = document.createElement('input');
-                input.type = 'file';
-                input.accept = 'image/*';
+                const input = document.createElement("input");
+                input.type = "file";
+                input.accept = "image/*";
                 input.onchange = async e => {
                     const file = e.target.files[0];
                     const reader = new FileReader();
                     reader.onload = async function (event) {
                         const img = new Image();
                         img.onload = async function () {
-                            const canvas = document.createElement('canvas');
-                            const ctx = canvas.getContext('2d');
+                            const canvas = document.createElement("canvas");
+                            const ctx = canvas.getContext("2d");
                             canvas.width = img.width;
                             canvas.height = img.height;
                             ctx.drawImage(img, 0, 0);
@@ -568,19 +568,19 @@ events.on("newRank", newRank => {
             return { lineData, pixelData };
         }
 
-        tool.setEvent('mousedown', async event => {
+        tool.setEvent("mousedown", async event => {
             if(event.buttons === 1) {
-                const input = document.createElement('input');
-                input.type = 'file';
-                input.accept = 'image/*';
+                const input = document.createElement("input");
+                input.type = "file";
+                input.accept = "image/*";
                 input.onchange = async e => {
                     const file = e.target.files[0];
                     const reader = new FileReader();
                     reader.onload = async function (event) {
                         const img = new Image();
                         img.onload = async function () {
-                            const canvas = document.createElement('canvas');
-                            const ctx = canvas.getContext('2d');
+                            const canvas = document.createElement("canvas");
+                            const ctx = canvas.getContext("2d");
                             canvas.width = img.width;
                             canvas.height = img.height;
                             ctx.drawImage(img, 0, 0);
@@ -746,7 +746,7 @@ events.on("newRank", newRank => {
         function displayImageInModal(imageSrc) {
             const modal = document.createElement("div");
             modal.style.position = "fixed";
-            modal.style.left = "0";
+            modal.style.left = '0';
             modal.style.top = '0';
             modal.style.width = "100%";
             modal.style.height = "100%";

@@ -6,10 +6,10 @@ import local_player from "../local_player.js";
 import { toolIDs } from "../tools.js";
 import { cursors } from "../cursors.js";
 import ChunkCluster from "./ChunkCluster.js";
-import Fx from '../fx.js';
+import Fx from "../fx.js";
 
 const unloadedChunkImage = new Image();
-unloadedChunkImage.src = './img/unloaded.png';
+unloadedChunkImage.src = "./img/unloaded.png";
 
 // Canvas autosize
 const canvas = document.getElementById("gameCanvas");
@@ -24,7 +24,7 @@ window.addEventListener("resize", () => {
 });
 
 export function drawGrid() {
-    const gridColor = 'rgba(0, 0, 0, 0.2)';
+    const gridColor = "rgba(0, 0, 0, 0.2)";
     ctx.strokeStyle = gridColor;
     ctx.lineWidth = 1;
 
@@ -63,7 +63,7 @@ export function drawGrid() {
 }
 
 export function renderLine(x1, y1, x2, y2) {
-    ctx.strokeStyle = '#000000';
+    ctx.strokeStyle = "#000000";
     ctx.beginPath();
     ctx.moveTo(x1 * camera.zoom - camera.x, y1 * camera.zoom - camera.y);
     ctx.lineTo(x2 * camera.zoom - camera.x, y2 * camera.zoom - camera.y);
@@ -161,7 +161,7 @@ function renderPlayers() {
 
         const toolName = Object.keys(toolIDs).find(key => toolIDs[key] === player.tool);
         
-        ctx.font = '12px Arial';
+        ctx.font = "12px Arial";
         const textWidth = ctx.measureText(id).width;
         const padding = 4; // padding around text
         const idContainerWidth = textWidth + padding * 2;
@@ -173,7 +173,7 @@ function renderPlayers() {
         const idContainerY = playerY + (72 / (camera.zoom / 8)) + 5; // below player tool
         ctx.strokeRect(playerX, idContainerY, idContainerWidth, idContainerHeight);
 
-        ctx.fillStyle = 'black';
+        ctx.fillStyle = "black";
         // centered within the container
         const textX = playerX + padding;
         const textY = idContainerY + padding + (idContainerHeight / 2);

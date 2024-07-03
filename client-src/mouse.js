@@ -33,7 +33,7 @@ export function getGameCoordinates(clientX, clientY) {
     return { x: gameX, y: gameY };
 }
 
-canvas.addEventListener('mousemove', event => {
+canvas.addEventListener("mousemove", event => {
     mouse.x = event.clientX, mouse.y = event.clientY;
 
     const pos = getGameCoordinates(event.clientX, event.clientY);
@@ -43,6 +43,6 @@ canvas.addEventListener('mousemove', event => {
     world.move(mouse.tileX, mouse.tileY);
 });
 
-canvas.addEventListener('contextmenu', function(event) {
+canvas.addEventListener("contextmenu", function(event) {
     event.preventDefault();
 });

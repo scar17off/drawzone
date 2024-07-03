@@ -72,30 +72,30 @@ const local_player = {
 }
 local_player.selectedColor = local_player.palette[0];
 
-window.addEventListener('keypress', event => {
+window.addEventListener("keypress", event => {
     if(event.key.length === 1) local_player.text += event.key;
 });
 
-window.addEventListener('keydown', event => {
+window.addEventListener("keydown", event => {
     const activeElementTag = document.activeElement.tagName.toLowerCase();
-    const isTextInputActive = ['input', 'textarea'].includes(activeElementTag);
+    const isTextInputActive = ["input", "textarea"].includes(activeElementTag);
 	
-    if(event.key === 'Enter' && !isTextInputActive) {
+    if(event.key === "Enter" && !isTextInputActive) {
         events.emit("addText", local_player.text, mouse.tileX, mouse.tileY);
         texts[`${mouse.tileX},${mouse.tileY}`] = local_player.text;
         local_player.text = '';
-    } else if(event.key === 'Backspace') {
+    } else if(event.key === "Backspace") {
         local_player.text = local_player.text.slice(0, -1);
     }
 });
 
 // color stuff
 function addColorEvent(item) {
-    item.addEventListener('click', () => {
-        const color = item.getAttribute('data-color').split(',').map(Number);
+    item.addEventListener("click", () => {
+        const color = item.getAttribute("data-color").split(',').map(Number);
         local_player.selectedColor = color;
-        document.querySelectorAll('.color-item').forEach(i => i.classList.remove('selected'));
-        item.classList.add('selected');
+        document.querySelectorAll(".color-item").forEach(i => i.classList.remove("selected"));
+        item.classList.add("selected");
     });
 	item.addEventListener("contextmenu", event => {
 		item.remove();
@@ -104,20 +104,20 @@ function addColorEvent(item) {
 	});
 }
 
-document.querySelectorAll('.color-item').forEach(item => addColorEvent(item));
+document.querySelectorAll(".color-item").forEach(item => addColorEvent(item));
 
 export function addColor(color) {
-    const colorDiv = document.createElement('div');
-    colorDiv.className = 'color-item';
-    colorDiv.style.backgroundColor = `rgb(${color.join(',')})`;
+    const colorDiv = document.createElement("div");
+    colorDiv.className = "color-item";
+    colorDiv.style.backgroundColor = `rgb(${color.join(',')}`;
     local_player.palette.push(color);
-    colorDiv.setAttribute('data-color', color.join(','));
+    colorDiv.setAttribute("data-color", color.join(','));
     document.getElementById("color-list").appendChild(colorDiv);
     addColorEvent(colorDiv);
 }
 
-document.getElementById('color-picker').addEventListener('change', () => {
-    const color = document.getElementById('color-picker').value.match(/\w\w/g).map(hex => parseInt(hex, 16));
+document.getElementById("color-picker").addEventListener("change", () => {
+    const color = document.getElementById("color-picker").value.match(/\w\w/g).map(hex => parseInt(hex, 16));
     addColor(color);
 });
 

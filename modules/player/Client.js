@@ -90,7 +90,7 @@ class Client {
             
             this.setId(world.clients.length);
             
-            const quotas = ['lineQuota', 'pixelQuota'];
+            const quotas = ["lineQuota", "pixelQuota"];
             quotas.forEach(quotaType => {
                 const worldQuota = world[quotaType];
                 const rankData = getRankByID(this.rank);

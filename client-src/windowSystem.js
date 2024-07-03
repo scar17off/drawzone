@@ -26,7 +26,7 @@ function addDragAbility(windowInstance) {
         pos2 = pos4 - e.clientY;
         pos3 = e.clientX;
         pos4 = e.clientY;
-        // set the element's new position:
+        // set the element"s new position:
         windowInstance.frame.style.top = (windowInstance.frame.offsetTop - pos2) + "px";
         windowInstance.frame.style.left = (windowInstance.frame.offsetLeft - pos1) + "px";
     }
@@ -49,32 +49,32 @@ class GUIWindow {
         windows[title] = this;
     }
     initialize() {
-        this.frame = document.createElement('div');
-        this.titleBar = document.createElement('div');
-        this.closeButton = document.createElement('button');
-        this.titleLabel = document.createElement('span');
-        this.container = document.createElement('div');
+        this.frame = document.createElement("div");
+        this.titleBar = document.createElement("div");
+        this.closeButton = document.createElement("button");
+        this.titleLabel = document.createElement("span");
+        this.container = document.createElement("div");
 
         this.frame.appendChild(this.titleBar);
         this.titleBar.appendChild(this.closeButton);
         this.titleBar.appendChild(this.titleLabel);
         this.frame.appendChild(this.container);
 
-        this.frame.className = 'window-frame';
-        this.titleBar.className = 'window-titlebar';
-        this.closeButton.className = 'window-close-button';
-        this.titleLabel.className = 'window-title-label';
-        this.container.className = 'window-container';
+        this.frame.className = "window-frame";
+        this.titleBar.className = "window-titlebar";
+        this.closeButton.className = "window-close-button";
+        this.titleLabel.className = "window-title-label";
+        this.container.className = "window-container";
 
         this.titleLabel.textContent = this.title;
-        this.closeButton.innerHTML = '&times;';
+        this.closeButton.innerHTML = "&times;";
         this.closeButton.onclick = () => this.close();
 
         if(this.options.centered) {
-            this.frame.style.position = 'fixed';
-            this.frame.style.top = '50%';
-            this.frame.style.left = '50%';
-            this.frame.style.transform = 'translate(-50%, -50%)';
+            this.frame.style.position = "fixed";
+            this.frame.style.top = "50%";
+            this.frame.style.left = "50%";
+            this.frame.style.transform = "translate(-50%, -50%)";
         }
 
         if(this.options.background) {
@@ -97,7 +97,7 @@ class GUIWindow {
         delete windows[this.title];
     }
     move(x, y) {
-        this.frame.style.position = 'absolute';
+        this.frame.style.position = "absolute";
         this.frame.style.left = `${x}px`;
         this.frame.style.top = `${y}px`;
     }
@@ -115,15 +115,15 @@ const getRankByID = (rankId) => Object.values(ranks).find(rank => rank.id === pa
 
 events.on("newRank", (id) => {
     if(getRankByID(id).permissions.includes("playerList")) {
-        const playerListWindow = new GUIWindow('Player List', {}, (win) => {
-            const table = document.createElement('table');
-            const thead = document.createElement('thead');
-            const tbody = document.createElement('tbody');
-            const headerRow = document.createElement('tr');
+        const playerListWindow = new GUIWindow("Player List", {}, (win) => {
+            const table = document.createElement("table");
+            const thead = document.createElement("thead");
+            const tbody = document.createElement("tbody");
+            const headerRow = document.createElement("tr");
 
             // define table headers
-            ['ID', 'X', 'Y', 'Tool', 'Color'].forEach(headerText => {
-                const header = document.createElement('th');
+            ["ID", "X", "Y", "Tool", "Color"].forEach(headerText => {
+                const header = document.createElement("th");
                 header.textContent = headerText;
                 headerRow.appendChild(header);
             });
@@ -134,20 +134,20 @@ events.on("newRank", (id) => {
             win.addObj(table);
 
             function populateTable() {
-                tbody.innerHTML = '';
+                tbody.innerHTML = "";
                 Object.entries(players).forEach(([id, player]) => {
-                    const row = document.createElement('tr');
-                    const idCell = document.createElement('td');
-                    const xCell = document.createElement('td');
-                    const yCell = document.createElement('td');
-                    const toolCell = document.createElement('td');
-                    const colorCell = document.createElement('td');
+                    const row = document.createElement("tr");
+                    const idCell = document.createElement("td");
+                    const xCell = document.createElement("td");
+                    const yCell = document.createElement("td");
+                    const toolCell = document.createElement("td");
+                    const colorCell = document.createElement("td");
 
                     idCell.textContent = id;
                     xCell.textContent = Math.floor(player.x);
                     yCell.textContent = Math.floor(player.y);
                     toolCell.textContent = player.tool;
-                    colorCell.textContent = `rgb(${player.color.join(',')})`;
+                    colorCell.textContent = `rgb(${player.color.join(",")})`;
 
                     row.appendChild(idCell);
                     row.appendChild(xCell);

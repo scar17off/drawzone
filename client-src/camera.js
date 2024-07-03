@@ -83,19 +83,19 @@ function handleMouseMove(event) {
 
 function handleKeyDown(event) {
     switch (event.key) {
-        case 'ArrowUp':
+        case "ArrowUp":
             camera.y -= 1 * camera.zoom;
             events.emit("loadChunks");
             break;
-        case 'ArrowDown':
+        case "ArrowDown":
             camera.y += 1 * camera.zoom;
             events.emit("loadChunks");
             break;
-        case 'ArrowLeft':
+        case "ArrowLeft":
             camera.x -= 1 * camera.zoom;
             events.emit("loadChunks");
             break;
-        case 'ArrowRight':
+        case "ArrowRight":
             camera.x += 1 * camera.zoom;
             events.emit("loadChunks");
             break;
@@ -112,9 +112,9 @@ function handleWheel(event) {
     }
 }
 
-canvas.addEventListener('wheel', handleWheel);
-canvas.addEventListener('mousedown', handleMouseDown);
-canvas.addEventListener('mouseup', handleMouseUp);
-canvas.addEventListener('mousemove', handleMouseMove);
+canvas.addEventListener("wheel", handleWheel);
+canvas.addEventListener("mousedown", handleMouseDown);
+canvas.addEventListener("mouseup", handleMouseUp);
+canvas.addEventListener("mousemove", handleMouseMove);
 
-window.addEventListener('keydown', handleKeyDown);
+window.addEventListener("keydown", handleKeyDown);

@@ -123,7 +123,7 @@ class Command {
         }, {});
 
         Object.entries(ranksWithClients).forEach(([rankKey, clients]) => {
-            this.client.send(`${rankKey} (${clients.length}): ${clients.join(', ')}`);
+            this.client.send(`${rankKey} (${clients.length}): ${clients.join(", ")}`);
         });
     }
     spawn() {

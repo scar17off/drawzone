@@ -37,14 +37,14 @@ class Plugin {
  * Loads plugins from the plugins directory and initializes them.
  */
 function loadPlugins() {
-    const folder = path.join(__dirname, '../plugins');
+    const folder = path.join(__dirname, "../plugins");
     fs.readdirSync(folder).forEach(file => {
         const filePath = path.join(folder, file);
         let plugin;
 
         if(fs.statSync(filePath).isDirectory()) {
             if(file.startsWith("-")) return;
-            const pluginIndex = path.join(filePath, 'index.js');
+            const pluginIndex = path.join(filePath, "index.js");
             if(!fs.existsSync(pluginIndex)) return;
             plugin = require(pluginIndex);
             plugin.filename = file;
@@ -66,7 +66,7 @@ function loadPlugins() {
                 log(`${plugin.name}`, `Enabling ${plugin.name} v${plugin.version} took ${convertTime(plugin.took / 1000)}`);
             } else {
                 plugin.loaded = false;
-                log("ERROR", `Could not load '${filePath}'\nDoesn't follow syntax`);
+                log("ERROR", `Could not load "${filePath}"\nDoesn't follow syntax`);
             }
         }
         server.plugins.push(new Plugin(plugin));

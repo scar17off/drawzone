@@ -132,7 +132,7 @@ module.exports = httpServer => {
         socket.on("loadChunk", (loadQueueOrX, maybeY) => {
             const chunkDatas = {};
             
-            if(typeof loadQueueOrX === 'object') {
+            if(typeof loadQueueOrX === "object") {
                 for(let i in loadQueueOrX) {
                     const [x, y] = loadQueueOrX[i];
 
@@ -141,7 +141,7 @@ module.exports = httpServer => {
                         protected: chunkManager.get_protection(client.world, x, y)
                     }
                 }
-            } else if(typeof loadQueueOrX === 'number' && typeof maybeY === 'number') {
+            } else if(typeof loadQueueOrX === "number" && typeof maybeY === "number") {
                 const x = loadQueueOrX, y = maybeY;
                 chunkDatas[`${x},${y}`] = {
                     data: chunkManager.get_chunkdata(client.world, x, y),
