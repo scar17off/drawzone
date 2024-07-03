@@ -38,7 +38,7 @@ function getPlayersInWorld(worldName) {
  * @returns {Array} An array of all player objects.
  */
 function getAllPlayers() {
-    return server.worlds.flatMap(world => world.clients);
+    return [].concat(...server.worlds.map(world => world.clients));
 }
 
 module.exports = {
