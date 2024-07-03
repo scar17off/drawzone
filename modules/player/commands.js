@@ -3,6 +3,7 @@ const { getRankByID } = require("./rankingUtils.js");
 const ranks = require("../shared/ranks.json");
 const { getPlayersInWorld } = require("../player/players.js");
 const { sanitizeXSS } = require("../utils.js");
+const { getWorldByName } = require("../world/worldManager.js");
 
 const loginCommands = Object.values(ranks).reduce((acc, rank) => {
     if(rank.loginCommand) {
@@ -170,6 +171,47 @@ class Command {
 
         if (page < totalPages) {
             this.client.send(`Type /help ${page + 1} to see more commands.`);
+        }
+    }
+    world() {
+        const action = this.args[0];
+        const property = this.args[1];
+        const value = this.args.slice(2).join(" ");
+
+        if (action === "set" && property && value) {
+            const world = getWorldByName(this.client.world);
+
+            switch (property) {
+                case "background":
+                    const background = value.split(",").map(Number);
+                    if (background.length === 3 && background.every(num => !isNaN(num))) {
+                        world.setProperty("background", background);
+                        this.client.send(`World ${this.client.world} background set to ${background.join(",")}`);
+                    } else {
+                        this.client.send("Invalid background value. Use format: 255,255,255");
+                    }
+                    break;
+                case "lineQuota":
+                case "pixelQuota":
+                    const [rate, per] = value.split("x").map(Number);
+                    if (!isNaN(rate) && !isNaN(per)) {
+                        world.setProperty(property, { rate, per });
+                        this.client.send(`World ${this.client.world} ${property} set to ${rate}x${per}`);
+                    } else {
+                        this.client.send(`Invalid ${property} value. Use format: 10x100`);
+                    }
+                    break;
+                default:
+                    if (world.hasOwnProperty(property)) {
+                        world.setProperty(property, value);
+                        this.client.send(`World ${this.client.world} ${property} set to ${value}`);
+                    } else {
+                        this.client.send(`Unknown property: ${property}`);
+                    }
+                    break;
+            }
+        } else {
+            this.client.send("Invalid command format. Use: /world set <property> <value>");
         }
     }
 }

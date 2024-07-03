@@ -1,7 +1,6 @@
 const fs = require("fs");
 const path = require("path");
 
-const CHUNK_FILL = [255, 255, 255];
 const CHUNK_SIZE = 16;
 
 /**
@@ -45,7 +44,7 @@ function get_chunkdata(worldName, chunkX, chunkY) {
         const chunkData = JSON.parse(fs.readFileSync(chunkPath, "utf8"));
         return chunkData;
     } else {
-        const emptyChunkData = Array.from({ length: CHUNK_SIZE }, () => Array.from({ length: CHUNK_SIZE }, () => CHUNK_FILL));
+        const emptyChunkData = Array.from({ length: CHUNK_SIZE }, () => Array.from({ length: CHUNK_SIZE }, () => server.worlds.find(world => world.name === worldName).background));
         return emptyChunkData;
     }
 }
@@ -59,7 +58,7 @@ function get_chunkdata(worldName, chunkX, chunkY) {
  */
 function initChunk(worldName, chunkX, chunkY) {
     const chunkPath = getChunkFilePath(worldName, chunkX, chunkY);
-    const chunkData = Array.from({ length: CHUNK_SIZE }, () => Array.from({ length: CHUNK_SIZE }, () => CHUNK_FILL));
+    const chunkData = Array.from({ length: CHUNK_SIZE }, () => Array.from({ length: CHUNK_SIZE }, () => server.worlds.find(world => world.name === worldName).background));
 
     fs.writeFileSync(chunkPath, JSON.stringify(chunkData));
 

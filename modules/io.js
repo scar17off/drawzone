@@ -24,6 +24,8 @@ module.exports = httpServer => {
         broadcastMessage(client.world, { type: "playerJoin", id: client.id });
 
         socket.on("setPixel", (x, y, color) => {
+            if(getWorldByName(client.world).readonly) return;
+
             x = Math.floor(x);
             y = Math.floor(y);
             
@@ -42,6 +44,7 @@ module.exports = httpServer => {
         });
 
         socket.on("setLine", (from, to) => {
+            if(getWorldByName(client.world).readonly) return;
             if(!client.lineQuota.canSpend(1)) return;
             if(server.config.saving.saveLines) lineManager.draw_line(client.world, from, to);
             
@@ -49,6 +52,7 @@ module.exports = httpServer => {
         });
 
         socket.on("setText", (text, x, y) => {
+            if(getWorldByName(client.world).readonly) return;
             if(server.config.saving.saveTexts) textManager.set_text(client.world, text, x, y);
 
             broadcastMessage(client.world, { type: "newText", text, x, y });
