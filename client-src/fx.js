@@ -1,5 +1,6 @@
 import { camera } from "./camera.js";
 import local_player from "./local_player.js";
+import { options } from "./sharedState.js";
 
 export default {
     NONE: null,
