@@ -17,58 +17,95 @@ const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
 export const tools = {};
 export const toolIDs = Object.keys(cursors).reduce((acc, toolName, index) => (acc[toolName] = index, acc), {});
 
+/**
+ * @param {string} name
+ * @param {object} cursor
+ * @param {function} fxRenderer
+ * @param {number} minRank
+ * @param {function} onInit
+ */
 class Tool {
+    /**
+     * @param {string} name
+     * @param {object} cursor
+     * @param {function} fxRenderer
+     * @param {number} minRank
+     * @param {function} onInit
+     */
     constructor(name, cursor, fxRenderer, minRank, onInit) {
         this.name = name;
         this.elementName = name.toLowerCase().replaceAll(" ", "-");
         this.cursor = cursor;
         this.minRank = minRank.id;
-        this.fxRenderer = { type: fxRenderer[0], params: fxRenderer.slice(1) };
+        this.fxRenderer = fxRenderer;
         this.eventListeners = [];
         this.id = Object.keys(tools).length;
         if(onInit) this.setToolInit(onInit);
     }
     
+    /**
+     * @param {function} onInit
+     */
     setToolInit(onInit) {
         this.onInit = onInit;
         this.addEvents();
     }
     
+    /**
+     * @param {function} fx
+     */
     setFxRenderer(fx) {
         this.fxRenderer = fx;
     }
     
+    /**
+     * @param {function} onInit
+     */
     addEvents() {
         if(typeof this.onInit === "function") this.onInit(this);
     }
     
+    /**
+     * @param {string} event
+     * @param {function} callback
+     */
     setEvent(event, callback) {
         const eventListener = { event, callback };
 
         this.eventListeners.push(eventListener);
     }
     
+    /**
+     * @param {function} callback
+     */
     activate() {
         this.eventListeners.forEach(({ event, callback }) => {
             canvas.addEventListener(event, callback);
         });
 
-        if(typeof this.fxRenderer?.type == "number") {
-            local_player.currentFxRenderer = this.fxRenderer;
-        }
+        local_player.currentFxRenderer = this.fxRenderer;
     }
     
+    /**
+     * @param {function} callback
+     */
     deactivate() {
         this.eventListeners.forEach(({ event, callback }) => {
             canvas.removeEventListener(event, callback);
         });
     }
     
+    /**
+     * @param {function} callback
+     */
     show() {
         const toolButton = document.getElementById(`tool-${this.elementName}`);
         if(toolButton) toolButton.style.display = '';
     }
     
+    /**
+     * @param {function} callback
+     */
     hide() {
         const toolButton = document.getElementById(`tool-${this.elementName}`);
         if(toolButton) toolButton.style.display = "none";
@@ -135,7 +172,7 @@ events.on("newRank", newRank => {
 });
 
 {
-    addTool("Cursor", cursors.cursor, [Fx.RECT_SELECT_ALIGNED, 1], ranks.User, function(tool) {
+    addTool("Cursor", cursors.cursor, Fx.RECT_SELECT_ALIGNED(1), ranks.User, function(tool) {
         function mouseDown(event) {
             if(event.buttons === 1 || event.buttons == 2) {
                 const color = event.buttons === 1 ? local_player.selectedColor : [255, 255, 255];
@@ -152,7 +189,7 @@ events.on("newRank", newRank => {
         tool.setEvent("mousedown", mouseDown);
     });
 
-    addTool("Pipette", cursors.pipette, [Fx.NONE], ranks.User, function(tool) {
+    addTool("Pipette", cursors.pipette, Fx.NONE, ranks.User, function(tool) {
         async function mouseDown(event) {
             if(event.buttons === 1) {
                 const color = await world.getPixel(mouse.tileX, mouse.tileY);
@@ -177,7 +214,7 @@ events.on("newRank", newRank => {
         tool.setEvent("mousedown", mouseDown);
     });
 
-    addTool("Pencil", cursors.pencil, [Fx.NONE], ranks.User, function(tool) {
+    addTool("Pencil", cursors.pencil, Fx.NONE, ranks.User, function(tool) {
         let intervalId = null;
         let drawingStarted = false;
 
@@ -241,7 +278,7 @@ events.on("newRank", newRank => {
         });
     });
 
-    addTool("Line Pencil", cursors.linepencil, [Fx.NONE], ranks.User, function(tool) {
+    addTool("Line Pencil", cursors.linepencil, Fx.NONE, ranks.User, function(tool) {
         let startPoint = null;
         const maxLength = 64;
 
@@ -256,10 +293,7 @@ events.on("newRank", newRank => {
                 const endPoint = [mouse.tileX, mouse.tileY];
                 const distance = Math.sqrt(Math.pow(endPoint[0] - startPoint[0], 2) + Math.pow(endPoint[1] - startPoint[1], 2));
                 if(distance <= maxLength) {
-                    local_player.currentFxRenderer = {
-                        type: Fx.LINE,
-                        params: [startPoint, endPoint]
-                    }
+                    local_player.currentFxRenderer = Fx.LINE(startPoint, endPoint);
                     requestRender();
                 }
             }
@@ -302,7 +336,7 @@ events.on("newRank", newRank => {
         });
     });
 
-    addTool("Pixel Line", cursors.line, [Fx.NONE], ranks.User, function(tool) {
+    addTool("Pixel Line", cursors.line, Fx.NONE, ranks.User, function(tool) {
         let pixelLineStart = null;
 
         tool.setEvent("mousedown", event => {
@@ -314,10 +348,7 @@ events.on("newRank", newRank => {
         tool.setEvent("mousemove", event => {
             if(event.buttons === 1 && pixelLineStart) {
                 const pixelLineEnd = [mouse.tileX, mouse.tileY];
-                local_player.currentFxRenderer = {
-                    type: Fx.PIXEL_LINE,
-                    params: [pixelLineStart, pixelLineEnd]
-                }
+                local_player.currentFxRenderer = Fx.PIXEL_LINE(pixelLineStart, pixelLineEnd);
                 requestRender();
             }
         });
@@ -340,14 +371,14 @@ events.on("newRank", newRank => {
                     y += yIncrement;
                 }
 
-                local_player.currentFxRenderer = { type: Fx.NONE, params: [] };
+                local_player.currentFxRenderer = Fx.NONE;
                 requestRender();
                 pixelLineStart = null;
             }
         });
     });
 
-    addTool("Move", cursors.move, [Fx.NONE], ranks.User, function(tool) {
+    addTool("Move", cursors.move, Fx.NONE, ranks.User, function(tool) {
         tool.setEvent("mousemove", event => {
             if(event.buttons === 1) {
                 camera.x -= event.movementX;
@@ -358,7 +389,7 @@ events.on("newRank", newRank => {
         });
     });
 
-    addTool("Fill", cursors.fill, [Fx.NONE], ranks.User, function(tool) {
+    addTool("Fill", cursors.fill, Fx.NONE, ranks.User, function(tool) {
         let filling = false;
 
         const colorEquals = (color1, color2) => color1[0] === color2[0] && color1[1] === color2[1] && color1[2] === color2[2];
@@ -394,7 +425,7 @@ events.on("newRank", newRank => {
         });
     });
 
-    addTool("Zoom", cursors.zoom, [Fx.NONE], ranks.User, function(tool) {
+    addTool("Zoom", cursors.zoom, Fx.NONE, ranks.User, function(tool) {
         tool.setEvent("mousedown", event => {
             if(event.buttons === 1) {
                 camera.editZoom(0.5);
@@ -404,7 +435,7 @@ events.on("newRank", newRank => {
         });
     });
 
-    addTool("Protect", cursors.protect, [Fx.NONE], ranks.Moderator, function(tool) {
+    addTool("Protect", cursors.protect, Fx.NONE, ranks.Moderator, function(tool) {
         const protect = event => {
             if(event.buttons === 0 || event.buttons === 4) return;
             const chunkX = Math.floor(mouse.tileX / chunkSize);
@@ -417,7 +448,7 @@ events.on("newRank", newRank => {
         tool.setEvent("mousedown", protect);
     });
 
-    addTool("Eraser", cursors.eraser, [Fx.RECT_SELECT_ALIGNED, chunkSize], ranks.Moderator, function(tool) {
+    addTool("Eraser", cursors.eraser, Fx.RECT_SELECT_ALIGNED(chunkSize), ranks.Moderator, function(tool) {
         const erase = event => {
             if(event.buttons === 4 || event.buttons === 0) return;
             const chunkX = Math.floor(mouse.tileX / chunkSize);
@@ -430,7 +461,7 @@ events.on("newRank", newRank => {
         tool.setEvent("mousedown", erase);
     });
 
-    addTool("Paste", cursors.paste, [Fx.NONE], ranks.Moderator, function(tool) {
+    addTool("Paste", cursors.paste, Fx.NONE, ranks.Moderator, function(tool) {
         function getImageChunkData(imageData) {
             const chunkData = {};
             const width = imageData.width;
@@ -499,7 +530,7 @@ events.on("newRank", newRank => {
         });
     });
 
-    addTool("Paste as Lines", cursors.linepaste, [Fx.NONE], ranks.Admin, function(tool) {
+    addTool("Paste as Lines", cursors.linepaste, Fx.NONE, ranks.Admin, function(tool) {
         tool.horizontal = true;
         tool.vertical = true;
         tool.pixel = false;
@@ -615,7 +646,7 @@ events.on("newRank", newRank => {
         });
     });
 
-    addTool("Area Erase", cursors.areaerase, [Fx.NONE], ranks.Moderator, function(tool) {
+    addTool("Area Erase", cursors.areaerase, Fx.NONE, ranks.Moderator, function(tool) {
         let selectionStart = null;
         let selectionEnd = null;
         let step = chunkSize;
@@ -629,10 +660,7 @@ events.on("newRank", newRank => {
         tool.setEvent("mousemove", event => {
             if(event.buttons === 1 && selectionStart) {
                 selectionEnd = [mouse.tileX, mouse.tileY];
-                local_player.currentFxRenderer = {
-                    type: Fx.AREA_SELECT,
-                    params: [selectionStart, selectionEnd, step]
-                }
+                local_player.currentFxRenderer = Fx.AREA_SELECT(selectionStart, selectionEnd, step);
                 requestRender();
             }
         });
@@ -671,7 +699,7 @@ events.on("newRank", newRank => {
         });
     });
 
-    addTool("Area Protect", cursors.areaprotect, [Fx.NONE], ranks.Moderator, async (tool) => {
+    addTool("Area Protect", cursors.areaprotect, Fx.NONE, ranks.Moderator, async (tool) => {
         let selectionStart = null;
         let selectionEnd = null;
         let step = chunkSize;
@@ -685,10 +713,7 @@ events.on("newRank", newRank => {
         tool.setEvent("mousemove", event => {
             if(event.buttons === 1 && selectionStart) {
                 selectionEnd = [mouse.tileX, mouse.tileY];
-                local_player.currentFxRenderer = {
-                    type: Fx.AREA_SELECT,
-                    params: [selectionStart, selectionEnd, step]
-                }
+                local_player.currentFxRenderer = Fx.AREA_SELECT(selectionStart, selectionEnd, step);
                 requestRender();
             }
         });
@@ -713,13 +738,13 @@ events.on("newRank", newRank => {
 
                 selectionStart = null;
                 selectionEnd = null;
-                local_player.currentFxRenderer = { type: Fx.NONE, params: [] };
+                local_player.currentFxRenderer = Fx.NONE;
                 requestRender();
             }
         });
     });
 
-    addTool("Screenshot", cursors.camera, [Fx.NONE], ranks.User, function(tool) {
+    addTool("Screenshot", cursors.camera, Fx.NONE, ranks.User, function(tool) {
         let selectionStart = null;
         let selectionEnd = null;
 
@@ -781,10 +806,7 @@ events.on("newRank", newRank => {
         tool.setEvent("mousemove", event => {
             if(event.buttons === 1 && selectionStart) {
                 selectionEnd = [mouse.tileX, mouse.tileY];
-                local_player.currentFxRenderer = {
-                    type: Fx.AREA_SELECT,
-                    params: [selectionStart, selectionEnd, 1]
-                }
+                local_player.currentFxRenderer = Fx.AREA_SELECT(selectionStart, selectionEnd, 1);
                 requestRender();
             }
         });
