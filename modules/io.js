@@ -4,7 +4,6 @@ module.exports = httpServer => {
     const textManager = require("./world/textManager.js");
     const lineManager = require("./world/lineManager.js");
     const { getWorldByName } = require("./world/worldManager.js");
-    const { getRankByID } = require("./player/rankingUtils.js");
     const { formatMessage } = require("./utils.js");
     const { Command } = require("./player/commands.js");
 
@@ -22,6 +21,7 @@ module.exports = httpServer => {
         socket.join(client.world);
 
         broadcastMessage(client.world, { type: "playerJoin", id: client.id });
+        server.events.emit("playerJoin", client);
 
         socket.on("setPixel", (x, y, color) => {
             if(getWorldByName(client.world).readonly && !client.hasPermission("bypassReadOnly")) return;
@@ -42,6 +42,7 @@ module.exports = httpServer => {
             if(server.config.saving.savePixels) chunkManager.set_pixel(client.world, x, y, color);
             
             broadcastMessage(client.world, { type: "newPixel", x, y, color });
+            server.events.emit("newPixel", client, x, y, color);
         });
 
         socket.on("setLine", (from, to) => {
@@ -121,6 +122,7 @@ module.exports = httpServer => {
             client.y = y;
 
             broadcastMessage(client.world, { type: "playerMoved", id: client.id, x, y });
+            server.events.emit("playerUpdate", client);
         });
 
         socket.on("setTool", toolID => {
@@ -170,6 +172,7 @@ module.exports = httpServer => {
 
         socket.on("disconnect", () => {
             broadcastMessage(client.world, { type: "playerLeft", id: client.id });
+            server.events.emit("playerLeft", client);
         });
     });
 }

@@ -37,4 +37,9 @@ The game's configuration can be found in `config.json`
   - [ ] Copy
 - [ ] Tempmute & Tempban
   - bansManager.js, muteManager.js
-- [ ] Add Customizable World Templates
+
+## Documentation
+- [Server](docs/server.md)
+- [Plugins](docs/plugins.md)
+- [Client](docs/client.md)
+- [Commands](docs/commands.md)

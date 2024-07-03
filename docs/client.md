@@ -194,18 +194,18 @@ Save a tool event to the canvas and deactivate on unequip.
 
 #### Example: Circle tool
 ```js
-DrawZone.tools.addTool("Circle", DrawZone.cursors.cursor, [DrawZone.renderer.Fx.NONE], DrawZone.ranks.User, function (tool) {
+DrawZone.tools.addTool("Circle", DrawZone.cursors.cursor, DrawZone.renderer.Fx.NONE, DrawZone.ranks.User, function (tool) {
     const segmentCount = 15;
     let startPoint = null;
 
     tool.setEvent("mousedown", event => {
-        if(event.buttons === 1) {
+        if (event.buttons === 1) {
             startPoint = [DrawZone.mouse.tileX, DrawZone.mouse.tileY];
         }
     });
 
-    tool.setEvent("mouseup", () => {
-        if(startPoint) {
+    tool.setEvent("mouseup", async () => {
+        if (startPoint) {
             const endPoint = [DrawZone.mouse.tileX, DrawZone.mouse.tileY];
             const radius = Math.sqrt(Math.pow(endPoint[0] - startPoint[0], 2) + Math.pow(endPoint[1] - startPoint[1], 2));
             const angleIncrement = 360 / segmentCount;
@@ -215,10 +215,17 @@ DrawZone.tools.addTool("Circle", DrawZone.cursors.cursor, [DrawZone.renderer.Fx.
                 const y = startPoint[1] + radius * Math.sin(angle * Math.PI / 180);
                 points.push([x, y]);
             }
+            const lines = [];
             for (let i = 0; i < points.length - 1; i++) {
-                DrawZone.world.drawLine(points[i], points[i + 1]);
+                lines.push([points[i], points[i + 1]]);
             }
-            DrawZone.world.drawLine(points[points.length - 1], points[0]);
+            lines.push([points[points.length - 1], points[0]]);
+
+            for (const [start, end] of lines) {
+                DrawZone.world.drawLine(start, end);
+                await new Promise(resolve => setTimeout(resolve, 2));
+            }
+
             startPoint = null;
         }
     });

@@ -74,5 +74,5 @@ module.exports = {
         client.login(process.env.DISCORD_BOT_TOKEN);
     },
     name: "Discord Gateway",
-    version: "1.0.0",
+    version: "1.0.0"
 }
