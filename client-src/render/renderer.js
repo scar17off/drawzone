@@ -244,16 +244,28 @@ function handleFx() {
         const adjustedEndX = step === options.chunkSize ? Math.floor(end[0] / step) * step : end[0];
         const adjustedEndY = step === options.chunkSize ? Math.floor(end[1] / step) * step : end[1];
 
-        ctx.strokeStyle = `rgba(${local_player.selectedColor.join(", ")}, 0.5)`;
-        ctx.lineWidth = 2;
+        const width = adjustedEndX - adjustedStartX + step;
+        const height = adjustedEndY - adjustedStartY + step;
+        const widthInChunks = width / options.chunkSize;
+        const heightInChunks = height / options.chunkSize;
 
-        for (let x = adjustedStartX; x <= adjustedEndX; x += step) {
-            for (let y = adjustedStartY; y <= adjustedEndY; y += step) {
-                if((x === adjustedStartX || x === adjustedEndX || y === adjustedStartY || y === adjustedEndY)) {
-                    ctx.strokeRect(Math.floor(x * camera.zoom - camera.x), Math.floor(y * camera.zoom - camera.y), step * camera.zoom, step * camera.zoom);
-                }
-            }
-        }
+        ctx.strokeStyle = `rgba(${local_player.selectedColor.join(", ")}, 0.5)`;
+        ctx.lineWidth = 3;
+        ctx.strokeRect(
+            Math.floor(adjustedStartX * camera.zoom - camera.x),
+            Math.floor(adjustedStartY * camera.zoom - camera.y),
+            width * camera.zoom,
+            height * camera.zoom
+        );
+
+        const text = `${width}x${height} pixels, ${widthInChunks}x${heightInChunks} chunks`;
+        const textX = (adjustedStartX + width / 2) * camera.zoom - camera.x;
+        const textY = (adjustedStartY + height / 2) * camera.zoom - camera.y;
+
+        const fontSize = 14;
+        ctx.font = `${fontSize}px Arial`;
+        ctx.fillStyle = "black";
+        ctx.fillText(text, textX, textY);
         break;
     case Fx.LINE:
         const [startPoint, endPoint] = local_player.currentFxRenderer.params;
