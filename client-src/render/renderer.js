@@ -254,6 +254,7 @@ function handleFx() {
                 }
             }
         }
+        break;
     case Fx.LINE:
         const [startPoint, endPoint] = local_player.currentFxRenderer.params;
         renderLine(startPoint[0], startPoint[1], endPoint[0], endPoint[1]);
